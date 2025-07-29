@@ -44,9 +44,10 @@ Sub TaxonomyCleaner()
         Exit Sub
     End If
     
-    ' Show the simple input interface
-    Call ShowSegmentSelector
+    ' Show the simple interface (for real buttons, create UserForm manually)
+    TaxonomyCleanerForm.Show
 End Sub
+
 
 ' Simple single-dialog interface for segment selection
 Sub ShowSegmentSelector()
@@ -144,17 +145,12 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
 NextCell:
     Next cell
     
-    ' Show completion message
+    ' Show completion message ONLY (don't unload form here)
     If processedCount > 0 Then
         MsgBox "Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!", vbInformation, "Process Complete"
     Else
         MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
     End If
-    
-    ' Close the form (if it exists)
-    On Error Resume Next
-    Unload TaxonomyCleanerForm
-    On Error GoTo 0
 End Sub
 
 '================================================================================
@@ -199,17 +195,17 @@ Private Sub UserForm_Initialize()
     Me.Caption = "Taxonomy Cleaner - Segment Selector"
 End Sub
 
-Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
-Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
-Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
-Private Sub btn4_Click(): Call ExtractPipeSegment(4): End Sub
-Private Sub btn5_Click(): Call ExtractPipeSegment(5): End Sub
-Private Sub btn6_Click(): Call ExtractPipeSegment(6): End Sub
-Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
-Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
+Private Sub btn1_Click(): Call ExtractPipeSegment(1): Unload Me: End Sub
+Private Sub btn2_Click(): Call ExtractPipeSegment(2): Unload Me: End Sub  
+Private Sub btn3_Click(): Call ExtractPipeSegment(3): Unload Me: End Sub
+Private Sub btn4_Click(): Call ExtractPipeSegment(4): Unload Me: End Sub
+Private Sub btn5_Click(): Call ExtractPipeSegment(5): Unload Me: End Sub
+Private Sub btn6_Click(): Call ExtractPipeSegment(6): Unload Me: End Sub
+Private Sub btn7_Click(): Call ExtractPipeSegment(7): Unload Me: End Sub
+Private Sub btn8_Click(): Call ExtractPipeSegment(8): Unload Me: End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
 
 ' STEP 4: Update the main function to use the form:
-' Replace "Call ShowSegmentSelector" with "TaxonomyCleanerForm.Show"
+' Replace "TaxonomyCleanerForm.Show" with "TaxonomyCleanerForm.Show"
 '
 '================================================================================
