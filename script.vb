@@ -1,3 +1,24 @@
+'================================================================================
+' EXCEL TAXONOMY CLEANER - Enhanced Version
+'================================================================================
+' 
+' QUICK START INSTRUCTIONS:
+' 1. Copy this entire code into a VBA Module in Excel
+' 2. Select cells with pipe-delimited text (e.g., "A|B|C|D|E")
+' 3. Run the TaxonomyCleaner macro
+' 4. Enter a number (1-8) to extract text before that pipe position
+'
+' ADVANCED SETUP (Optional - for button interface):
+' - Create a UserForm named "TaxonomyCleanerForm" following instructions at bottom
+' - The script will automatically use the form if it exists, otherwise uses input dialog
+'
+' EXAMPLES:
+' For text "Marketing|Campaign|Q4|Social|Facebook":
+' - Button/Number 1: "Marketing"
+' - Button/Number 2: "Marketing|Campaign" 
+' - Button/Number 3: "Marketing|Campaign|Q4"
+'================================================================================
+
 ' Main macro to be called when button is pressed
 Sub TaxonomyCleaner()
     ' Check if cells are selected
@@ -22,8 +43,35 @@ Sub TaxonomyCleaner()
         Exit Sub
     End If
     
-    ' Show the user interface
+    ' Show the user interface (with fallback for missing UserForm)
+    On Error GoTo UseInputBox
     TaxonomyCleanerForm.Show
+    Exit Sub
+    
+UseInputBox:
+    ' Fallback interface using InputBox if UserForm doesn't exist
+    Dim pipeNumber As String
+    Dim validNumber As Integer
+    
+    pipeNumber = InputBox("Welcome to the Taxonomy Cleaner Tool!" & vbCrLf & vbCrLf & _
+                         "This tool extracts text from pipe-delimited data in your selected cells." & vbCrLf & _
+                         "Enter a number (1-8) to extract all text BEFORE that pipe position:" & vbCrLf & vbCrLf & _
+                         "Example: For 'A|B|C|D|E', entering 3 extracts 'A|B|C'" & vbCrLf & vbCrLf & _
+                         "Enter pipe number (1-8):", "Taxonomy Cleaner", "")
+    
+    ' Validate input
+    If pipeNumber = "" Then Exit Sub ' User cancelled
+    
+    If IsNumeric(pipeNumber) Then
+        validNumber = CInt(pipeNumber)
+        If validNumber >= 1 And validNumber <= 8 Then
+            Call ExtractBeforePipe(validNumber)
+        Else
+            MsgBox "Please enter a number between 1 and 8.", vbExclamation, "Invalid Input"
+        End If
+    Else
+        MsgBox "Please enter a valid number between 1 and 8.", vbExclamation, "Invalid Input"
+    End If
 End Sub
 
 ' Function to extract text before the nth pipe for a range of cells
@@ -82,8 +130,10 @@ NextCell:
         MsgBox "No cells were processed. Make sure your selected cells contain pipe-delimited text with at least " & pipeNumber & " pipe character(s).", vbExclamation, "No Changes Made"
     End If
     
-    ' Close the form
+    ' Close the form (if it exists)
+    On Error Resume Next
     Unload TaxonomyCleanerForm
+    On Error GoTo 0
 End Sub
 
 '================================================================================
