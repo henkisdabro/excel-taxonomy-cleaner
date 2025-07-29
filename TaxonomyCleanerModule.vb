@@ -14,11 +14,12 @@
 ' 3. Choose segment number to extract that specific part
 '
 ' EXAMPLES:
-' For text "Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024":
-' - Segment 1: "Marketing" (1st segment)
-' - Segment 3: "Q4" (3rd segment) 
-' - Segment 5: "Facebook" (5th segment)
-' - Segment 8: "2024" (8th segment)
+' For text "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725":
+' - Segment 1: "FY24_26" (1st segment)
+' - Segment 3: "Tourism WA" (3rd segment) 
+' - Segment 5: "Always On Remarketing" (5th segment)
+' - Segment 9: "Conversions" (9th segment)
+' - Activation ID: "DJTDOM060725" (after colon)
 '================================================================================
 
 ' Global variables for UNDO functionality
@@ -73,25 +74,29 @@ Sub ShowSegmentSelector()
     ' Show clean, simple interface
     selectedSegment = InputBox("TAXONOMY CLEANER - Segment Extractor" & vbCrLf & vbCrLf & _
                               "This tool extracts specific segments from pipe-delimited data." & vbCrLf & vbCrLf & _
-                              "EXAMPLE: For 'Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024'" & vbCrLf & _
-                              "  Segment 1 = Marketing" & vbCrLf & _
-                              "  Segment 3 = Q4" & vbCrLf & _
-                              "  Segment 5 = Facebook" & vbCrLf & _
-                              "  Segment 8 = 2024" & vbCrLf & vbCrLf & _
-                              "Enter segment number (1-8):", "Taxonomy Cleaner", "")
+                              "EXAMPLE: 'FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725'" & vbCrLf & _
+                              "  Segment 1 = FY24_26" & vbCrLf & _
+                              "  Segment 3 = Tourism WA" & vbCrLf & _
+                              "  Segment 5 = Always On Remarketing" & vbCrLf & _
+                              "  Segment 9 = Conversions" & vbCrLf & _
+                              "  A = DJTDOM060725 (Activation ID)" & vbCrLf & vbCrLf & _
+                              "Enter segment number (1-9) or 'A' for Activation ID:", "Taxonomy Cleaner", "")
     
     ' Validate and execute
     If selectedSegment = "" Then Exit Sub ' User cancelled
     
-    If IsNumeric(selectedSegment) Then
+    ' Check for Activation ID
+    If UCase(Trim(selectedSegment)) = "A" Then
+        Call ExtractActivationID
+    ElseIf IsNumeric(selectedSegment) Then
         validNumber = CInt(selectedSegment)
-        If validNumber >= 1 And validNumber <= 8 Then
+        If validNumber >= 1 And validNumber <= 9 Then
             Call ExtractPipeSegment(validNumber)
         Else
-            MsgBox "Please enter a number between 1 and 8.", vbExclamation, "Invalid Input"
+            MsgBox "Please enter a number between 1 and 9, or 'A' for Activation ID.", vbExclamation, "Invalid Input"
         End If
     Else
-        MsgBox "Please enter a valid number between 1 and 8.", vbExclamation, "Invalid Input"
+        MsgBox "Please enter a valid number between 1 and 9, or 'A' for Activation ID.", vbExclamation, "Invalid Input"
     End If
 End Sub
 
@@ -219,7 +224,14 @@ Sub UndoTaxonomyCleaning()
     End If
     
     ' Confirm undo operation
-    If MsgBox("This will restore " & UndoCount & " cell(s) to their original values before segment " & LastSegmentNumber & " extraction." & vbCrLf & vbCrLf & _
+    Dim operationType As String
+    If LastSegmentNumber = 0 Then
+        operationType = "Activation ID"
+    Else
+        operationType = "segment " & LastSegmentNumber
+    End If
+    
+    If MsgBox("This will restore " & UndoCount & " cell(s) to their original values before " & operationType & " extraction." & vbCrLf & vbCrLf & _
               "Do you want to continue?", vbYesNo + vbQuestion, "Confirm Undo") = vbNo Then
         Exit Sub
     End If
@@ -241,6 +253,79 @@ Sub UndoTaxonomyCleaning()
     
     ' Show confirmation
     MsgBox "Successfully restored " & i - 1 & " cell(s) to their original values.", vbInformation, "Undo Complete"
+    
+    ' Ensure screen updating is always re-enabled
+    Application.ScreenUpdating = True
+End Sub
+
+' Extract Activation ID (text after colon character)
+Sub ExtractActivationID()
+    Dim cell As Range
+    Dim cellText As String
+    Dim extractedText As String
+    Dim colonPos As Integer
+    Dim processedCount As Integer
+    
+    ' Initialize undo functionality
+    UndoCount = 0
+    LastSegmentNumber = 0 ' Special marker for Activation ID
+    ReDim UndoArray(1 To Selection.Cells.Count)
+    
+    ' Disable screen updating for better performance, then re-enable for visual update
+    Application.ScreenUpdating = False
+    
+    processedCount = 0
+    
+    For Each cell In Selection
+        On Error GoTo NextCell ' Skip any problematic cells
+        cellText = CStr(cell.Value)
+        
+        ' Skip empty cells
+        If Len(Trim(cellText)) = 0 Then
+            GoTo NextCell
+        End If
+        
+        ' Find colon position
+        colonPos = InStr(cellText, ":")
+        
+        If colonPos > 0 Then
+            ' Extract text after colon
+            extractedText = Mid(cellText, colonPos + 1)
+            
+            ' Store original value for undo before changing
+            UndoCount = UndoCount + 1
+            UndoArray(UndoCount).CellAddress = cell.Address
+            UndoArray(UndoCount).OriginalValue = cellText
+            
+            cell.Value = extractedText
+            processedCount = processedCount + 1
+        End If
+        ' If no colon found, leave cell unchanged
+        
+NextCell:
+        On Error GoTo 0 ' Reset error handling
+    Next cell
+    
+    ' Re-enable screen updating to show all changes immediately
+    Application.ScreenUpdating = True
+    
+    ' Show completion message with undo information
+    If processedCount > 0 Then
+        Dim result As VbMsgBoxResult
+        result = MsgBox("Successfully extracted Activation ID from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
+                       "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
+                       "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
+        
+        ' Close the UserForm if user clicked Cancel
+        If result = vbCancel Then
+            On Error Resume Next
+            Unload TaxonomyCleanerForm
+            On Error GoTo 0
+        End If
+    Else
+        MsgBox "No cells were processed. Make sure your selected cells contain colon (:) characters.", vbExclamation, "No Changes Made"
+        UndoCount = 0 ' Clear undo data if nothing was processed
+    End If
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True

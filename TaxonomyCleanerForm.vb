@@ -2,7 +2,7 @@
 ' EXCEL TAXONOMY CLEANER - UserForm Code
 '================================================================================
 ' 
-' This file contains the code and instructions for creating the UserForm with 8 buttons.
+' This file contains the code and instructions for creating the UserForm with 9 segment buttons + Activation ID button.
 ' The UserForm provides a much better experience than the simple InputBox interface.
 '
 ' SETUP INSTRUCTIONS:
@@ -14,8 +14,8 @@
 ' 2. Right-click your project → Insert → UserForm  
 ' 3. Name the UserForm "TaxonomyCleanerForm" (important!)
 ' 4. Set UserForm properties:
-'    - Width: 420
-'    - Height: 280
+'    - Width: 480
+'    - Height: 320
 '    - Caption: "Taxonomy Cleaner - Select Segment"
 '
 ' STEP 2: Add Controls to the UserForm
@@ -26,30 +26,34 @@
 '    - Name: lblInstructions
 '    - Caption: "Click a button to extract that segment from your pipe-delimited data:"
 '    - Position: Left=20, Top=20
-'    - Size: Width=380, Height=40
+'    - Size: Width=440, Height=40
 '    - TextAlign: Center (2)
 '    - Font: Size=10, Bold=True
 '
-' B) Add SEGMENT BUTTONS (arrange in 2 rows of 4):
+' B) Add SEGMENT BUTTONS (arrange in 3 rows):
 '    
-'    ROW 1 (Top row - segments 1-4):
+'    ROW 1 (segments 1-3):
 '    - btn1: Left=25,  Top=70,  Width=80, Height=35, Caption="Segment 1"
 '    - btn2: Left=120, Top=70,  Width=80, Height=35, Caption="Segment 2"
 '    - btn3: Left=215, Top=70,  Width=80, Height=35, Caption="Segment 3" 
 '    - btn4: Left=310, Top=70,  Width=80, Height=35, Caption="Segment 4"
 '    
-'    ROW 2 (Bottom row - segments 5-8):
-'    - btn5: Left=25,  Top=120, Width=80, Height=35, Caption="Segment 5"
-'    - btn6: Left=120, Top=120, Width=80, Height=35, Caption="Segment 6"
-'    - btn7: Left=215, Top=120, Width=80, Height=35, Caption="Segment 7"
-'    - btn8: Left=310, Top=120, Width=80, Height=35, Caption="Segment 8"
+'    ROW 2 (segments 4-6):
+'    - btn5: Left=25,  Top=110, Width=80, Height=35, Caption="Segment 5"
+'    - btn6: Left=120, Top=110, Width=80, Height=35, Caption="Segment 6"
+'    - btn7: Left=215, Top=110, Width=80, Height=35, Caption="Segment 7"
+'    - btn8: Left=310, Top=110, Width=80, Height=35, Caption="Segment 8"
+'    
+'    ROW 3 (segment 9 + Activation ID):
+'    - btn9: Left=25,  Top=150, Width=80, Height=35, Caption="Segment 9"
+'    - btnActivationID: Left=120, Top=150, Width=120, Height=35, Caption="Activation ID"
 '    
 '    Set all buttons to: Font Size=10, Bold=True
 '
 ' C) Add ACTION BUTTONS:
-'    - btnCancel: Name="btnCancel", Caption="Cancel", Left=100, Top=180, Width=60, Height=30, Font Size=10
-'    - btnUndo: Name="btnUndo", Caption="Undo Last", Left=170, Top=180, Width=80, Height=30, Font Size=10
-'    - btnClose: Name="btnClose", Caption="Close", Left=260, Top=180, Width=60, Height=30, Font Size=10
+'    - btnCancel: Name="btnCancel", Caption="Cancel", Left=100, Top=200, Width=60, Height=30, Font Size=10
+'    - btnUndo: Name="btnUndo", Caption="Undo Last", Left=170, Top=200, Width=80, Height=30, Font Size=10
+'    - btnClose: Name="btnClose", Caption="Close", Left=260, Top=200, Width=60, Height=30, Font Size=10
 '
 ' STEP 3: Add VBA Code to UserForm
 ' --------------------------------
@@ -67,6 +71,8 @@ Private Sub btn5_Click(): Call ExtractPipeSegment(5): End Sub
 Private Sub btn6_Click(): Call ExtractPipeSegment(6): End Sub
 Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
 Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
+Private Sub btn9_Click(): Call ExtractPipeSegment(9): End Sub
+Private Sub btnActivationID_Click(): Call ExtractActivationID: End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
 Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub

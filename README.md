@@ -5,18 +5,19 @@ A VBA utility for extracting specific segments from pipe-delimited text in Excel
 ## Quick Start
 
 1. **Copy the main code**: Use `TaxonomyCleanerModule.vb` - copy this code into an Excel VBA module
-2. **Select cells**: Choose cells containing pipe-delimited text (e.g., `Marketing|Campaign|Q4|Social|Facebook`)  
+2. **Select cells**: Choose cells containing pipe-delimited text with activation IDs
 3. **Run macro**: Execute `TaxonomyCleaner` macro to extract specific segments
-4. **Choose segment**: Pick which segment to extract (1-8)
+4. **Choose option**: Pick segment (1-9) or activation ID
 
 ## Example
 
-For text: `Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024`
+For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725`
 
-- Segment 1 → `Marketing`
-- Segment 3 → `Q4` 
-- Segment 5 → `Facebook`
-- Segment 8 → `2024`
+- Segment 1 → `FY24_26`
+- Segment 3 → `Tourism WA` 
+- Segment 5 → `Always On Remarketing`
+- Segment 9 → `Conversions`
+- Activation ID → `DJTDOM060725`
 
 ## Files
 
@@ -29,11 +30,11 @@ For text: `Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024`
 ### Basic (InputBox)
 - Simple text input dialog
 - Works immediately after copying the module code
-- Type 1-8 to select segment
+- Type 1-9 to select segment, or 'A' for Activation ID
 - Run `UndoTaxonomyCleaning` macro to undo changes
 
 ### Advanced (UserForm) 
-- Professional 8-button interface  
+- Professional interface with 9 segment buttons + Activation ID button
 - Requires following setup instructions in `TaxonomyCleanerForm.vb`
 - Click buttons instead of typing numbers
 - Built-in "Undo Last" button for quick reversal
