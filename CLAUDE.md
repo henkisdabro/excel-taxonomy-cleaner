@@ -4,22 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of text segments from pipe-delimited taxonomy data. The tool features a user-friendly interface allowing users to extract text before any specified pipe position across multiple selected cells.
+This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
 
 ## Architecture
 
 ### Core Functionality
 - **Enhanced Range Support**: Works with single cells or multiple selected cell ranges
-- **User Interface**: Custom UserForm with numbered buttons (1-8) for different extraction options
-- **Flexible Text Processing**: Extracts text before the nth pipe position based on user selection
+- **Professional UserForm**: Custom interface with 9 segment buttons + Activation ID button
+- **Flexible Text Processing**: Extracts specific segments (1-9) or activation IDs from pipe-delimited data
 - **Batch Processing**: Processes multiple cells simultaneously with progress feedback
+- **Custom Undo System**: Full undo functionality since Excel's built-in undo doesn't work with VBA
+- **Excel Add-in Ready**: Can be packaged as .xlam for distribution
 
 ### Key Components
-- **Main Entry Point** (`TaxonomyCleaner`): Validates selection and launches the user interface
-- **Extraction Engine** (`ExtractPipeSegment`): Processes selected cells based on pipe position
+- **Main Entry Point** (`TaxonomyExtractor`): Validates selection and launches the user interface
+- **Segment Extraction** (`ExtractPipeSegment`): Extracts specific segments (1-9) from pipe-delimited text
+- **Activation ID Extraction** (`ExtractActivationID`): Extracts text after colon characters
 - **Undo System** (`UndoTaxonomyCleaning`): Custom undo functionality with automatic value storage
-- **User Interface** (`TaxonomyCleanerForm`): Provides intuitive button-based selection interface
-- **Comprehensive Validation**: Checks for text content, proper selections, and pipe availability
+- **User Interface** (`TaxonomyExtractorForm`): Professional 9-button interface with undo controls
+- **Comprehensive Validation**: Checks for text content, proper selections, and data format
 
 ## Development Environment
 
@@ -28,99 +31,140 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - No external dependencies or package management
 
 ### File Structure
-- **TaxonomyCleanerModule.vb**: Main VBA module code with core functionality and undo system
-- **TaxonomyCleanerForm.vb**: UserForm code and detailed setup instructions
+- **TaxonomyExtractorModule.vb**: Main VBA module with core functionality and undo system
+- **TaxonomyExtractorForm.vb**: UserForm code and detailed setup instructions
+- **ADDON_INSTRUCTIONS.md**: Complete guide for creating and installing Excel Add-in
 - **README.md**: User-friendly quick start guide
 
 ### Testing the VBA Code
 1. Open Microsoft Excel
 2. Press `Alt + F11` to open the VBA Editor
 3. Insert a new module (`Insert > Module`)
-4. Copy code from `TaxonomyCleanerModule.vb` into the module
-5. Optionally create UserForm following instructions in `TaxonomyCleanerForm.vb`
+4. Copy code from `TaxonomyExtractorModule.vb` into the module
+5. Create UserForm following instructions in `TaxonomyExtractorForm.vb`
 6. Close the VBA Editor and test with sample pipe-delimited data
 
 ### Usage Workflow
 
-#### Basic Interface (InputBox)
-1. Select one or more cells containing pipe-delimited text
-2. Run the `TaxonomyCleaner` macro (or assign it to a button)
-3. Enter segment number (1-9) or 'A' for Activation ID in the input dialog
-4. All cells process immediately with success message
-5. Run `UndoTaxonomyCleaning` macro to reverse if needed
-
-#### Advanced Interface (UserForm with Buttons)
-1. Select one or more cells containing pipe-delimited text
-2. Run the `TaxonomyCleaner` macro - UserForm appears
+#### Professional Interface (UserForm with 9 Buttons)
+1. Select one or more cells containing pipe-delimited text with activation IDs
+2. Run the `TaxonomyExtractor` macro - UserForm appears with 9 segment buttons
 3. Click any segment button (1-9) or "Activation ID" - all cells process immediately
 4. Success dialog appears: Choose OK (keep open) or Cancel (close)
 5. If kept open: Use "Undo Last" button to reverse, then "Close" when done
 6. Perfect for experimenting with different segments and activation IDs
 
+#### Fallback Interface (InputBox)
+1. Select one or more cells containing pipe-delimited text
+2. If UserForm doesn't exist, InputBox appears automatically
+3. Enter segment number (1-9) or 'A' for Activation ID
+4. All cells process immediately with success message
+5. Run `UndoTaxonomyCleaning` macro to reverse if needed
+
 ## Code Structure
 
 ### Main Functions
 
-#### `TaxonomyCleaner()`
+#### `TaxonomyExtractor()`
 - Entry point macro that validates cell selection
 - Checks for text content in selected cells
-- Launches the UserForm interface for user interaction
+- Shows TaxonomyExtractorForm (UserForm with buttons) if it exists
+- Falls back to InputBox interface if UserForm not created
 
-#### `ExtractBeforePipe(pipeNumber As Integer)`
-- Core extraction logic that processes all selected cells
-- Extracts text before the specified pipe position
+#### `ExtractPipeSegment(segmentNumber As Integer)`
+- Core extraction logic for segments 1-9
+- Handles segment extraction with colon delimiter support
 - Provides detailed feedback on processing results
-- Handles edge cases (empty cells, insufficient pipes)
+- Stores original values for undo functionality
+
+#### `ExtractActivationID()`
+- Specialized function for extracting activation IDs (text after colon)
+- Processes all selected cells for activation ID extraction
+- Integrates with undo system
+
+#### `UndoTaxonomyCleaning()`
+- Custom undo system that works with VBA changes
+- Restores original cell values before extraction
+- Confirmation dialog prevents accidental restoration
 
 #### UserForm Event Handlers
-- 8 button click handlers (btn1_Click through btn8_Click)
-- Each button calls `ExtractBeforePipe` with corresponding pipe number
-- Cancel button for user to exit without processing
+- 9 segment button handlers (btn1_Click through btn9_Click)
+- Activation ID button handler (btnActivationID_Click)
+- Undo, Cancel, and Close button handlers
 
 ### Error Handling
 - **No Selection**: Prompts user to select cells before running
 - **No Text Content**: Validates that selected cells contain text
-- **Insufficient Pipes**: Processes cells with available pipes, reports results
+- **Insufficient Segments**: Processes cells with available segments, reports results
 - **Processing Summary**: Shows count of successfully processed cells
 - **Undo Protection**: Confirmation dialog prevents accidental data restoration
 - **Loop Protection**: Error handling ensures all selected cells get processed
 
 ## Data Format Expectations and Examples
 
-The utility works with pipe-delimited data in this format:
+The utility works with pipe-delimited data with activation IDs in this format:
 ```
-field1|field2|field3|field4|field5|field6|field7|field8
+segment1|segment2|segment3|segment4|segment5|segment6|segment7|segment8|segment9:activationID
 ```
 
-**Button Examples** (for input: `A|B|C|D|E|F|G|H`):
-- **Button 1**: Extracts `A` (before 1st pipe)
-- **Button 2**: Extracts `A|B` (before 2nd pipe)
-- **Button 3**: Extracts `A|B|C` (before 3rd pipe)
-- **Button 4**: Extracts `A|B|C|D` (before 4th pipe)
-- **Button 5**: Extracts `A|B|C|D|E` (before 5th pipe)
-- And so on...
+**Real Example**:
+```
+FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725
+```
 
-## Deployment
+**Extraction Results**:
+- **Segment 1**: `FY24_26`
+- **Segment 3**: `Tourism WA`
+- **Segment 5**: `Always On Remarketing`
+- **Segment 8**: `Facebook_Instagram`
+- **Segment 9**: `Conversions` (text after 8th pipe, before colon)
+- **Activation ID**: `DJTDOM060725` (text after colon)
 
-### Quick Setup (Basic Functionality)
-1. Copy code from `TaxonomyCleanerModule.vb` into an Excel VBA module
-2. Run the `TaxonomyCleaner` macro to use InputBox interface
+## Deployment Options
+
+### Option 1: Basic Workbook (Quick Setup)
+1. Copy code from `TaxonomyExtractorModule.vb` into an Excel VBA module
+2. Create UserForm following instructions in `TaxonomyExtractorForm.vb`
 3. Save workbook as `.xlsm` (macro-enabled) format
+4. Assign `TaxonomyExtractor` to a ribbon button
 
-### Advanced Setup (Button Interface)
-1. Follow the basic setup above
-2. Create UserForm following detailed instructions in `TaxonomyCleanerForm.vb`
-3. Get professional 8-button interface with built-in undo functionality
+### Option 2: Excel Add-in (Professional Distribution)
+1. Follow Option 1 setup
+2. Save as Excel Add-in (`.xlam`) format
+3. Install via File > Options > Add-ins
+4. Available in all Excel workbooks automatically
+5. Follow complete instructions in `ADDON_INSTRUCTIONS.md`
 
 ### Recommended Setup
-- Assign `TaxonomyCleaner` to a ribbon button for easy access
-- Test with sample pipe-delimited data before production use
-- Consider creating a backup of data before batch processing large ranges
-- Use the UserForm interface for frequent usage - much more efficient
-- Take advantage of the undo system to experiment with different segments safely
+- Use Excel Add-in format for professional deployment
+- Create ribbon button for easy access
+- Test with sample data before production use
+- Take advantage of custom undo system for safe experimentation
+- UserForm provides much better user experience than InputBox fallback
 
-### New Features
+### Advanced Features
 - **Custom Undo System**: Works where Excel's built-in Undo cannot (VBA changes)
 - **Dialog Persistence**: Keep UserForm open to access undo functionality
 - **Safe Experimentation**: Try different segments, undo if not satisfied
 - **Professional Workflow**: Extract → Review → Undo if needed → Extract again → Close
+- **Add-in Distribution**: Package as .xlam for easy sharing and installation
+- **Activation ID Support**: Extract unique identifiers from colon-delimited text
+- **9 Segment Support**: Handle complex taxonomy structures up to 9 segments
+
+## Technical Notes
+
+### UserForm Naming
+- UserForm must be named exactly `TaxonomyCleanerForm_2` in the Excel VBA project
+- This name is referenced in the module code for proper functionality
+- If UserForm doesn't exist, code automatically falls back to InputBox interface
+
+### Undo System Implementation
+- Stores original cell values before any extraction
+- Custom implementation required because Excel's Undo doesn't work with VBA changes
+- Confirmation dialogs prevent accidental data loss
+- Undo data cleared after each new extraction operation
+
+### Error Recovery
+- Robust error handling prevents crashes during batch processing
+- Screen updating control for better performance and visual feedback
+- Graceful fallback from UserForm to InputBox if form doesn't exist

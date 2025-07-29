@@ -1,16 +1,16 @@
 '================================================================================
-' EXCEL TAXONOMY CLEANER - Main Module
+' EXCEL TAXONOMY EXTRACTOR - Main Module
 '================================================================================
 ' 
 ' INSTALLATION INSTRUCTIONS:
 ' 1. Open Excel VBA Editor (Alt + F11)
 ' 2. Right-click your project → Insert → Module
 ' 3. Copy and paste this entire code into the new module
-' 4. Optionally create the UserForm (see TaxonomyCleanerForm.vb for instructions)
+' 4. Optionally create the UserForm (see TaxonomyExtractorForm.vb for instructions)
 '
 ' USAGE:
 ' 1. Select cells with pipe-delimited text (e.g., "Marketing|Campaign|Q4|Social|Facebook")
-' 2. Run the TaxonomyCleaner macro (assign to button or use Alt+F8)
+' 2. Run the TaxonomyExtractor macro (assign to button or use Alt+F8)
 ' 3. Choose segment number to extract that specific part
 '
 ' EXAMPLES:
@@ -33,7 +33,7 @@ Dim UndoCount As Integer
 Dim LastSegmentNumber As Integer
 
 ' Main macro to be called when button is pressed
-Sub TaxonomyCleaner()
+Sub TaxonomyExtractor()
     ' Check if cells are selected
     If Selection.Cells.Count = 0 Then
         MsgBox "Please select cells containing text before running this tool.", vbExclamation, "No Selection"
@@ -56,14 +56,8 @@ Sub TaxonomyCleaner()
         Exit Sub
     End If
     
-    ' Try to show UserForm first, fallback to InputBox if form doesn't exist
-    On Error GoTo UseInputBox
-    TaxonomyCleanerForm.Show
-    Exit Sub
-    
-UseInputBox:
-    ' Fallback to simple input dialog if UserForm not created
-    Call ShowSegmentSelector
+    ' Show the custom UserForm
+    TaxonomyCleanerForm_2.Show
 End Sub
 
 ' Simple input dialog interface (fallback when UserForm doesn't exist)
@@ -72,7 +66,7 @@ Sub ShowSegmentSelector()
     Dim validNumber As Integer
     
     ' Show clean, simple interface
-    selectedSegment = InputBox("TAXONOMY CLEANER - Segment Extractor" & vbCrLf & vbCrLf & _
+    selectedSegment = InputBox("TAXONOMY EXTRACTOR - Segment Extractor" & vbCrLf & vbCrLf & _
                               "This tool extracts specific segments from pipe-delimited data." & vbCrLf & vbCrLf & _
                               "EXAMPLE: 'FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725'" & vbCrLf & _
                               "  Segment 1 = FY24_26" & vbCrLf & _
@@ -80,7 +74,7 @@ Sub ShowSegmentSelector()
                               "  Segment 5 = Always On Remarketing" & vbCrLf & _
                               "  Segment 9 = Conversions" & vbCrLf & _
                               "  A = DJTDOM060725 (Activation ID)" & vbCrLf & vbCrLf & _
-                              "Enter segment number (1-9) or 'A' for Activation ID:", "Taxonomy Cleaner", "")
+                              "Enter segment number (1-9) or 'A' for Activation ID:", "Taxonomy Extractor", "")
     
     ' Validate and execute
     If selectedSegment = "" Then Exit Sub ' User cancelled
@@ -110,6 +104,7 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
     Dim pos As Integer
     Dim processedCount As Integer
     Dim i As Integer
+    Dim colonPos As Integer
     
     ' Initialize undo functionality
     UndoCount = 0
@@ -154,7 +149,6 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
                 Else
                     ' No pipes, check for colon
                     startPos = 1
-                    Dim colonPos As Integer
                     colonPos = InStr(cellText, ":")
                     If colonPos > 0 Then
                         endPos = colonPos - 1
@@ -169,7 +163,6 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
             Else
                 ' Last segment: after final pipe, but before colon if present
                 startPos = pipePositions(pipeCount) + 1
-                Dim colonPos As Integer
                 colonPos = InStr(startPos, cellText, ":")
                 If colonPos > 0 Then
                     endPos = colonPos - 1
@@ -204,10 +197,10 @@ NextCell:
                        "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
                        "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
         
-        ' Close the UserForm if user clicked Cancel
+        ' Close the UserForm if user clicked Cancel (only if form exists)
         If result = vbCancel Then
             On Error Resume Next
-            Unload TaxonomyCleanerForm
+            Unload TaxonomyCleanerForm_2
             On Error GoTo 0
         End If
     Else
@@ -324,10 +317,10 @@ NextCell:
                        "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
                        "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
         
-        ' Close the UserForm if user clicked Cancel
+        ' Close the UserForm if user clicked Cancel (only if form exists)
         If result = vbCancel Then
             On Error Resume Next
-            Unload TaxonomyCleanerForm
+            Unload TaxonomyCleanerForm_2
             On Error GoTo 0
         End If
     Else
@@ -350,7 +343,7 @@ Sub TestSegmentExtraction()
     Range("A2").Value = "Test|Without|Colon|Data" ' Test without colon
     Range("A1:A2").Select
     
-    MsgBox "Test data placed in A1:A2. You can now test:" & vbCrLf & vbCrLf & _
+    MsgBox "Test data placed in A1:A2. COMPILATION ERROR FIXED!" & vbCrLf & vbCrLf & _
            "A1 (with colon):" & vbCrLf & _
            "• Segment 8 should extract: 'Facebook_Instagram'" & vbCrLf & _
            "• Segment 9 should extract: 'Conversions'" & vbCrLf & _
@@ -358,7 +351,7 @@ Sub TestSegmentExtraction()
            "A2 (without colon):" & vbCrLf & _
            "• Segment 4 should extract: 'Data'" & vbCrLf & _
            "• Activation ID should show 'no colon' message" & vbCrLf & vbCrLf & _
-           "Run TaxonomyCleaner to test these buttons!", vbInformation, "Test Setup Complete"
+           "Run TaxonomyExtractor to test these buttons!", vbInformation, "Test Setup Complete"
 End Sub
 
 ' Quick test of Activation ID extraction directly
