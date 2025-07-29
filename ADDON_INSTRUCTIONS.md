@@ -46,7 +46,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
    - **Activation ID** → `DJTDOM060725`
 
 ### Undo Changes
-- **Click "Undo Last"** button in the dialog
+- **Click "Undo Last"** button in the dialog (instant, no confirmation)
 - **Or run** `UndoTaxonomyCleaning` macro manually
 
 ## File Components

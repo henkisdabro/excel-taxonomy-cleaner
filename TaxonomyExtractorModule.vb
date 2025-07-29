@@ -190,20 +190,9 @@ NextCell:
     ' Re-enable screen updating to show all changes immediately
     Application.ScreenUpdating = True
     
-    ' Show completion message with undo information
-    If processedCount > 0 Then
-        Dim result As VbMsgBoxResult
-        result = MsgBox("Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
-                       "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
-                       "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
-        
-        ' Close the UserForm if user clicked Cancel (only if form exists)
-        If result = vbCancel Then
-            On Error Resume Next
-            Unload TaxonomyCleanerForm_2
-            On Error GoTo 0
-        End If
-    Else
+    ' Silent operation - only show errors when nothing processed
+    If processedCount = 0 Then
+        ' Only show error if nothing was processed
         MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
         UndoCount = 0 ' Clear undo data if nothing was processed
     End If
@@ -224,18 +213,7 @@ Sub UndoTaxonomyCleaning()
         Exit Sub
     End If
     
-    ' Confirm undo operation
-    Dim operationType As String
-    If LastSegmentNumber = 0 Then
-        operationType = "Activation ID"
-    Else
-        operationType = "segment " & LastSegmentNumber
-    End If
-    
-    If MsgBox("This will restore " & UndoCount & " cell(s) to their original values before " & operationType & " extraction." & vbCrLf & vbCrLf & _
-              "Do you want to continue?", vbYesNo + vbQuestion, "Confirm Undo") = vbNo Then
-        Exit Sub
-    End If
+    ' Silent undo operation - no confirmation dialog
     
     ' Disable screen updating for better performance, then re-enable for visual update
     Application.ScreenUpdating = False
@@ -252,8 +230,7 @@ Sub UndoTaxonomyCleaning()
     ' Clear undo data
     UndoCount = 0
     
-    ' Show confirmation
-    MsgBox "Successfully restored " & i - 1 & " cell(s) to their original values.", vbInformation, "Undo Complete"
+    ' Silent completion - no success message
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True
@@ -310,20 +287,9 @@ NextCell:
     ' Re-enable screen updating to show all changes immediately
     Application.ScreenUpdating = True
     
-    ' Show completion message with undo information
-    If processedCount > 0 Then
-        Dim result As VbMsgBoxResult
-        result = MsgBox("Successfully extracted Activation ID from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
-                       "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
-                       "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
-        
-        ' Close the UserForm if user clicked Cancel (only if form exists)
-        If result = vbCancel Then
-            On Error Resume Next
-            Unload TaxonomyCleanerForm_2
-            On Error GoTo 0
-        End If
-    Else
+    ' Silent operation - only show errors when nothing processed
+    If processedCount = 0 Then
+        ' Only show error if nothing was processed
         MsgBox "No cells were processed. Make sure your selected cells contain colon (:) characters.", vbExclamation, "No Changes Made"
         UndoCount = 0 ' Clear undo data if nothing was processed
     End If

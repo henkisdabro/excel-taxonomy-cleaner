@@ -49,16 +49,16 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 #### Professional Interface (UserForm with 9 Buttons)
 1. Select one or more cells containing pipe-delimited text with activation IDs
 2. Run the `TaxonomyExtractor` macro - UserForm appears with 9 segment buttons
-3. Click any segment button (1-9) or "Activation ID" - all cells process immediately
-4. Success dialog appears: Choose OK (keep open) or Cancel (close)
-5. If kept open: Use "Undo Last" button to reverse, then "Close" when done
-6. Perfect for experimenting with different segments and activation IDs
+3. Click any segment button (1-9) or "Activation ID" - all cells process immediately and silently
+4. No success dialogs or confirmations - extraction happens instantly
+5. Use "Undo Last" button to reverse the last operation without confirmation
+6. Use "Close" button when finished - perfect for rapid experimentation
 
 #### Fallback Interface (InputBox)
 1. Select one or more cells containing pipe-delimited text
 2. If UserForm doesn't exist, InputBox appears automatically
 3. Enter segment number (1-9) or 'A' for Activation ID
-4. All cells process immediately with success message
+4. All cells process immediately and silently (no success messages)
 5. Run `UndoTaxonomyCleaning` macro to reverse if needed
 
 ## Code Structure
@@ -74,18 +74,18 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 #### `ExtractPipeSegment(segmentNumber As Integer)`
 - Core extraction logic for segments 1-9
 - Handles segment extraction with colon delimiter support
-- Provides detailed feedback on processing results
+- Silent operation - only shows errors if no cells processed
 - Stores original values for undo functionality
 
 #### `ExtractActivationID()`
 - Specialized function for extracting activation IDs (text after colon)
-- Processes all selected cells for activation ID extraction
+- Silent operation - only shows errors if no cells processed
 - Integrates with undo system
 
 #### `UndoTaxonomyCleaning()`
 - Custom undo system that works with VBA changes
 - Restores original cell values before extraction
-- Confirmation dialog prevents accidental restoration
+- Silent operation - no confirmation dialogs needed
 
 #### UserForm Event Handlers
 - 9 segment button handlers (btn1_Click through btn9_Click)
@@ -96,8 +96,8 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - **No Selection**: Prompts user to select cells before running
 - **No Text Content**: Validates that selected cells contain text
 - **Insufficient Segments**: Processes cells with available segments, reports results
-- **Processing Summary**: Shows count of successfully processed cells
-- **Undo Protection**: Confirmation dialog prevents accidental data restoration
+- **Processing Summary**: Silent operation except for error conditions
+- **Undo Protection**: Immediate undo operation without confirmation
 - **Loop Protection**: Error handling ensures all selected cells get processed
 
 ## Data Format Expectations and Examples
@@ -144,9 +144,9 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 
 ### Advanced Features
 - **Custom Undo System**: Works where Excel's built-in Undo cannot (VBA changes)
-- **Dialog Persistence**: Keep UserForm open to access undo functionality
-- **Safe Experimentation**: Try different segments, undo if not satisfied
-- **Professional Workflow**: Extract → Review → Undo if needed → Extract again → Close
+- **Silent Operation**: No confirmation dialogs or success messages - immediate action
+- **Rapid Experimentation**: Instant extraction with one-click undo for quick testing
+- **Professional Workflow**: Extract → Review → Undo → Extract again → Close (all silent)
 - **Add-in Distribution**: Package as .xlam for easy sharing and installation
 - **Activation ID Support**: Extract unique identifiers from colon-delimited text
 - **9 Segment Support**: Handle complex taxonomy structures up to 9 segments
@@ -161,7 +161,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 ### Undo System Implementation
 - Stores original cell values before any extraction
 - Custom implementation required because Excel's Undo doesn't work with VBA changes
-- Confirmation dialogs prevent accidental data loss
+- Silent operation for rapid workflow without interruptions
 - Undo data cleared after each new extraction operation
 
 ### Error Recovery

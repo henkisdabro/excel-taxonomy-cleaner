@@ -50,7 +50,7 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 ' - Much faster workflow for frequent use
 ' - Looks and feels like a proper Excel tool
 ' - Built-in UNDO button to reverse the last operation
-' - Custom undo functionality (Excel's built-in Undo doesn't work with VBA changes)
+' - Custom undo functionality with instant operation (Excel's built-in Undo doesn't work with VBA changes)
 
 ' FUNCTIONALITY:
 ' ==============

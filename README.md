@@ -55,7 +55,7 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 - **Automatic**: Original values stored before each extraction
 - **UserForm**: Click "Undo Last" button 
 - **Manual**: Run `UndoTaxonomyCleaning` macro
-- **Safe**: Confirmation dialog prevents accidents
+- **Instant**: Silent operation without confirmation dialogs
 - **Smart**: Undo data cleared after each new operation
 
 ### 📦 Excel Add-in Ready
@@ -91,16 +91,16 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 ### With UserForm Interface
 1. **Select cells** with pipe-delimited data
 2. **Click ribbon button** (or run `TaxonomyExtractor`)
-3. **Click segment button** (1-9) or "Activation ID"
-4. **Review results** - choose OK (keep open) or Cancel (close)
-5. **Experiment freely** - use "Undo Last" if needed
+3. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
+4. **Review results** - keep dialog open for more extractions
+5. **Experiment freely** - use "Undo Last" button for instant reversal
 6. **Click "Close"** when finished
 
 ### With InputBox Interface
 1. **Select cells** with pipe-delimited data  
 2. **Run `TaxonomyExtractor`** macro
 3. **Type segment number** (1-9) or 'A' for Activation ID
-4. **Results applied** immediately
+4. **Results applied** immediately and silently
 5. **Run `UndoTaxonomyCleaning`** to reverse if needed
 
 ## Data Format Support
@@ -126,7 +126,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Robust Error Handling**: Prevents crashes during batch processing
 - **Performance Optimized**: Screen updating control for smooth operation
 - **Memory Efficient**: Automatic cleanup of undo data
-- **User-Friendly**: Clear success/error messages with counts
+- **Silent Operation**: No interruptions - only error messages when needed
 - **Professional UI**: Looks and feels like built-in Excel tools
 
 ## Perfect For
