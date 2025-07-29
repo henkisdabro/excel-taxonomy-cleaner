@@ -111,6 +111,9 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
     LastSegmentNumber = segmentNumber
     ReDim UndoArray(1 To Selection.Cells.Count)
     
+    ' Disable screen updating for better performance, then re-enable for visual update
+    Application.ScreenUpdating = False
+    
     processedCount = 0
     
     For Each cell In Selection
@@ -178,6 +181,9 @@ NextCell:
         On Error GoTo 0 ' Reset error handling
     Next cell
     
+    ' Re-enable screen updating to show all changes immediately
+    Application.ScreenUpdating = True
+    
     ' Show completion message with undo information
     If processedCount > 0 Then
         Dim result As VbMsgBoxResult
@@ -195,6 +201,9 @@ NextCell:
         MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
         UndoCount = 0 ' Clear undo data if nothing was processed
     End If
+    
+    ' Ensure screen updating is always re-enabled
+    Application.ScreenUpdating = True
 End Sub
 
 ' Undo the last taxonomy cleaning operation
