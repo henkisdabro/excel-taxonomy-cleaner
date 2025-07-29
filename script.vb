@@ -44,91 +44,38 @@ Sub TaxonomyCleaner()
         Exit Sub
     End If
     
-    ' Show the user interface (with fallback for missing UserForm)
-    On Error GoTo UseInputBox
-    TaxonomyCleanerForm.Show
-    Exit Sub
-    
-UseInputBox:
-    ' Simple button-style interface using message boxes
+    ' Show the simple input interface
     Call ShowSegmentSelector
 End Sub
 
-' Creates a button-style interface for segment selection
+' Simple single-dialog interface for segment selection
 Sub ShowSegmentSelector()
-    Dim response As VbMsgBoxResult
-    Dim selectedSegment As Integer
+    Dim selectedSegment As String
+    Dim validNumber As Integer
     
-    ' Show welcome and instructions
-    response = MsgBox("🚀 TAXONOMY CLEANER MAGIC! 🚀" & vbCrLf & vbCrLf & _
-                     "✨ Ready to extract segments from your pipe-delimited data! ✨" & vbCrLf & vbCrLf & _
-                     "🎯 Example: 'Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024'" & vbCrLf & _
-                     "   • Segment 1 = 'Marketing'" & vbCrLf & _
-                     "   • Segment 3 = 'Q4'" & vbCrLf & _
-                     "   • Segment 5 = 'Facebook'" & vbCrLf & vbCrLf & _
-                     "💡 Ready to choose your segment?", vbOKCancel + vbInformation, "🎪 Welcome to Segment Paradise! 🎪")
+    ' Show clean, simple interface
+    selectedSegment = InputBox("TAXONOMY CLEANER - Segment Extractor" & vbCrLf & vbCrLf & _
+                              "This tool extracts specific segments from pipe-delimited data." & vbCrLf & vbCrLf & _
+                              "EXAMPLE: For 'Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024'" & vbCrLf & _
+                              "  Segment 1 = Marketing" & vbCrLf & _
+                              "  Segment 3 = Q4" & vbCrLf & _
+                              "  Segment 5 = Facebook" & vbCrLf & _
+                              "  Segment 8 = 2024" & vbCrLf & vbCrLf & _
+                              "Enter segment number (1-8):", "Taxonomy Cleaner", "")
     
-    If response = vbCancel Then Exit Sub
+    ' Validate and execute
+    If selectedSegment = "" Then Exit Sub ' User cancelled
     
-    ' Show segment selection buttons in groups
-    response = MsgBox("🎯 SELECT YOUR SEGMENT (Part 1 of 2)" & vbCrLf & vbCrLf & _
-                     "Choose which segment to extract:" & vbCrLf & vbCrLf & _
-                     "✅ Click YES for segments 1-4" & vbCrLf & _
-                     "✅ Click NO for segments 5-8" & vbCrLf & _
-                     "❌ Click CANCEL to exit", vbYesNoCancel + vbQuestion, "🎪 Segment Selector 🎪")
-    
-    If response = vbCancel Then Exit Sub
-    
-    If response = vbYes Then
-        ' Segments 1-4
-        response = MsgBox("🎯 SEGMENTS 1-4 SELECTION" & vbCrLf & vbCrLf & _
-                         "Choose your segment:" & vbCrLf & vbCrLf & _
-                         "✅ YES = Show segments 1 & 2" & vbCrLf & _
-                         "✅ NO = Show segments 3 & 4" & vbCrLf & _
-                         "❌ CANCEL = Go back", vbYesNoCancel + vbQuestion, "🔥 Segments 1-4 🔥")
-                         
-        If response = vbCancel Then Call ShowSegmentSelector: Exit Sub
-        
-        If response = vbYes Then
-            ' Segments 1 & 2
-            response = MsgBox("🎯 FINAL CHOICE - Segments 1 & 2" & vbCrLf & vbCrLf & _
-                             "✅ YES = Extract SEGMENT 1 (first part)" & vbCrLf & _
-                             "✅ NO = Extract SEGMENT 2 (second part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
-            selectedSegment = IIf(response = vbYes, 1, 2)
+    If IsNumeric(selectedSegment) Then
+        validNumber = CInt(selectedSegment)
+        If validNumber >= 1 And validNumber <= 8 Then
+            Call ExtractPipeSegment(validNumber)
         Else
-            ' Segments 3 & 4
-            response = MsgBox("🎯 FINAL CHOICE - Segments 3 & 4" & vbCrLf & vbCrLf & _
-                             "✅ YES = Extract SEGMENT 3 (third part)" & vbCrLf & _
-                             "✅ NO = Extract SEGMENT 4 (fourth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
-            selectedSegment = IIf(response = vbYes, 3, 4)
+            MsgBox "Please enter a number between 1 and 8.", vbExclamation, "Invalid Input"
         End If
     Else
-        ' Segments 5-8
-        response = MsgBox("🎯 SEGMENTS 5-8 SELECTION" & vbCrLf & vbCrLf & _
-                         "Choose your segment:" & vbCrLf & vbCrLf & _
-                         "✅ YES = Show segments 5 & 6" & vbCrLf & _
-                         "✅ NO = Show segments 7 & 8" & vbCrLf & _
-                         "❌ CANCEL = Go back", vbYesNoCancel + vbQuestion, "🔥 Segments 5-8 🔥")
-                         
-        If response = vbCancel Then Call ShowSegmentSelector: Exit Sub
-        
-        If response = vbYes Then
-            ' Segments 5 & 6
-            response = MsgBox("🎯 FINAL CHOICE - Segments 5 & 6" & vbCrLf & vbCrLf & _
-                             "✅ YES = Extract SEGMENT 5 (fifth part)" & vbCrLf & _
-                             "✅ NO = Extract SEGMENT 6 (sixth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
-            selectedSegment = IIf(response = vbYes, 5, 6)
-        Else
-            ' Segments 7 & 8
-            response = MsgBox("🎯 FINAL CHOICE - Segments 7 & 8" & vbCrLf & vbCrLf & _
-                             "✅ YES = Extract SEGMENT 7 (seventh part)" & vbCrLf & _
-                             "✅ NO = Extract SEGMENT 8 (eighth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
-            selectedSegment = IIf(response = vbYes, 7, 8)
-        End If
+        MsgBox "Please enter a valid number between 1 and 8.", vbExclamation, "Invalid Input"
     End If
-    
-    ' Execute the extraction
-    Call ExtractPipeSegment(selectedSegment)
 End Sub
 
 ' Function to extract text between pipes (segment n)
@@ -199,9 +146,9 @@ NextCell:
     
     ' Show completion message
     If processedCount > 0 Then
-        MsgBox "🎉 Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!", vbInformation, "Mission Accomplished!"
+        MsgBox "Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!", vbInformation, "Process Complete"
     Else
-        MsgBox "⚠️ No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "Nothing to Extract"
+        MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
     End If
     
     ' Close the form (if it exists)
@@ -211,93 +158,58 @@ NextCell:
 End Sub
 
 '================================================================================
-' USERFORM CODE - TaxonomyCleanerForm
-' Instructions: Create a UserForm named "TaxonomyCleanerForm" and add the code below
+' OPTIONAL: ADVANCED USERFORM WITH 8 BUTTONS
 '================================================================================
-
-' UserForm_Initialize - This code goes in the UserForm module
-Private Sub UserForm_Initialize()
-    ' Set form properties
-    Me.Caption = "Taxonomy Cleaner Tool"
-    Me.Width = 400
-    Me.Height = 350
-    
-    ' Welcome message (add a Label control named "lblWelcome")
-    ' lblWelcome.Caption = "Welcome to the Taxonomy Cleaner Tool!" & vbCrLf & vbCrLf & _
-    '                     "This tool extracts text from pipe-delimited data in your selected cells." & vbCrLf & _
-    '                     "Choose the number below to extract all text BEFORE that pipe position:" & vbCrLf & vbCrLf & _
-    '                     "Example: For 'A|B|C|D|E', button 3 extracts 'A|B|C'"
-End Sub
-
-' Button click handlers - Add these to the UserForm module
-Private Sub btn1_Click()
-    Call ExtractPipeSegment(1)
-End Sub
-
-Private Sub btn2_Click()
-    Call ExtractPipeSegment(2)
-End Sub
-
-Private Sub btn3_Click()
-    Call ExtractPipeSegment(3)
-End Sub
-
-Private Sub btn4_Click()
-    Call ExtractPipeSegment(4)
-End Sub
-
-Private Sub btn5_Click()
-    Call ExtractPipeSegment(5)
-End Sub
-
-Private Sub btn6_Click()
-    Call ExtractPipeSegment(6)
-End Sub
-
-Private Sub btn7_Click()
-    Call ExtractPipeSegment(7)
-End Sub
-
-Private Sub btn8_Click()
-    Call ExtractPipeSegment(8)
-End Sub
-
-Private Sub btnCancel_Click()
-    Unload Me
-End Sub
-
-'================================================================================
-' USERFORM DESIGN INSTRUCTIONS
-'================================================================================
+' For the ultimate experience, you can create a UserForm with actual buttons.
+' This requires manual setup but gives you the real button interface you want.
+'
+' STEP 1: Create the UserForm
+' - Open VBA Editor (Alt + F11)
+' - Right-click your project → Insert → UserForm  
+' - Name it "TaxonomyCleanerForm"
+' - Set properties: Width=400, Height=300
+'
+' STEP 2: Add controls to the UserForm:
 ' 
-' To create the UserForm in Excel VBA:
-' 1. Open VBA Editor (Alt + F11)
-' 2. Right-click on your project → Insert → UserForm
-' 3. Name the UserForm "TaxonomyCleanerForm"
-' 4. Add the following controls:
+' 1. Add a LABEL at the top:
+'    - Name: lblInstructions
+'    - Caption: "Select segment to extract from pipe-delimited data:"
+'    - Position: Top center
+'    - Size: Width=350, Height=40
 '
-' LABEL (lblWelcome):
-'   - Position: Top of form
-'   - Caption: "Welcome to the Taxonomy Cleaner Tool!
-'              
-'              This tool extracts text from pipe-delimited data in your selected cells.
-'              Choose the number below to extract all text BEFORE that pipe position:
-'              
-'              Example: For 'A|B|C|D|E', button 3 extracts 'A|B|C'"
-'   - WordWrap: True
-'   - Size: Width=350, Height=120
+' 2. Add 8 BUTTONS in two rows:
+'    Row 1 (buttons 1-4): Y=80, Heights=40, Width=70 each
+'    - btn1: X=30,  Caption="Segment 1"
+'    - btn2: X=110, Caption="Segment 2" 
+'    - btn3: X=190, Caption="Segment 3"
+'    - btn4: X=270, Caption="Segment 4"
+'    
+'    Row 2 (buttons 5-8): Y=130, Heights=40, Width=70 each  
+'    - btn5: X=30,  Caption="Segment 5"
+'    - btn6: X=110, Caption="Segment 6"
+'    - btn7: X=190, Caption="Segment 7" 
+'    - btn8: X=270, Caption="Segment 8"
 '
-' BUTTONS (btn1 through btn8):
-'   - Create 8 CommandButton controls
-'   - Name them: btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8
-'   - Caption: "1", "2", "3", "4", "5", "6", "7", "8" respectively
-'   - Arrange in 2 rows of 4 buttons
-'   - Size: Width=60, Height=30 each
+' 3. Add CANCEL button:
+'    - btnCancel: X=160, Y=200, Width=80, Height=30, Caption="Cancel"
 '
-' CANCEL BUTTON (btnCancel):
-'   - Name: btnCancel
-'   - Caption: "Cancel"
-'   - Position: Bottom center
-'   - Size: Width=80, Height=30
+' STEP 3: Add this VBA code to the UserForm module:
+
+Private Sub UserForm_Initialize()
+    Me.Caption = "Taxonomy Cleaner - Segment Selector"
+End Sub
+
+Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
+Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
+Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
+Private Sub btn4_Click(): Call ExtractPipeSegment(4): End Sub
+Private Sub btn5_Click(): Call ExtractPipeSegment(5): End Sub
+Private Sub btn6_Click(): Call ExtractPipeSegment(6): End Sub
+Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
+Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
+Private Sub btnCancel_Click(): Unload Me: End Sub
+
+' STEP 4: Update the main function to use the form:
+' Replace "Call ShowSegmentSelector" with "TaxonomyCleanerForm.Show"
 '
 '================================================================================
