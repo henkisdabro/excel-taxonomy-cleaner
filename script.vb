@@ -6,17 +6,18 @@
 ' 1. Copy this entire code into a VBA Module in Excel
 ' 2. Select cells with pipe-delimited text (e.g., "A|B|C|D|E")
 ' 3. Run the TaxonomyCleaner macro
-' 4. Enter a number (1-8) to extract text before that pipe position
+' 4. Choose a number (1-8) to extract THAT SPECIFIC SEGMENT
 '
-' ADVANCED SETUP (Optional - for button interface):
+' ADVANCED SETUP (Optional - for awesome button interface):
 ' - Create a UserForm named "TaxonomyCleanerForm" following instructions at bottom
-' - The script will automatically use the form if it exists, otherwise uses input dialog
+' - Get 8 beautiful buttons instead of boring input dialog!
 '
 ' EXAMPLES:
-' For text "Marketing|Campaign|Q4|Social|Facebook":
-' - Button/Number 1: "Marketing"
-' - Button/Number 2: "Marketing|Campaign" 
-' - Button/Number 3: "Marketing|Campaign|Q4"
+' For text "Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024":
+' - Button/Number 1: "Marketing" (1st segment)
+' - Button/Number 3: "Q4" (3rd segment)
+' - Button/Number 5: "Facebook" (5th segment)
+' - Button/Number 8: "2024" (8th segment)
 '================================================================================
 
 ' Main macro to be called when button is pressed
@@ -49,39 +50,97 @@ Sub TaxonomyCleaner()
     Exit Sub
     
 UseInputBox:
-    ' Fallback interface using InputBox if UserForm doesn't exist
-    Dim pipeNumber As String
-    Dim validNumber As Integer
-    
-    pipeNumber = InputBox("Welcome to the Taxonomy Cleaner Tool!" & vbCrLf & vbCrLf & _
-                         "This tool extracts text from pipe-delimited data in your selected cells." & vbCrLf & _
-                         "Enter a number (1-8) to extract all text BEFORE that pipe position:" & vbCrLf & vbCrLf & _
-                         "Example: For 'A|B|C|D|E', entering 3 extracts 'A|B|C'" & vbCrLf & vbCrLf & _
-                         "Enter pipe number (1-8):", "Taxonomy Cleaner", "")
-    
-    ' Validate input
-    If pipeNumber = "" Then Exit Sub ' User cancelled
-    
-    If IsNumeric(pipeNumber) Then
-        validNumber = CInt(pipeNumber)
-        If validNumber >= 1 And validNumber <= 8 Then
-            Call ExtractBeforePipe(validNumber)
-        Else
-            MsgBox "Please enter a number between 1 and 8.", vbExclamation, "Invalid Input"
-        End If
-    Else
-        MsgBox "Please enter a valid number between 1 and 8.", vbExclamation, "Invalid Input"
-    End If
+    ' Simple button-style interface using message boxes
+    Call ShowSegmentSelector
 End Sub
 
-' Function to extract text before the nth pipe for a range of cells
-Sub ExtractBeforePipe(pipeNumber As Integer)
+' Creates a button-style interface for segment selection
+Sub ShowSegmentSelector()
+    Dim response As VbMsgBoxResult
+    Dim selectedSegment As Integer
+    
+    ' Show welcome and instructions
+    response = MsgBox("🚀 TAXONOMY CLEANER MAGIC! 🚀" & vbCrLf & vbCrLf & _
+                     "✨ Ready to extract segments from your pipe-delimited data! ✨" & vbCrLf & vbCrLf & _
+                     "🎯 Example: 'Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024'" & vbCrLf & _
+                     "   • Segment 1 = 'Marketing'" & vbCrLf & _
+                     "   • Segment 3 = 'Q4'" & vbCrLf & _
+                     "   • Segment 5 = 'Facebook'" & vbCrLf & vbCrLf & _
+                     "💡 Ready to choose your segment?", vbOKCancel + vbInformation, "🎪 Welcome to Segment Paradise! 🎪")
+    
+    If response = vbCancel Then Exit Sub
+    
+    ' Show segment selection buttons in groups
+    response = MsgBox("🎯 SELECT YOUR SEGMENT (Part 1 of 2)" & vbCrLf & vbCrLf & _
+                     "Choose which segment to extract:" & vbCrLf & vbCrLf & _
+                     "✅ Click YES for segments 1-4" & vbCrLf & _
+                     "✅ Click NO for segments 5-8" & vbCrLf & _
+                     "❌ Click CANCEL to exit", vbYesNoCancel + vbQuestion, "🎪 Segment Selector 🎪")
+    
+    If response = vbCancel Then Exit Sub
+    
+    If response = vbYes Then
+        ' Segments 1-4
+        response = MsgBox("🎯 SEGMENTS 1-4 SELECTION" & vbCrLf & vbCrLf & _
+                         "Choose your segment:" & vbCrLf & vbCrLf & _
+                         "✅ YES = Show segments 1 & 2" & vbCrLf & _
+                         "✅ NO = Show segments 3 & 4" & vbCrLf & _
+                         "❌ CANCEL = Go back", vbYesNoCancel + vbQuestion, "🔥 Segments 1-4 🔥")
+                         
+        If response = vbCancel Then Call ShowSegmentSelector: Exit Sub
+        
+        If response = vbYes Then
+            ' Segments 1 & 2
+            response = MsgBox("🎯 FINAL CHOICE - Segments 1 & 2" & vbCrLf & vbCrLf & _
+                             "✅ YES = Extract SEGMENT 1 (first part)" & vbCrLf & _
+                             "✅ NO = Extract SEGMENT 2 (second part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
+            selectedSegment = IIf(response = vbYes, 1, 2)
+        Else
+            ' Segments 3 & 4
+            response = MsgBox("🎯 FINAL CHOICE - Segments 3 & 4" & vbCrLf & vbCrLf & _
+                             "✅ YES = Extract SEGMENT 3 (third part)" & vbCrLf & _
+                             "✅ NO = Extract SEGMENT 4 (fourth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
+            selectedSegment = IIf(response = vbYes, 3, 4)
+        End If
+    Else
+        ' Segments 5-8
+        response = MsgBox("🎯 SEGMENTS 5-8 SELECTION" & vbCrLf & vbCrLf & _
+                         "Choose your segment:" & vbCrLf & vbCrLf & _
+                         "✅ YES = Show segments 5 & 6" & vbCrLf & _
+                         "✅ NO = Show segments 7 & 8" & vbCrLf & _
+                         "❌ CANCEL = Go back", vbYesNoCancel + vbQuestion, "🔥 Segments 5-8 🔥")
+                         
+        If response = vbCancel Then Call ShowSegmentSelector: Exit Sub
+        
+        If response = vbYes Then
+            ' Segments 5 & 6
+            response = MsgBox("🎯 FINAL CHOICE - Segments 5 & 6" & vbCrLf & vbCrLf & _
+                             "✅ YES = Extract SEGMENT 5 (fifth part)" & vbCrLf & _
+                             "✅ NO = Extract SEGMENT 6 (sixth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
+            selectedSegment = IIf(response = vbYes, 5, 6)
+        Else
+            ' Segments 7 & 8
+            response = MsgBox("🎯 FINAL CHOICE - Segments 7 & 8" & vbCrLf & vbCrLf & _
+                             "✅ YES = Extract SEGMENT 7 (seventh part)" & vbCrLf & _
+                             "✅ NO = Extract SEGMENT 8 (eighth part)", vbYesNo + vbInformation, "🎊 Almost There! 🎊")
+            selectedSegment = IIf(response = vbYes, 7, 8)
+        End If
+    End If
+    
+    ' Execute the extraction
+    Call ExtractPipeSegment(selectedSegment)
+End Sub
+
+' Function to extract text between pipes (segment n)
+Sub ExtractPipeSegment(segmentNumber As Integer)
     Dim cell As Range
     Dim cellText As String
     Dim extractedText As String
+    Dim pipePositions(1 To 10) As Integer
     Dim pipeCount As Integer
     Dim pos As Integer
     Dim processedCount As Integer
+    Dim i As Integer
     
     processedCount = 0
     
@@ -93,41 +152,56 @@ Sub ExtractBeforePipe(pipeNumber As Integer)
             GoTo NextCell
         End If
         
-        ' Count pipes and find position of nth pipe
+        ' Find all pipe positions
         pipeCount = 0
         pos = 1
-        
-        Do While pos <= Len(cellText)
+        Do While pos <= Len(cellText) And pipeCount < 10
             pos = InStr(pos, cellText, "|")
             If pos = 0 Then Exit Do
             pipeCount = pipeCount + 1
-            If pipeCount = pipeNumber Then
-                ' Extract text before the nth pipe
-                extractedText = Left(cellText, pos - 1)
-                cell.Value = extractedText
-                processedCount = processedCount + 1
-                GoTo NextCell
-            End If
+            pipePositions(pipeCount) = pos
             pos = pos + 1
         Loop
         
-        ' If we don't have enough pipes, keep original text or warn user
-        If pipeCount < pipeNumber Then
-            ' If requesting pipe 1 and no pipes exist, use entire text
-            If pipeNumber = 1 Then
-                processedCount = processedCount + 1
+        ' Extract the requested segment
+        If segmentNumber = 1 Then
+            ' First segment: from start to first pipe (or entire text if no pipes)
+            If pipeCount >= 1 Then
+                extractedText = Left(cellText, pipePositions(1) - 1)
+            Else
+                extractedText = cellText ' No pipes, use entire text
             End If
-            ' For other cases, leave cell unchanged
+            cell.Value = extractedText
+            processedCount = processedCount + 1
+        ElseIf segmentNumber <= pipeCount + 1 Then
+            ' Middle/end segments: between pipes
+            Dim startPos As Integer
+            Dim endPos As Integer
+            
+            If segmentNumber <= pipeCount Then
+                ' Between two pipes
+                startPos = pipePositions(segmentNumber - 1) + 1
+                endPos = pipePositions(segmentNumber) - 1
+            Else
+                ' Last segment after final pipe
+                startPos = pipePositions(pipeCount) + 1
+                endPos = Len(cellText)
+            End If
+            
+            extractedText = Mid(cellText, startPos, endPos - startPos + 1)
+            cell.Value = extractedText
+            processedCount = processedCount + 1
         End If
+        ' If not enough segments, leave cell unchanged
         
 NextCell:
     Next cell
     
     ' Show completion message
     If processedCount > 0 Then
-        MsgBox "Successfully processed " & processedCount & " cell(s). Text before pipe " & pipeNumber & " has been extracted.", vbInformation, "Process Complete"
+        MsgBox "🎉 Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!", vbInformation, "Mission Accomplished!"
     Else
-        MsgBox "No cells were processed. Make sure your selected cells contain pipe-delimited text with at least " & pipeNumber & " pipe character(s).", vbExclamation, "No Changes Made"
+        MsgBox "⚠️ No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "Nothing to Extract"
     End If
     
     ' Close the form (if it exists)
@@ -157,35 +231,35 @@ End Sub
 
 ' Button click handlers - Add these to the UserForm module
 Private Sub btn1_Click()
-    Call ExtractBeforePipe(1)
+    Call ExtractPipeSegment(1)
 End Sub
 
 Private Sub btn2_Click()
-    Call ExtractBeforePipe(2)
+    Call ExtractPipeSegment(2)
 End Sub
 
 Private Sub btn3_Click()
-    Call ExtractBeforePipe(3)
+    Call ExtractPipeSegment(3)
 End Sub
 
 Private Sub btn4_Click()
-    Call ExtractBeforePipe(4)
+    Call ExtractPipeSegment(4)
 End Sub
 
 Private Sub btn5_Click()
-    Call ExtractBeforePipe(5)
+    Call ExtractPipeSegment(5)
 End Sub
 
 Private Sub btn6_Click()
-    Call ExtractBeforePipe(6)
+    Call ExtractPipeSegment(6)
 End Sub
 
 Private Sub btn7_Click()
-    Call ExtractBeforePipe(7)
+    Call ExtractPipeSegment(7)
 End Sub
 
 Private Sub btn8_Click()
-    Call ExtractBeforePipe(8)
+    Call ExtractPipeSegment(8)
 End Sub
 
 Private Sub btnCancel_Click()
