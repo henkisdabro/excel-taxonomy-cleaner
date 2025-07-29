@@ -4,21 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a VBA (Visual Basic for Applications) utility for Excel that extracts campaign names from structured data containing pipe-delimited fields. The tool is designed to parse taxonomy strings and extract specific segments for data cleaning purposes.
+This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of text segments from pipe-delimited taxonomy data. The tool features a user-friendly interface allowing users to extract text before any specified pipe position across multiple selected cells.
 
 ## Architecture
 
 ### Core Functionality
-- **Single File Structure**: The entire utility is contained in `script.vb`
-- **Excel Integration**: Designed to run as a macro within Microsoft Excel
-- **Text Processing**: Parses pipe-delimited strings to extract the 6th field (between 5th and 6th pipes)
-- **In-Place Editing**: Modifies the selected cell content directly
+- **Enhanced Range Support**: Works with single cells or multiple selected cell ranges
+- **User Interface**: Custom UserForm with numbered buttons (1-8) for different extraction options
+- **Flexible Text Processing**: Extracts text before the nth pipe position based on user selection
+- **Batch Processing**: Processes multiple cells simultaneously with progress feedback
 
 ### Key Components
-- **Cell Selection Validation**: Ensures exactly one cell is selected before processing
-- **Pipe Position Detection**: Dynamically finds all pipe character positions in the text
-- **Text Extraction Logic**: Extracts content between specific pipe delimiters
-- **Error Handling**: Provides user feedback for insufficient pipe characters or invalid selections
+- **Main Entry Point** (`TaxonomyCleaner`): Validates selection and launches the user interface
+- **Extraction Engine** (`ExtractBeforePipe`): Processes selected cells based on pipe position
+- **User Interface** (`TaxonomyCleanerForm`): Provides intuitive button-based selection interface
+- **Comprehensive Validation**: Checks for text content, proper selections, and pipe availability
 
 ## Development Environment
 
@@ -30,38 +30,70 @@ This is a VBA (Visual Basic for Applications) utility for Excel that extracts ca
 1. Open Microsoft Excel
 2. Press `Alt + F11` to open the VBA Editor
 3. Insert a new module (`Insert > Module`)
-4. Copy the code from `script.vb` into the module
-5. Close the VBA Editor
-6. Test with sample data containing pipe-delimited text
+4. Copy the main subroutines from `script.vb` into the module
+5. Create a UserForm named "TaxonomyCleanerForm" following the design instructions in the script
+6. Add the UserForm event handlers to the form module
+7. Close the VBA Editor and test with sample pipe-delimited data
 
 ### Usage Workflow
-1. Select a cell containing pipe-delimited text (minimum 6 pipes required)
-2. Run the `ExtractCampaignName` macro
-3. The cell content will be replaced with the extracted campaign name
+1. Select one or more cells containing pipe-delimited text
+2. Run the `TaxonomyCleaner` macro (or assign it to a button)
+3. Choose from numbered buttons (1-8) to extract text before that pipe position
+4. Review the processed results and completion message
 
 ## Code Structure
 
-### Main Function: `ExtractCampaignName()`
-- Validates single cell selection
-- Parses pipe positions using string search
-- Extracts text segment between positions 5 and 6
-- Replaces original cell content with extracted text
+### Main Functions
 
-### Error Conditions
-- Multiple or no cell selection: Shows "Please select exactly one cell" message
-- Insufficient pipes: Shows "Need at least 6 pipe characters" with count
+#### `TaxonomyCleaner()`
+- Entry point macro that validates cell selection
+- Checks for text content in selected cells
+- Launches the UserForm interface for user interaction
 
-## Data Format Expectations
+#### `ExtractBeforePipe(pipeNumber As Integer)`
+- Core extraction logic that processes all selected cells
+- Extracts text before the specified pipe position
+- Provides detailed feedback on processing results
+- Handles edge cases (empty cells, insufficient pipes)
 
-The utility expects input data in this format:
+#### UserForm Event Handlers
+- 8 button click handlers (btn1_Click through btn8_Click)
+- Each button calls `ExtractBeforePipe` with corresponding pipe number
+- Cancel button for user to exit without processing
+
+### Error Handling
+- **No Selection**: Prompts user to select cells before running
+- **No Text Content**: Validates that selected cells contain text
+- **Insufficient Pipes**: Processes cells with available pipes, reports results
+- **Processing Summary**: Shows count of successfully processed cells
+
+## Data Format Expectations and Examples
+
+The utility works with pipe-delimited data in this format:
 ```
-field1|field2|field3|field4|field5|CAMPAIGN_NAME|field7|...
+field1|field2|field3|field4|field5|field6|field7|field8
 ```
 
-Where `CAMPAIGN_NAME` is the target content to be extracted (6th field).
+**Button Examples** (for input: `A|B|C|D|E|F|G|H`):
+- **Button 1**: Extracts `A` (before 1st pipe)
+- **Button 2**: Extracts `A|B` (before 2nd pipe)
+- **Button 3**: Extracts `A|B|C` (before 3rd pipe)
+- **Button 4**: Extracts `A|B|C|D` (before 4th pipe)
+- **Button 5**: Extracts `A|B|C|D|E` (before 5th pipe)
+- And so on...
 
 ## Deployment
 
-This is a standalone VBA script that doesn't require traditional deployment. Users need to:
-1. Copy the code into their Excel VBA environment
-2. Save the workbook as `.xlsm` (macro-enabled) format if they want to preserve the macro
+This enhanced VBA utility requires more setup than a simple macro:
+
+### Installation Steps
+1. Copy the main subroutines into an Excel VBA module
+2. Create the UserForm following the detailed design instructions in `script.vb`
+3. Add the UserForm event handler code to the form module  
+4. Create a macro button or assign the `TaxonomyCleaner` macro to a keyboard shortcut
+5. Save the workbook as `.xlsm` (macro-enabled) format to preserve all components
+
+### Recommended Setup
+- Assign `TaxonomyCleaner` to a ribbon button for easy access
+- Test with sample pipe-delimited data before production use
+- Consider creating a backup of data before batch processing large ranges
