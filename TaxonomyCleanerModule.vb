@@ -142,31 +142,32 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
         Loop
         
         ' Extract the requested segment
-        If segmentNumber = 1 Then
-            ' First segment: from start to first pipe (or entire text if no pipes)
-            If pipeCount >= 1 Then
-                extractedText = Trim(Left(cellText, pipePositions(1) - 1))
-            Else
-                extractedText = Trim(cellText) ' No pipes, use entire text
-            End If
-            ' Store original value for undo before changing
-            UndoCount = UndoCount + 1
-            UndoArray(UndoCount).CellAddress = cell.Address
-            UndoArray(UndoCount).OriginalValue = cellText
-            
-            cell.Value = extractedText
-            processedCount = processedCount + 1
-        ElseIf segmentNumber <= pipeCount + 1 Then
-            ' Middle/end segments: between pipes
+        If segmentNumber <= pipeCount + 1 Then
             Dim startPos As Integer
             Dim endPos As Integer
             
-            If segmentNumber <= pipeCount Then
-                ' Between two pipes
+            If segmentNumber = 1 Then
+                ' First segment: from start to first pipe (or entire text if no pipes)
+                If pipeCount >= 1 Then
+                    startPos = 1
+                    endPos = pipePositions(1) - 1
+                Else
+                    ' No pipes, check for colon
+                    startPos = 1
+                    Dim colonPos As Integer
+                    colonPos = InStr(cellText, ":")
+                    If colonPos > 0 Then
+                        endPos = colonPos - 1
+                    Else
+                        endPos = Len(cellText)
+                    End If
+                End If
+            ElseIf segmentNumber <= pipeCount Then
+                ' Middle segments: between two pipes
                 startPos = pipePositions(segmentNumber - 1) + 1
                 endPos = pipePositions(segmentNumber) - 1
             Else
-                ' Last segment after final pipe (but stop at colon if present)
+                ' Last segment: after final pipe, but before colon if present
                 startPos = pipePositions(pipeCount) + 1
                 Dim colonPos As Integer
                 colonPos = InStr(startPos, cellText, ":")
@@ -178,6 +179,7 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
             End If
             
             extractedText = Trim(Mid(cellText, startPos, endPos - startPos + 1))
+            
             ' Store original value for undo before changing
             UndoCount = UndoCount + 1
             UndoArray(UndoCount).CellAddress = cell.Address
@@ -343,13 +345,25 @@ Sub TestSegmentExtraction()
     
     testText = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
     
-    ' Create a test cell
+    ' Create test cells
     Range("A1").Value = testText
-    Range("A1").Select
+    Range("A2").Value = "Test|Without|Colon|Data" ' Test without colon
+    Range("A1:A2").Select
     
-    MsgBox "Test data placed in A1. You can now test:" & vbCrLf & vbCrLf & _
+    MsgBox "Test data placed in A1:A2. You can now test:" & vbCrLf & vbCrLf & _
+           "A1 (with colon):" & vbCrLf & _
            "• Segment 8 should extract: 'Facebook_Instagram'" & vbCrLf & _
            "• Segment 9 should extract: 'Conversions'" & vbCrLf & _
            "• Activation ID should extract: 'DJTDOM060725'" & vbCrLf & vbCrLf & _
+           "A2 (without colon):" & vbCrLf & _
+           "• Segment 4 should extract: 'Data'" & vbCrLf & _
+           "• Activation ID should show 'no colon' message" & vbCrLf & vbCrLf & _
            "Run TaxonomyCleaner to test these buttons!", vbInformation, "Test Setup Complete"
+End Sub
+
+' Quick test of Activation ID extraction directly
+Sub TestActivationIDDirect()
+    Range("A1").Value = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
+    Range("A1").Select
+    Call ExtractActivationID
 End Sub
