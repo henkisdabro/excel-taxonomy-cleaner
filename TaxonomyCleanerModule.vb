@@ -145,9 +145,9 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
         If segmentNumber = 1 Then
             ' First segment: from start to first pipe (or entire text if no pipes)
             If pipeCount >= 1 Then
-                extractedText = Left(cellText, pipePositions(1) - 1)
+                extractedText = Trim(Left(cellText, pipePositions(1) - 1))
             Else
-                extractedText = cellText ' No pipes, use entire text
+                extractedText = Trim(cellText) ' No pipes, use entire text
             End If
             ' Store original value for undo before changing
             UndoCount = UndoCount + 1
@@ -166,12 +166,18 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
                 startPos = pipePositions(segmentNumber - 1) + 1
                 endPos = pipePositions(segmentNumber) - 1
             Else
-                ' Last segment after final pipe
+                ' Last segment after final pipe (but stop at colon if present)
                 startPos = pipePositions(pipeCount) + 1
-                endPos = Len(cellText)
+                Dim colonPos As Integer
+                colonPos = InStr(startPos, cellText, ":")
+                If colonPos > 0 Then
+                    endPos = colonPos - 1
+                Else
+                    endPos = Len(cellText)
+                End If
             End If
             
-            extractedText = Mid(cellText, startPos, endPos - startPos + 1)
+            extractedText = Trim(Mid(cellText, startPos, endPos - startPos + 1))
             ' Store original value for undo before changing
             UndoCount = UndoCount + 1
             UndoArray(UndoCount).CellAddress = cell.Address
@@ -289,8 +295,8 @@ Sub ExtractActivationID()
         colonPos = InStr(cellText, ":")
         
         If colonPos > 0 Then
-            ' Extract text after colon
-            extractedText = Mid(cellText, colonPos + 1)
+            ' Extract text after colon (trim any spaces)
+            extractedText = Trim(Mid(cellText, colonPos + 1))
             
             ' Store original value for undo before changing
             UndoCount = UndoCount + 1
@@ -329,4 +335,21 @@ NextCell:
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True
+End Sub
+
+' Test function to verify segment extraction works correctly
+Sub TestSegmentExtraction()
+    Dim testText As String
+    
+    testText = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
+    
+    ' Create a test cell
+    Range("A1").Value = testText
+    Range("A1").Select
+    
+    MsgBox "Test data placed in A1. You can now test:" & vbCrLf & vbCrLf & _
+           "• Segment 8 should extract: 'Facebook_Instagram'" & vbCrLf & _
+           "• Segment 9 should extract: 'Conversions'" & vbCrLf & _
+           "• Activation ID should extract: 'DJTDOM060725'" & vbCrLf & vbCrLf & _
+           "Run TaxonomyCleaner to test these buttons!", vbInformation, "Test Setup Complete"
 End Sub
