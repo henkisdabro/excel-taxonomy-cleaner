@@ -45,17 +45,17 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 #### Basic Interface (InputBox)
 1. Select one or more cells containing pipe-delimited text
 2. Run the `TaxonomyCleaner` macro (or assign it to a button)
-3. Enter segment number (1-8) in the input dialog
+3. Enter segment number (1-9) or 'A' for Activation ID in the input dialog
 4. All cells process immediately with success message
 5. Run `UndoTaxonomyCleaning` macro to reverse if needed
 
 #### Advanced Interface (UserForm with Buttons)
 1. Select one or more cells containing pipe-delimited text
 2. Run the `TaxonomyCleaner` macro - UserForm appears
-3. Click any segment button (1-8) - all cells process immediately
+3. Click any segment button (1-9) or "Activation ID" - all cells process immediately
 4. Success dialog appears: Choose OK (keep open) or Cancel (close)
 5. If kept open: Use "Undo Last" button to reverse, then "Close" when done
-6. Perfect for experimenting with different segments
+6. Perfect for experimenting with different segments and activation IDs
 
 ## Code Structure
 
