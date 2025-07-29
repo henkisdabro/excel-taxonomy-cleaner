@@ -46,12 +46,9 @@
 '    
 '    Set all buttons to: Font Size=10, Bold=True
 '
-' C) Add CANCEL BUTTON:
-'    - Name: btnCancel
-'    - Caption: "Cancel"
-'    - Position: Left=170, Top=180
-'    - Size: Width=80, Height=30
-'    - Font: Size=10
+' C) Add ACTION BUTTONS:
+'    - btnCancel: Name="btnCancel", Caption="Cancel", Left=120, Top=180, Width=80, Height=30, Font Size=10
+'    - btnUndo: Name="btnUndo", Caption="Undo Last", Left=220, Top=180, Width=80, Height=30, Font Size=10
 '
 ' STEP 3: Add VBA Code to UserForm
 ' --------------------------------
@@ -70,6 +67,7 @@ Private Sub btn6_Click(): Call ExtractPipeSegment(6): Unload Me: End Sub
 Private Sub btn7_Click(): Call ExtractPipeSegment(7): Unload Me: End Sub
 Private Sub btn8_Click(): Call ExtractPipeSegment(8): Unload Me: End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
+Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: Unload Me: End Sub
 
 ' STEP 4: Test the UserForm
 ' -------------------------
@@ -91,5 +89,15 @@ Private Sub btnCancel_Click(): Unload Me: End Sub
 ' - Immediate visual feedback 
 ' - Much faster workflow for frequent use
 ' - Looks and feels like a proper Excel tool
+' - Built-in UNDO button to reverse the last operation
+' - Custom undo functionality (Excel's built-in Undo doesn't work with VBA changes)
+
+' UNDO FUNCTIONALITY:
+' ===================
+' - Every extraction operation stores the original values automatically
+' - Click "Undo Last" button to restore previous values
+' - Can also run UndoTaxonomyCleaning macro manually
+' - Undo data is cleared after each new extraction operation
+' - Confirmation dialog prevents accidental undo operations
 '
 '================================================================================

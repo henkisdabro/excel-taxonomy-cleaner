@@ -21,6 +21,16 @@
 ' - Segment 8: "2024" (8th segment)
 '================================================================================
 
+' Global variables for UNDO functionality
+Type UndoData
+    CellAddress As String
+    OriginalValue As String
+End Type
+
+Dim UndoArray() As UndoData
+Dim UndoCount As Integer
+Dim LastSegmentNumber As Integer
+
 ' Main macro to be called when button is pressed
 Sub TaxonomyCleaner()
     ' Check if cells are selected
@@ -96,6 +106,11 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
     Dim processedCount As Integer
     Dim i As Integer
     
+    ' Initialize undo functionality
+    UndoCount = 0
+    LastSegmentNumber = segmentNumber
+    ReDim UndoArray(1 To Selection.Cells.Count)
+    
     processedCount = 0
     
     For Each cell In Selection
@@ -125,6 +140,11 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
             Else
                 extractedText = cellText ' No pipes, use entire text
             End If
+            ' Store original value for undo before changing
+            UndoCount = UndoCount + 1
+            UndoArray(UndoCount).CellAddress = cell.Address
+            UndoArray(UndoCount).OriginalValue = cellText
+            
             cell.Value = extractedText
             processedCount = processedCount + 1
         ElseIf segmentNumber <= pipeCount + 1 Then
@@ -143,6 +163,11 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
             End If
             
             extractedText = Mid(cellText, startPos, endPos - startPos + 1)
+            ' Store original value for undo before changing
+            UndoCount = UndoCount + 1
+            UndoArray(UndoCount).CellAddress = cell.Address
+            UndoArray(UndoCount).OriginalValue = cellText
+            
             cell.Value = extractedText
             processedCount = processedCount + 1
         End If
@@ -151,10 +176,43 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
 NextCell:
     Next cell
     
-    ' Show completion message
+    ' Show completion message with undo information
     If processedCount > 0 Then
-        MsgBox "Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!", vbInformation, "Process Complete"
+        MsgBox "Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
+               "To undo these changes, run the UndoTaxonomyCleaning macro.", vbInformation, "Process Complete"
     Else
         MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
+        UndoCount = 0 ' Clear undo data if nothing was processed
     End If
+End Sub
+
+' Undo the last taxonomy cleaning operation
+Sub UndoTaxonomyCleaning()
+    Dim i As Integer
+    Dim cell As Range
+    Dim undoRange As Range
+    
+    ' Check if there's anything to undo
+    If UndoCount = 0 Then
+        MsgBox "No taxonomy cleaning operations to undo.", vbInformation, "Nothing to Undo"
+        Exit Sub
+    End If
+    
+    ' Confirm undo operation
+    If MsgBox("This will restore " & UndoCount & " cell(s) to their original values before segment " & LastSegmentNumber & " extraction." & vbCrLf & vbCrLf & _
+              "Do you want to continue?", vbYesNo + vbQuestion, "Confirm Undo") = vbNo Then
+        Exit Sub
+    End If
+    
+    ' Restore original values
+    For i = 1 To UndoCount
+        Set cell = Range(UndoArray(i).CellAddress)
+        cell.Value = UndoArray(i).OriginalValue
+    Next i
+    
+    ' Clear undo data
+    UndoCount = 0
+    
+    ' Show confirmation
+    MsgBox "Successfully restored " & i - 1 & " cell(s) to their original values.", vbInformation, "Undo Complete"
 End Sub

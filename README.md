@@ -22,7 +22,6 @@ For text: `Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024`
 
 - **`TaxonomyCleanerModule.vb`** - Main VBA code (copy this into Excel)
 - **`TaxonomyCleanerForm.vb`** - Optional UserForm for 8-button interface
-- **`script.vb`** - Legacy combined file (use the split files above)
 - **`CLAUDE.md`** - Development documentation
 
 ## Interface Options
@@ -31,11 +30,23 @@ For text: `Marketing|Campaign|Q4|Social|Facebook|Brand|Active|2024`
 - Simple text input dialog
 - Works immediately after copying the module code
 - Type 1-8 to select segment
+- Run `UndoTaxonomyCleaning` macro to undo changes
 
 ### Advanced (UserForm) 
 - Professional 8-button interface  
 - Requires following setup instructions in `TaxonomyCleanerForm.vb`
 - Click buttons instead of typing numbers
+- Built-in "Undo Last" button for quick reversal
+
+## Undo Functionality
+
+Since Excel's built-in Undo doesn't work with VBA changes, this tool includes custom undo:
+
+- **Automatic**: Original values stored before each extraction
+- **UserForm**: Click "Undo Last" button 
+- **Manual**: Run `UndoTaxonomyCleaning` macro
+- **Safe**: Confirmation dialog prevents accidents
+- **Smart**: Undo data cleared after each new operation
 
 ## Installation
 

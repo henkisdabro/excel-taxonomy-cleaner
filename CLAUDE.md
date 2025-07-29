@@ -16,7 +16,8 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 
 ### Key Components
 - **Main Entry Point** (`TaxonomyCleaner`): Validates selection and launches the user interface
-- **Extraction Engine** (`ExtractBeforePipe`): Processes selected cells based on pipe position
+- **Extraction Engine** (`ExtractPipeSegment`): Processes selected cells based on pipe position
+- **Undo System** (`UndoTaxonomyCleaning`): Custom undo functionality with automatic value storage
 - **User Interface** (`TaxonomyCleanerForm`): Provides intuitive button-based selection interface
 - **Comprehensive Validation**: Checks for text content, proper selections, and pipe availability
 
@@ -27,9 +28,9 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - No external dependencies or package management
 
 ### File Structure
-- **TaxonomyCleanerModule.vb**: Main VBA module code with core functionality
+- **TaxonomyCleanerModule.vb**: Main VBA module code with core functionality and undo system
 - **TaxonomyCleanerForm.vb**: UserForm code and detailed setup instructions
-- **script.vb**: Legacy combined file (deprecated - use the split files above)
+- **README.md**: User-friendly quick start guide
 
 ### Testing the VBA Code
 1. Open Microsoft Excel
