@@ -224,15 +224,24 @@ Sub UndoTaxonomyCleaning()
         Exit Sub
     End If
     
+    ' Disable screen updating for better performance, then re-enable for visual update
+    Application.ScreenUpdating = False
+    
     ' Restore original values
     For i = 1 To UndoCount
         Set cell = Range(UndoArray(i).CellAddress)
         cell.Value = UndoArray(i).OriginalValue
     Next i
     
+    ' Re-enable screen updating to show all changes immediately
+    Application.ScreenUpdating = True
+    
     ' Clear undo data
     UndoCount = 0
     
     ' Show confirmation
     MsgBox "Successfully restored " & i - 1 & " cell(s) to their original values.", vbInformation, "Undo Complete"
+    
+    ' Ensure screen updating is always re-enabled
+    Application.ScreenUpdating = True
 End Sub
