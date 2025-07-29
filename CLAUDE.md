@@ -26,14 +26,18 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - Microsoft Excel with VBA support enabled
 - No external dependencies or package management
 
+### File Structure
+- **TaxonomyCleanerModule.vb**: Main VBA module code with core functionality
+- **TaxonomyCleanerForm.vb**: UserForm code and detailed setup instructions
+- **script.vb**: Legacy combined file (deprecated - use the split files above)
+
 ### Testing the VBA Code
 1. Open Microsoft Excel
 2. Press `Alt + F11` to open the VBA Editor
 3. Insert a new module (`Insert > Module`)
-4. Copy the main subroutines from `script.vb` into the module
-5. Create a UserForm named "TaxonomyCleanerForm" following the design instructions in the script
-6. Add the UserForm event handlers to the form module
-7. Close the VBA Editor and test with sample pipe-delimited data
+4. Copy code from `TaxonomyCleanerModule.vb` into the module
+5. Optionally create UserForm following instructions in `TaxonomyCleanerForm.vb`
+6. Close the VBA Editor and test with sample pipe-delimited data
 
 ### Usage Workflow
 1. Select one or more cells containing pipe-delimited text
@@ -84,16 +88,18 @@ field1|field2|field3|field4|field5|field6|field7|field8
 
 ## Deployment
 
-This enhanced VBA utility requires more setup than a simple macro:
+### Quick Setup (Basic Functionality)
+1. Copy code from `TaxonomyCleanerModule.vb` into an Excel VBA module
+2. Run the `TaxonomyCleaner` macro to use InputBox interface
+3. Save workbook as `.xlsm` (macro-enabled) format
 
-### Installation Steps
-1. Copy the main subroutines into an Excel VBA module
-2. Create the UserForm following the detailed design instructions in `script.vb`
-3. Add the UserForm event handler code to the form module  
-4. Create a macro button or assign the `TaxonomyCleaner` macro to a keyboard shortcut
-5. Save the workbook as `.xlsm` (macro-enabled) format to preserve all components
+### Advanced Setup (Button Interface)
+1. Follow the basic setup above
+2. Create UserForm following detailed instructions in `TaxonomyCleanerForm.vb`
+3. Get professional 8-button interface instead of simple input dialog
 
 ### Recommended Setup
 - Assign `TaxonomyCleaner` to a ribbon button for easy access
 - Test with sample pipe-delimited data before production use
 - Consider creating a backup of data before batch processing large ranges
+- Use the UserForm interface for frequent usage - much more efficient
