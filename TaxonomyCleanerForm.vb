@@ -47,8 +47,9 @@
 '    Set all buttons to: Font Size=10, Bold=True
 '
 ' C) Add ACTION BUTTONS:
-'    - btnCancel: Name="btnCancel", Caption="Cancel", Left=120, Top=180, Width=80, Height=30, Font Size=10
-'    - btnUndo: Name="btnUndo", Caption="Undo Last", Left=220, Top=180, Width=80, Height=30, Font Size=10
+'    - btnCancel: Name="btnCancel", Caption="Cancel", Left=100, Top=180, Width=60, Height=30, Font Size=10
+'    - btnUndo: Name="btnUndo", Caption="Undo Last", Left=170, Top=180, Width=80, Height=30, Font Size=10
+'    - btnClose: Name="btnClose", Caption="Close", Left=260, Top=180, Width=60, Height=30, Font Size=10
 '
 ' STEP 3: Add VBA Code to UserForm
 ' --------------------------------
@@ -58,16 +59,17 @@ Private Sub UserForm_Initialize()
     Me.Caption = "Taxonomy Cleaner - Segment Selector"
 End Sub
 
-Private Sub btn1_Click(): Call ExtractPipeSegment(1): Unload Me: End Sub
-Private Sub btn2_Click(): Call ExtractPipeSegment(2): Unload Me: End Sub  
-Private Sub btn3_Click(): Call ExtractPipeSegment(3): Unload Me: End Sub
-Private Sub btn4_Click(): Call ExtractPipeSegment(4): Unload Me: End Sub
-Private Sub btn5_Click(): Call ExtractPipeSegment(5): Unload Me: End Sub
-Private Sub btn6_Click(): Call ExtractPipeSegment(6): Unload Me: End Sub
-Private Sub btn7_Click(): Call ExtractPipeSegment(7): Unload Me: End Sub
-Private Sub btn8_Click(): Call ExtractPipeSegment(8): Unload Me: End Sub
+Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
+Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
+Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
+Private Sub btn4_Click(): Call ExtractPipeSegment(4): End Sub
+Private Sub btn5_Click(): Call ExtractPipeSegment(5): End Sub
+Private Sub btn6_Click(): Call ExtractPipeSegment(6): End Sub
+Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
+Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
-Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: Unload Me: End Sub
+Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
+Private Sub btnClose_Click(): Unload Me: End Sub
 
 ' STEP 4: Test the UserForm
 ' -------------------------

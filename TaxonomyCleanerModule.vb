@@ -114,7 +114,8 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
     processedCount = 0
     
     For Each cell In Selection
-        cellText = cell.Value
+        On Error GoTo NextCell ' Skip any problematic cells
+        cellText = CStr(cell.Value)
         
         ' Skip empty cells
         If Len(Trim(cellText)) = 0 Then
@@ -174,12 +175,22 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
         ' If not enough segments, leave cell unchanged
         
 NextCell:
+        On Error GoTo 0 ' Reset error handling
     Next cell
     
     ' Show completion message with undo information
     If processedCount > 0 Then
-        MsgBox "Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
-               "To undo these changes, run the UndoTaxonomyCleaning macro.", vbInformation, "Process Complete"
+        Dim result As VbMsgBoxResult
+        result = MsgBox("Successfully extracted segment " & segmentNumber & " from " & processedCount & " cell(s)!" & vbCrLf & vbCrLf & _
+                       "Click OK to keep the dialog open (use Undo button if needed)" & vbCrLf & _
+                       "Click Cancel to close the dialog", vbOKCancel + vbInformation, "Process Complete")
+        
+        ' Close the UserForm if user clicked Cancel
+        If result = vbCancel Then
+            On Error Resume Next
+            Unload TaxonomyCleanerForm
+            On Error GoTo 0
+        End If
     Else
         MsgBox "No cells were processed. Make sure your selected cells have at least " & segmentNumber & " pipe-delimited segment(s).", vbExclamation, "No Changes Made"
         UndoCount = 0 ' Clear undo data if nothing was processed
