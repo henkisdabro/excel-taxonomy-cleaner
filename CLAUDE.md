@@ -41,10 +41,21 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 6. Close the VBA Editor and test with sample pipe-delimited data
 
 ### Usage Workflow
+
+#### Basic Interface (InputBox)
 1. Select one or more cells containing pipe-delimited text
 2. Run the `TaxonomyCleaner` macro (or assign it to a button)
-3. Choose from numbered buttons (1-8) to extract text before that pipe position
-4. Review the processed results and completion message
+3. Enter segment number (1-8) in the input dialog
+4. All cells process immediately with success message
+5. Run `UndoTaxonomyCleaning` macro to reverse if needed
+
+#### Advanced Interface (UserForm with Buttons)
+1. Select one or more cells containing pipe-delimited text
+2. Run the `TaxonomyCleaner` macro - UserForm appears
+3. Click any segment button (1-8) - all cells process immediately
+4. Success dialog appears: Choose OK (keep open) or Cancel (close)
+5. If kept open: Use "Undo Last" button to reverse, then "Close" when done
+6. Perfect for experimenting with different segments
 
 ## Code Structure
 
@@ -71,6 +82,8 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - **No Text Content**: Validates that selected cells contain text
 - **Insufficient Pipes**: Processes cells with available pipes, reports results
 - **Processing Summary**: Shows count of successfully processed cells
+- **Undo Protection**: Confirmation dialog prevents accidental data restoration
+- **Loop Protection**: Error handling ensures all selected cells get processed
 
 ## Data Format Expectations and Examples
 
@@ -97,10 +110,17 @@ field1|field2|field3|field4|field5|field6|field7|field8
 ### Advanced Setup (Button Interface)
 1. Follow the basic setup above
 2. Create UserForm following detailed instructions in `TaxonomyCleanerForm.vb`
-3. Get professional 8-button interface instead of simple input dialog
+3. Get professional 8-button interface with built-in undo functionality
 
 ### Recommended Setup
 - Assign `TaxonomyCleaner` to a ribbon button for easy access
 - Test with sample pipe-delimited data before production use
 - Consider creating a backup of data before batch processing large ranges
 - Use the UserForm interface for frequent usage - much more efficient
+- Take advantage of the undo system to experiment with different segments safely
+
+### New Features
+- **Custom Undo System**: Works where Excel's built-in Undo cannot (VBA changes)
+- **Dialog Persistence**: Keep UserForm open to access undo functionality
+- **Safe Experimentation**: Try different segments, undo if not satisfied
+- **Professional Workflow**: Extract → Review → Undo if needed → Extract again → Close
