@@ -31,6 +31,9 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 
 ### Professional UserForm (Recommended)
 - Beautiful interface with 9 segment buttons + Activation ID button
+- **Smart Label Display**: Shows truncated preview of selected data (12 chars + "...")
+- **Dynamic Button Captions**: Buttons show preview of each segment content
+- **Context-Aware Interface**: Adapts to your selected data automatically
 - Built-in "Undo Last" button for quick reversal
 - Keep dialog open to experiment with different extractions
 - Click buttons instead of typing numbers
@@ -49,6 +52,7 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 - **Activation IDs**: Extract unique identifiers after colon characters
 - **Batch Processing**: Works with single cells or multiple selected ranges
 - **Smart Parsing**: Handles missing segments gracefully
+- **Live Preview**: See segment content before extraction
 
 ### 🔄 Custom Undo System
 Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
@@ -91,10 +95,11 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 ### With UserForm Interface
 1. **Select cells** with pipe-delimited data
 2. **Click ribbon button** (or run `TaxonomyExtractor`)
-3. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
-4. **Review results** - keep dialog open for more extractions
-5. **Experiment freely** - use "Undo Last" button for instant reversal
-6. **Click "Close"** when finished
+3. **See your data preview** - label shows truncated content, buttons show segment previews
+4. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
+5. **Review results** - keep dialog open for more extractions
+6. **Experiment freely** - use "Undo Last" button for instant reversal
+7. **Click "Close"** when finished
 
 ### With InputBox Interface
 1. **Select cells** with pipe-delimited data  
@@ -128,6 +133,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Memory Efficient**: Automatic cleanup of undo data
 - **Silent Operation**: No interruptions - only error messages when needed
 - **Professional UI**: Looks and feels like built-in Excel tools
+- **Context-Aware Display**: Interface adapts to show your actual data content
 
 ## Perfect For
 

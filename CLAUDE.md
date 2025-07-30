@@ -11,17 +11,22 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 ### Core Functionality
 - **Enhanced Range Support**: Works with single cells or multiple selected cell ranges
 - **Professional UserForm**: Custom interface with 9 segment buttons + Activation ID button
+- **Smart Data Preview**: Displays truncated view (12 chars + "...") of selected data
+- **Dynamic Button Captions**: Shows preview of each segment content on buttons
+- **Context-Aware Parsing**: Automatically parses first selected cell into individual segments
 - **Flexible Text Processing**: Extracts specific segments (1-9) or activation IDs from pipe-delimited data
 - **Batch Processing**: Processes multiple cells simultaneously with progress feedback
 - **Custom Undo System**: Full undo functionality since Excel's built-in undo doesn't work with VBA
 - **Excel Add-in Ready**: Can be packaged as .xlam for distribution
 
 ### Key Components
-- **Main Entry Point** (`TaxonomyExtractor`): Validates selection and launches the user interface
+- **Main Entry Point** (`TaxonomyExtractor`): Validates selection, parses first cell, and launches the user interface
+- **Data Parser** (`ParseFirstCellData`): Parses selected cell into individual segments and activation ID
+- **Data Structure** (`ParsedCellData`): Type definition holding all parsed segments and display text
 - **Segment Extraction** (`ExtractPipeSegment`): Extracts specific segments (1-9) from pipe-delimited text
 - **Activation ID Extraction** (`ExtractActivationID`): Extracts text after colon characters
 - **Undo System** (`UndoTaxonomyCleaning`): Custom undo functionality with automatic value storage
-- **User Interface** (`TaxonomyExtractorForm`): Professional 9-button interface with undo controls
+- **User Interface** (`TaxonomyExtractorForm`): Professional 9-button interface with dynamic content preview
 - **Comprehensive Validation**: Checks for text content, proper selections, and data format
 
 ## Development Environment
@@ -49,10 +54,12 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 #### Professional Interface (UserForm with 9 Buttons)
 1. Select one or more cells containing pipe-delimited text with activation IDs
 2. Run the `TaxonomyExtractor` macro - UserForm appears with 9 segment buttons
-3. Click any segment button (1-9) or "Activation ID" - all cells process immediately and silently
-4. No success dialogs or confirmations - extraction happens instantly
-5. Use "Undo Last" button to reverse the last operation without confirmation
-6. Use "Close" button when finished - perfect for rapid experimentation
+3. Interface shows truncated preview of your data (12 chars + "...")
+4. Button captions display preview of each segment content  
+5. Click any segment button (1-9) or "Activation ID" - all cells process immediately and silently
+6. No success dialogs or confirmations - extraction happens instantly
+7. Use "Undo Last" button to reverse the last operation without confirmation
+8. Use "Close" button when finished - perfect for rapid experimentation
 
 #### Fallback Interface (InputBox)
 1. Select one or more cells containing pipe-delimited text
@@ -68,8 +75,16 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 #### `TaxonomyExtractor()`
 - Entry point macro that validates cell selection
 - Checks for text content in selected cells
+- Parses first selected cell into individual segments using `ParseFirstCellData`
+- Passes parsed data to UserForm via `SetParsedData` method
 - Shows TaxonomyExtractorForm (UserForm with buttons) if it exists
 - Falls back to InputBox interface if UserForm not created
+
+#### `ParseFirstCellData(cellContent As String) As ParsedCellData`
+- Parses pipe-delimited text into individual segments (1-9) and activation ID
+- Creates truncated display text (12 characters + "...")
+- Handles missing segments gracefully with bounds checking
+- Returns structured data for UserForm consumption
 
 #### `ExtractPipeSegment(segmentNumber As Integer)`
 - Core extraction logic for segments 1-9
@@ -88,6 +103,9 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - Silent operation - no confirmation dialogs needed
 
 #### UserForm Event Handlers
+- `SetParsedData(parsedData As ParsedCellData)` - Receives parsed cell data from main module
+- `UserForm_Initialize()` - Sets up interface with data preview and dynamic button captions
+- `UpdateButtonCaptions()` - Updates button text to show segment content previews
 - 9 segment button handlers (btn1_Click through btn9_Click)
 - Activation ID button handler (btnActivationID_Click)
 - Undo, Cancel, and Close button handlers
@@ -147,6 +165,9 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Silent Operation**: No confirmation dialogs or success messages - immediate action
 - **Rapid Experimentation**: Instant extraction with one-click undo for quick testing
 - **Professional Workflow**: Extract → Review → Undo → Extract again → Close (all silent)
+- **Context-Aware Interface**: Shows your actual data content in truncated form
+- **Dynamic Button Previews**: See what each segment contains before extracting
+- **Smart Data Parsing**: Automatically breaks down first selected cell into individual segments
 - **Add-in Distribution**: Package as .xlam for easy sharing and installation
 - **Activation ID Support**: Extract unique identifiers from colon-delimited text
 - **9 Segment Support**: Handle complex taxonomy structures up to 9 segments
@@ -156,7 +177,13 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 ### UserForm Naming
 - UserForm must be named exactly `TaxonomyCleanerForm_2` in the Excel VBA project
 - This name is referenced in the module code for proper functionality
+- UserForm must have `SetParsedData` method to receive parsed cell data
 - If UserForm doesn't exist, code automatically falls back to InputBox interface
+
+### Data Structure Requirements
+- `ParsedCellData` type must be defined in the main module
+- Contains individual segment variables (Segment1-Segment9, ActivationID)
+- Includes original text and truncated display text for UI purposes
 
 ### Undo System Implementation
 - Stores original cell values before any extraction
