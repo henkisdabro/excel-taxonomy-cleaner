@@ -23,15 +23,61 @@
 '   - v2.2: [Future updates - increment as needed]
 ' This helps track which version users are running in their Excel environment.
 '
-' CONTROLS:
-' - 9 segment buttons (btn1 through btn9)
-' - 1 activation ID button (btnActivationID)
-' - 3 action buttons (btnCancel, btnUndo, btnClose)
-' - 1 instruction label (lblInstructions)
+' CONTROLS (MUST be named exactly as shown):
+' ===========================================
+' 
+' REQUIRED CONTROLS FOR SMART INTERFACE:
+' 
+' 1. INSTRUCTION LABEL (for data preview):
+'    - Control Type: Label
+'    - Name: lblInstructions
+'    - Caption: "Select cells and click segment button"
+'    - Position: Top of form (X: 12, Y: 12)
+'    - Size: Width: 450, Height: 24
+'    - Font: Calibri, 10pt
+'    - Important: This label will show truncated data preview automatically
+'
+' 2. SEGMENT BUTTONS (9 buttons for segments 1-9):
+'    - Control Type: CommandButton
+'    - Names: btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9
+'    - Default Captions: "Segment 1", "Segment 2", etc.
+'    - Note: Captions will update automatically to show segment previews
+'    - Suggested Layout: 3 rows x 3 columns
+'      Row 1: btn1, btn2, btn3 (Y: 50)
+'      Row 2: btn4, btn5, btn6 (Y: 90)
+'      Row 3: btn7, btn8, btn9 (Y: 130)
+'    - Size: Width: 140, Height: 30
+'    - Spacing: X positions: 12, 164, 316
+'
+' 3. ACTIVATION ID BUTTON:
+'    - Control Type: CommandButton
+'    - Name: btnActivationID
+'    - Default Caption: "Activation ID"
+'    - Note: Caption will update to show "ID: [preview]"
+'    - Position: X: 12, Y: 180
+'    - Size: Width: 140, Height: 30
+'
+' 4. ACTION BUTTONS:
+'    - Control Type: CommandButton (3 buttons)
+'    - Names: btnUndo, btnCancel, btnClose
+'    - Captions: "Undo Last", "Cancel", "Close"
+'    - Position: X: 164, Y: 180 (btnUndo), X: 238, Y: 180 (btnCancel), X: 316, Y: 180 (btnClose)
+'    - Size: Width: 68, Height: 30
+'
+' LAYOUT SUMMARY:
+' - Form dimensions: 480 x 250
+' - lblInstructions shows: "Selected: [12 chars]..."
+' - Segment buttons show: "1: [8 chars]", "2: [8 chars]", etc.
+' - ID button shows: "ID: [6 chars]"
+' - All previews update automatically when UserForm opens
 '
 ' VBA CODE FOR THE USERFORM:
 ' ==========================
-' Copy and paste this code into the UserForm module (double-click TaxonomyCleanerForm_2):
+' After creating all controls above, copy and paste this code into the UserForm module (double-click TaxonomyCleanerForm_2):
+' 
+' IMPORTANT: The code below expects the exact control names listed above.
+' If lblInstructions doesn't exist, the line lblInstructions.Caption will cause an error.
+' Make sure all controls are created and named correctly before adding this code.
 
 Private cellData As ParsedCellData
 
@@ -77,12 +123,15 @@ Private Sub btnCancel_Click(): Unload Me: End Sub
 Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub
 
-' BENEFITS OF THIS USERFORM:
-' ==========================
+' BENEFITS OF THIS SMART USERFORM:
+' =================================
 ' - Clean, professional interface with 9 clearly labeled buttons + Activation ID button
+' - SMART DATA PREVIEW: Shows truncated view of your actual selected data
+' - DYNAMIC BUTTON CAPTIONS: Buttons show previews of what each segment contains
+' - CONTEXT-AWARE: Interface adapts to show your real data content
 ' - No typing required - just click the segment you want
-' - Immediate visual feedback 
-' - Much faster workflow for frequent use
+' - Immediate visual feedback of both data content and extraction results
+' - Much faster workflow for frequent use with live previews
 ' - Looks and feels like a proper Excel tool
 ' - Built-in UNDO button to reverse the last operation
 ' - Custom undo functionality with instant operation (Excel's built-in Undo doesn't work with VBA changes)
