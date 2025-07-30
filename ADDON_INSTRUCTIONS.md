@@ -52,7 +52,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 ## File Components
 
 Your add-in contains:
-- **`TaxonomyCleanerModule_FIXED.vb`** - Main VBA code
+- **`TaxonomyExtractorModule.vb`** - Main VBA code
 - **`TaxonomyCleanerForm_2`** - UserForm with buttons
 - **Ribbon customization** - Your custom button
 
