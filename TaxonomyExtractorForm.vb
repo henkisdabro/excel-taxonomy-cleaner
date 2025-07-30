@@ -152,4 +152,17 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 ' - Segment 9 → "Conversions"
 ' - Activation ID → "DJTDOM060725"
 '
+' QUICK SETUP GUIDE FOR SMART INTERFACE:
+' =======================================
+' 1. Insert UserForm → Name it "TaxonomyCleanerForm_2"
+' 2. Add Label → Name: "lblInstructions" (for data preview)
+' 3. Add 9 CommandButtons → Names: "btn1" through "btn9" (for segments)
+' 4. Add 1 CommandButton → Name: "btnActivationID" (for activation ID)
+' 5. Add 3 CommandButtons → Names: "btnUndo", "btnCancel", "btnClose"
+' 6. Copy VBA code above into UserForm module
+' 7. Test with sample data: "FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123"
+' 8. Label should show "Selected: FY24_26|Q1-4..."
+' 9. Buttons should show "1: FY24_26", "2: Q1-4", "3: Tourism", etc.
+' 10. ID button should show "ID: ABC123"
+'
 '================================================================================
