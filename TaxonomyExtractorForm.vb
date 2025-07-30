@@ -33,8 +33,34 @@
 ' ==========================
 ' Copy and paste this code into the UserForm module (double-click TaxonomyCleanerForm_2):
 
+Private cellData As ParsedCellData
+
+Public Sub SetParsedData(parsedData As ParsedCellData)
+    cellData = parsedData
+End Sub
+
 Private Sub UserForm_Initialize()
     Me.Caption = "Taxonomy Extractor v2.1 - Segment Selector"
+    
+    ' Set the main label to show truncated content
+    lblInstructions.Caption = "Selected: " & cellData.TruncatedDisplay
+    
+    ' Optional: Update button captions with segment previews
+    UpdateButtonCaptions
+End Sub
+
+Private Sub UpdateButtonCaptions()
+    ' Update button captions to show what each segment contains
+    If Len(cellData.Segment1) > 0 Then btn1.Caption = "1: " & Left(cellData.Segment1, 8)
+    If Len(cellData.Segment2) > 0 Then btn2.Caption = "2: " & Left(cellData.Segment2, 8)
+    If Len(cellData.Segment3) > 0 Then btn3.Caption = "3: " & Left(cellData.Segment3, 8)
+    If Len(cellData.Segment4) > 0 Then btn4.Caption = "4: " & Left(cellData.Segment4, 8)
+    If Len(cellData.Segment5) > 0 Then btn5.Caption = "5: " & Left(cellData.Segment5, 8)
+    If Len(cellData.Segment6) > 0 Then btn6.Caption = "6: " & Left(cellData.Segment6, 8)
+    If Len(cellData.Segment7) > 0 Then btn7.Caption = "7: " & Left(cellData.Segment7, 8)
+    If Len(cellData.Segment8) > 0 Then btn8.Caption = "8: " & Left(cellData.Segment8, 8)
+    If Len(cellData.Segment9) > 0 Then btn9.Caption = "9: " & Left(cellData.Segment9, 8)
+    If Len(cellData.ActivationID) > 0 Then btnActivationID.Caption = "ID: " & Left(cellData.ActivationID, 6)
 End Sub
 
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub

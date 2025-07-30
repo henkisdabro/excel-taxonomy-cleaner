@@ -28,6 +28,22 @@ Type UndoData
     OriginalValue As String
 End Type
 
+' Data structure to hold parsed segments from first selected cell
+Type ParsedCellData
+    OriginalText As String
+    TruncatedDisplay As String
+    Segment1 As String
+    Segment2 As String
+    Segment3 As String
+    Segment4 As String
+    Segment5 As String
+    Segment6 As String
+    Segment7 As String
+    Segment8 As String
+    Segment9 As String
+    ActivationID As String
+End Type
+
 Dim UndoArray() As UndoData
 Dim UndoCount As Integer
 Dim LastSegmentNumber As Integer
@@ -56,7 +72,15 @@ Sub TaxonomyExtractor()
         Exit Sub
     End If
     
-    ' Show the custom UserForm
+    ' Parse the first selected cell
+    Dim firstCellContent As String
+    firstCellContent = Selection.Cells(1).Value
+    
+    Dim parsedData As ParsedCellData
+    parsedData = ParseFirstCellData(firstCellContent)
+    
+    ' Show the UserForm and pass the parsed data
+    TaxonomyCleanerForm_2.SetParsedData parsedData
     TaxonomyCleanerForm_2.Show
 End Sub
 
@@ -93,6 +117,52 @@ Sub ShowSegmentSelector()
         MsgBox "Please enter a valid number between 1 and 9, or 'A' for Activation ID.", vbExclamation, "Invalid Input"
     End If
 End Sub
+
+' Parse first selected cell into individual segments
+Function ParseFirstCellData(cellContent As String) As ParsedCellData
+    Dim result As ParsedCellData
+    
+    ' Store original text
+    result.OriginalText = cellContent
+    
+    ' Create truncated display (12 chars + "...")
+    If Len(cellContent) > 15 Then
+        result.TruncatedDisplay = Left(cellContent, 12) & "..."
+    Else
+        result.TruncatedDisplay = cellContent
+    End If
+    
+    ' Split by colon first to separate activation ID
+    Dim colonParts() As String
+    colonParts = Split(cellContent, ":")
+    
+    Dim mainContent As String
+    mainContent = colonParts(0)
+    
+    ' Extract activation ID if colon exists
+    If UBound(colonParts) > 0 Then
+        result.ActivationID = Trim(colonParts(1))
+    Else
+        result.ActivationID = ""
+    End If
+    
+    ' Split main content by pipes
+    Dim segments() As String
+    segments = Split(mainContent, "|")
+    
+    ' Assign segments (with bounds checking)
+    If UBound(segments) >= 0 Then result.Segment1 = Trim(segments(0))
+    If UBound(segments) >= 1 Then result.Segment2 = Trim(segments(1))
+    If UBound(segments) >= 2 Then result.Segment3 = Trim(segments(2))
+    If UBound(segments) >= 3 Then result.Segment4 = Trim(segments(3))
+    If UBound(segments) >= 4 Then result.Segment5 = Trim(segments(4))
+    If UBound(segments) >= 5 Then result.Segment6 = Trim(segments(5))
+    If UBound(segments) >= 6 Then result.Segment7 = Trim(segments(6))
+    If UBound(segments) >= 7 Then result.Segment8 = Trim(segments(7))
+    If UBound(segments) >= 8 Then result.Segment9 = Trim(segments(8))
+    
+    ParseFirstCellData = result
+End Function
 
 ' Core function to extract specific segment from pipe-delimited text
 Sub ExtractPipeSegment(segmentNumber As Integer)
