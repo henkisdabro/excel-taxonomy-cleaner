@@ -16,11 +16,11 @@
 '
 ' VERSION MANAGEMENT:
 ' ===================
-' The UserForm_Initialize() code below sets the title to include version number (v2.1).
+' The UserForm_Initialize() code below sets the title to include version number (v1.1.0).
 ' IMPORTANT: Increment version number on each significant code update:
-'   - v2.0: Initial release with 9 buttons + Activation ID
-'   - v2.1: Added smart data preview and dynamic button captions
-'   - v2.2: [Future updates - increment as needed]
+'   - v1.0.0: Initial release with 9 buttons + Activation ID
+'   - v1.1.0: Added smart data preview and dynamic button captions
+'   - v1.2.0: [Future updates - increment as needed]
 ' This helps track which version users are running in their Excel environment.
 '
 ' CONTROLS (MUST be named exactly as shown):
@@ -86,7 +86,7 @@ Public Sub SetParsedData(parsedData As ParsedCellData)
 End Sub
 
 Private Sub UserForm_Initialize()
-    Me.Caption = "Taxonomy Extractor v2.1 - Segment Selector"
+    Me.Caption = "Taxonomy Extractor v1.1.0 - Segment Selector"
     
     ' Set the main label to show truncated content
     lblInstructions.Caption = "Selected: " & cellData.TruncatedDisplay
