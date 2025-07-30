@@ -14,6 +14,15 @@
 '    - Height: 320
 '    - Caption: "Taxonomy Extractor - Select Segment"
 '
+' VERSION MANAGEMENT:
+' ===================
+' The UserForm_Initialize() code below sets the title to include version number (v2.1).
+' IMPORTANT: Increment version number on each significant code update:
+'   - v2.0: Initial release with 9 buttons + Activation ID
+'   - v2.1: Added smart data preview and dynamic button captions
+'   - v2.2: [Future updates - increment as needed]
+' This helps track which version users are running in their Excel environment.
+'
 ' CONTROLS:
 ' - 9 segment buttons (btn1 through btn9)
 ' - 1 activation ID button (btnActivationID)
@@ -25,7 +34,7 @@
 ' Copy and paste this code into the UserForm module (double-click TaxonomyCleanerForm_2):
 
 Private Sub UserForm_Initialize()
-    Me.Caption = "Taxonomy Extractor - Segment Selector"
+    Me.Caption = "Taxonomy Extractor v2.1 - Segment Selector"
 End Sub
 
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
