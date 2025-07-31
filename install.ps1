@@ -103,24 +103,36 @@ function Install-AddIn {
 
         # Remove old versions before installing new one
         Write-Status "Cleaning up old versions..."
-        $oldVersionPatterns = @(
-            "ipg_taxonomy_extractor_addonv*.xlam",  # Catches all versioned files
-            "TaxonomyExtractor*.xlam",               # Legacy naming patterns
-            "taxonomy_extractor*.xlam"               # Alternative naming patterns
-        )
         
-        foreach ($pattern in $oldVersionPatterns) {
-            $oldFiles = Get-ChildItem -Path $AddInsPath -Name $pattern -ErrorAction SilentlyContinue
-            foreach ($oldFile in $oldFiles) {
-                # Skip the current version we're about to install
-                if ($oldFile -eq $AddInName) {
-                    continue
-                }
-                
-                $oldFilePath = Join-Path $AddInsPath $oldFile
-                if (Test-Path $oldFilePath) {
-                    Remove-Item $oldFilePath -Force -ErrorAction SilentlyContinue
-                    Write-Status "Removed old version: $oldFile" "Yellow"
+        # Get all XLAM files in the AddIns directory
+        $allXlamFiles = Get-ChildItem -Path $AddInsPath -Filter "*.xlam" -ErrorAction SilentlyContinue
+        
+        foreach ($file in $allXlamFiles) {
+            $fileName = $file.Name
+            $shouldDelete = $false
+            
+            # Check if it matches our taxonomy extractor patterns
+            if ($fileName -like "ipg_taxonomy_extractor_addon*") {
+                $shouldDelete = $true
+            } elseif ($fileName -like "TaxonomyExtractor*") {
+                $shouldDelete = $true
+            } elseif ($fileName -like "taxonomy_extractor*") {
+                $shouldDelete = $true
+            }
+            
+            # Skip the current version we're about to install
+            if ($fileName -eq $AddInName) {
+                $shouldDelete = $false
+                Write-Status "Keeping current version: $fileName" "Cyan"
+            }
+            
+            # Delete old versions
+            if ($shouldDelete) {
+                try {
+                    Remove-Item $file.FullName -Force -ErrorAction Stop
+                    Write-Status "Removed old version: $fileName" "Yellow"
+                } catch {
+                    Write-Status "Failed to remove $fileName`: $($_.Exception.Message)" "Red"
                 }
             }
         }
