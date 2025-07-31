@@ -32,6 +32,7 @@ End Type
 Type ParsedCellData
     OriginalText As String
     TruncatedDisplay As String
+    SelectedCellCount As Long
     Segment1 As String
     Segment2 As String
     Segment3 As String
@@ -87,7 +88,7 @@ Sub TaxonomyExtractor()
     Debug.Print "TaxonomyExtractor: First cell content: " & firstCellContent
     
     Dim parsedData As ParsedCellData
-    parsedData = ParseFirstCellData(firstCellContent)
+    parsedData = ParseFirstCellData(firstCellContent, Selection.Cells.Count)
     
     ' DEBUG: Show parsed results
     Debug.Print "TaxonomyExtractor: Parsed data:"
@@ -138,7 +139,7 @@ Sub TaxonomyExtractorModeless()
     firstCellContent = Selection.Cells(1).Value
     
     Dim parsedData As ParsedCellData
-    parsedData = ParseFirstCellData(firstCellContent)
+    parsedData = ParseFirstCellData(firstCellContent, Selection.Cells.Count)
     
     ' Show the UserForm as modeless and pass the parsed data
     TaxonomyExtractorForm.SetParsedData parsedData
@@ -185,11 +186,12 @@ Sub ShowSegmentSelector()
 End Sub
 
 ' Parse first selected cell into individual segments
-Function ParseFirstCellData(cellContent As String) As ParsedCellData
+Function ParseFirstCellData(cellContent As String, selectedCellCount As Long) As ParsedCellData
     Dim result As ParsedCellData
     
-    ' Store original text
+    ' Store original text and cell count
     result.OriginalText = cellContent
+    result.SelectedCellCount = selectedCellCount
     
     ' Create truncated display (12 chars + "...")
     If Len(cellContent) > 15 Then
@@ -464,7 +466,7 @@ Sub RefreshModelessFormIfOpen()
                 
                 ' Parse the updated cell content (now likely a single value, no pipes)
                 Dim updatedData As ParsedCellData
-                updatedData = ParseFirstCellData(firstCellContent)
+                updatedData = ParseFirstCellData(firstCellContent, Selection.Cells.Count)
                 
                 ' Update the form with new data
                 TaxonomyExtractorForm.SetParsedData updatedData

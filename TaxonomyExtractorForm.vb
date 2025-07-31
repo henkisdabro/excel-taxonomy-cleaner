@@ -37,7 +37,16 @@
 '    - Font: Calibri, 10pt
 '    - Important: This label will show truncated data preview automatically
 '
-' 2. SEGMENT BUTTONS (9 buttons for segments 1-9):
+' 2. CELL COUNT LABEL (optional - shows number of selected cells):
+'    - Control Type: Label
+'    - Name: lblCellCount
+'    - Caption: "Processing: 1 cells"
+'    - Position: Below instructions (X: 12, Y: 36)
+'    - Size: Width: 200, Height: 18
+'    - Font: Calibri, 9pt
+'    - Important: Access via cellData.SelectedCellCount
+'
+' 3. SEGMENT BUTTONS (9 buttons for segments 1-9):
 '    - Control Type: CommandButton
 '    - Names: btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9
 '    - Default Captions: "Segment 1", "Segment 2", etc.
@@ -49,7 +58,7 @@
 '    - Size: Width: 140, Height: 30
 '    - Spacing: X positions: 12, 164, 316
 '
-' 3. ACTIVATION ID BUTTON:
+' 4. ACTIVATION ID BUTTON:
 '    - Control Type: CommandButton
 '    - Name: btnActivationID
 '    - Default Caption: "Activation ID"
@@ -57,7 +66,7 @@
 '    - Position: X: 12, Y: 180
 '    - Size: Width: 140, Height: 30
 '
-' 4. ACTION BUTTONS:
+' 5. ACTION BUTTONS:
 '    - Control Type: CommandButton (3 buttons)
 '    - Names: btnUndo, btnCancel, btnClose
 '    - Captions: "Undo Last", "Cancel", "Close"
@@ -165,6 +174,16 @@ Private Sub UpdateInterface()
         lblInstructions.Caption = "Selected: [No data]"
         Debug.Print "  No original text data available"
     End If
+    
+    ' Optional: Update cell count label if it exists
+    On Error Resume Next
+    If cellData.SelectedCellCount = 1 Then
+        lblCellCount.Caption = "Processing: 1 cell"
+    Else
+        lblCellCount.Caption = "Processing: " & cellData.SelectedCellCount & " cells"
+    End If
+    Debug.Print "  Cell count: " & cellData.SelectedCellCount
+    On Error GoTo 0
     
     ' Update button captions with segment previews
     UpdateButtonCaptions
@@ -317,7 +336,7 @@ Public Sub UpdateForNewSelection(target As Range)
         If InStr(firstCellContent, "|") > 0 Then
             ' Parse the new data
             Dim newParsedData As ParsedCellData
-            newParsedData = ParseFirstCellData(firstCellContent)
+            newParsedData = ParseFirstCellData(firstCellContent, target.Cells.Count)
             
             ' Update our internal data
             cellData = newParsedData
