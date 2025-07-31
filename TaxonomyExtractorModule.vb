@@ -335,6 +335,9 @@ NextCell:
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True
+    
+    ' Refresh modeless UserForm if it's open (v1.4.0 enhancement)
+    Call RefreshModelessFormIfOpen
 End Sub
 
 ' Undo the last taxonomy cleaning operation
@@ -370,6 +373,9 @@ Sub UndoTaxonomyCleaning()
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True
+    
+    ' Refresh modeless UserForm if it's open (v1.4.0 enhancement)
+    Call RefreshModelessFormIfOpen
 End Sub
 
 ' Extract Activation ID (text after colon character)
@@ -432,6 +438,40 @@ NextCell:
     
     ' Ensure screen updating is always re-enabled
     Application.ScreenUpdating = True
+    
+    ' Refresh modeless UserForm if it's open (v1.4.0 enhancement)
+    Call RefreshModelessFormIfOpen
+End Sub
+
+' Refresh modeless UserForm after extraction (v1.4.0 UX enhancement)
+Sub RefreshModelessFormIfOpen()
+    On Error GoTo ErrorHandler
+    
+    ' Only refresh if UserForm exists and is visible (modeless mode)
+    If Not TaxonomyExtractorForm Is Nothing Then
+        If TaxonomyExtractorForm.Visible Then
+            ' Get current selection and update form with new content
+            If Selection.Cells.Count > 0 Then
+                Dim firstCellContent As String
+                firstCellContent = Selection.Cells(1).Value
+                
+                ' Parse the updated cell content (now likely a single value, no pipes)
+                Dim updatedData As ParsedCellData
+                updatedData = ParseFirstCellData(firstCellContent)
+                
+                ' Update the form with new data
+                TaxonomyExtractorForm.SetParsedData updatedData
+                
+                Debug.Print "RefreshModelessFormIfOpen: Updated form after extraction with: " & firstCellContent
+            End If
+        End If
+    End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    ' Silent error handling - don't interrupt user workflow
+    Debug.Print "RefreshModelessFormIfOpen Error: " & Err.Description
 End Sub
 
 ' Test function to verify segment extraction works correctly
