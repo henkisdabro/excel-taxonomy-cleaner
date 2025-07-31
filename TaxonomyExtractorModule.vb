@@ -51,6 +51,7 @@ Dim LastSegmentNumber As Integer
 ' Global variable to hold ribbon reference (optional)
 Public myRibbon As IRibbonUI
 
+
 ' Main macro to be called when button is pressed
 Sub TaxonomyExtractor()
     ' Check if cells are selected
@@ -414,6 +415,22 @@ Sub TestActivationIDDirect()
     Call ExtractActivationID
 End Sub
 
+' Test simple positioning - centers UserForm in Excel window
+Sub TestSimplePositioning()
+    ' Create test data
+    Range("B2").Value = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
+    Range("B2").Select
+    
+    MsgBox "SIMPLE POSITIONING TEST:" & vbCrLf & vbCrLf & _
+           "The UserForm will now appear centered within the Excel window." & vbCrLf & _
+           "This uses Excel's Application.Left, .Top, .Width, and .Height properties" & vbCrLf & _
+           "to calculate the center position reliably.", _
+           vbInformation, "Simple Positioning Test"
+    
+    ' Launch the form to test positioning
+    Call TaxonomyExtractor
+End Sub
+
 '================================================================================
 ' RIBBON CALLBACK FUNCTIONS
 '================================================================================
@@ -429,7 +446,7 @@ Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.2.0"
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"
 End Sub
 
 ' Optional: Ribbon load callback - called when the ribbon is loaded
