@@ -1,25 +1,12 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "clsAppEvents"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
-
 ' clsAppEvents - Application Event Handler for Modeless UserForm
-' Part of IPG Mediabrands Taxonomy Extractor v1.3.0
+' Part of IPG Mediabrands Taxonomy Extractor v1.4.0
 ' 
 ' This class module handles Excel application events to enable real-time
 ' UserForm updates when users change their cell selection while the 
 ' TaxonomyExtractorForm is open in modeless mode.
 '
-' Usage:
-' 1. Create instance of this class in main module
-' 2. Set App property to Application object
-' 3. Events will automatically fire when user changes selection
-' 4. Clean up by setting instance to Nothing when done
+' IMPORTANT: Copy only this code into your class module - do NOT include
+' any VERSION, BEGIN, END, or Attribute lines that appear in exported files.
 
 Public WithEvents App As Application
 
