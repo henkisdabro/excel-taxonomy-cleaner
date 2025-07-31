@@ -121,26 +121,30 @@ Private Sub UserForm_Initialize()
 End Sub
 
 Private Sub ApplyOptimalPositioning()
-    ' Simple, reliable positioning: center the form within Excel's window
+    ' Smart positioning: center the form within the active Excel worksheet window
     ' Respects the UserForm's design-time Width and Height properties
+    ' Works correctly with multi-monitor setups
     
     On Error GoTo CenterOnScreen
     
-    ' Get Excel application window position and size
+    ' Get the active worksheet window position and size (not the application window)
     Dim excelLeft As Long, excelTop As Long, excelWidth As Long, excelHeight As Long
     
-    ' Use Excel Application properties (simpler and more reliable)
-    excelLeft = Application.Left
-    excelTop = Application.Top  
-    excelWidth = Application.Width
-    excelHeight = Application.Height
+    ' Use ActiveWindow properties for multi-monitor compatibility
+    ' This centers on the actual worksheet window, not the Excel application frame
+    With Application.ActiveWindow
+        excelLeft = Application.Left + .Left
+        excelTop = Application.Top + .Top
+        excelWidth = .Width
+        excelHeight = .Height
+    End With
     
     ' Use the form's actual design-time dimensions (don't override them)
     Dim formWidth As Long, formHeight As Long
     formWidth = Me.Width
     formHeight = Me.Height
     
-    ' Calculate center position within Excel window using actual form size
+    ' Calculate center position within the active worksheet window
     Dim centerLeft As Long, centerTop As Long
     centerLeft = excelLeft + (excelWidth - formWidth) / 2
     centerTop = excelTop + (excelHeight - formHeight) / 2
@@ -151,7 +155,7 @@ Private Sub ApplyOptimalPositioning()
     Me.Top = centerTop
     ' DO NOT set Width or Height - respect design-time settings
     
-    Debug.Print "ApplyOptimalPositioning: Centered in Excel window - Left=" & Me.Left & ", Top=" & Me.Top & " (preserving design size " & formWidth & "x" & formHeight & ")"
+    Debug.Print "ApplyOptimalPositioning: Centered in active worksheet window - Left=" & Me.Left & ", Top=" & Me.Top & " (preserving design size " & formWidth & "x" & formHeight & ")"
     Exit Sub
     
 CenterOnScreen:
