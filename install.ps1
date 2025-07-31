@@ -2,7 +2,7 @@
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
-#   Uninstall: $env:TAXONOMY_UNINSTALL="true"; irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+#   Uninstall: (irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex
 
 [CmdletBinding()]
 param(
@@ -196,7 +196,7 @@ To uninstall: Run the same PowerShell command with -Uninstall flag
         Write-Host "🎯 IPG Taxonomy Extractor button will appear in IPG Tools group on Home tab" -ForegroundColor Gray
         Write-Host ""
         Write-Host "To uninstall later:" -ForegroundColor Yellow
-        Write-Host "`$env:TAXONOMY_UNINSTALL=`"true`"; irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`" | iex" -ForegroundColor Gray
+        Write-Host "(irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex" -ForegroundColor Gray
         Write-Host ""
 
     }
@@ -253,10 +253,13 @@ function Uninstall-AddIn {
     }
 }
 
-# Check for uninstall environment variable (for one-liner compatibility)
-if ($env:TAXONOMY_UNINSTALL -eq "true") {
+# Mode detection - default is INSTALL_MODE
+$ScriptMode = "INSTALL_MODE"
+
+# Check for uninstall mode marker (changed via string replacement)
+if ($ScriptMode -eq "UNINSTALL_MODE") {
     $Uninstall = $true
-    Write-Host "DEBUG: Environment variable detected, setting Uninstall=true" -ForegroundColor Yellow
+    Write-Host "DEBUG: Uninstall mode detected via string replacement" -ForegroundColor Yellow
 }
 
 # Main execution

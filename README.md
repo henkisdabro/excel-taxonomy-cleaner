@@ -26,7 +26,7 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 
 **To uninstall:**
 ```powershell
-$env:TAXONOMY_UNINSTALL="true"; irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+(irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex
 ```
 
 ## Manual Installation (Alternative)
