@@ -62,6 +62,7 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 - **Smart Label Display**: Shows truncated preview of selected data (12 chars + "...")
 - **Dynamic Button Captions**: Buttons show preview of each segment content
 - **Context-Aware Interface**: Adapts to your selected data automatically
+- **Smart Positioning**: Centers within Excel window while preserving your form size
 - Built-in "Undo Last" button for quick reversal
 - Keep dialog open to experiment with different extractions
 - Click buttons instead of typing numbers
@@ -182,6 +183,7 @@ Ready to streamline your taxonomy data extraction! 🚀
 - **Dynamic Button Captions**: Buttons show actual segment content from your data
 - **Smart Label Display**: Truncated preview (12 chars + "...") of selected data
 - **Context-Aware Parsing**: Automatically analyzes first selected cell
+- **Smart Positioning**: Centers UserForm within Excel window while respecting design dimensions
 - **PowerShell One-Liner Installation**: GitHub-hosted automated deployment
 - **Native AddIns Folder**: Optimal Excel integration and compatibility
 - **CustomUI Ribbon Support**: Embedded ribbon buttons for professional distribution

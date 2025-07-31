@@ -104,9 +104,54 @@ Private Sub UserForm_Initialize()
     Debug.Print "UserForm_Initialize called"
     Debug.Print "  cellData.OriginalText length: " & Len(cellData.OriginalText)
     
+    ' Apply simple, reliable positioning - center within Excel window
+    ApplyOptimalPositioning
+    
     ' Note: SetParsedData will handle interface updates
     ' Don't try to update interface here as cellData may not be set yet
 End Sub
+
+Private Sub ApplyOptimalPositioning()
+    ' Simple, reliable positioning: center the form within Excel's window
+    ' Respects the UserForm's design-time Width and Height properties
+    
+    On Error GoTo CenterOnScreen
+    
+    ' Get Excel application window position and size
+    Dim excelLeft As Long, excelTop As Long, excelWidth As Long, excelHeight As Long
+    
+    ' Use Excel Application properties (simpler and more reliable)
+    excelLeft = Application.Left
+    excelTop = Application.Top  
+    excelWidth = Application.Width
+    excelHeight = Application.Height
+    
+    ' Use the form's actual design-time dimensions (don't override them)
+    Dim formWidth As Long, formHeight As Long
+    formWidth = Me.Width
+    formHeight = Me.Height
+    
+    ' Calculate center position within Excel window using actual form size
+    Dim centerLeft As Long, centerTop As Long
+    centerLeft = excelLeft + (excelWidth - formWidth) / 2
+    centerTop = excelTop + (excelHeight - formHeight) / 2
+    
+    ' Apply ONLY the positioning (preserve original width/height)
+    Me.StartUpPosition = 0  ' Manual positioning
+    Me.Left = centerLeft
+    Me.Top = centerTop
+    ' DO NOT set Width or Height - respect design-time settings
+    
+    Debug.Print "ApplyOptimalPositioning: Centered in Excel window - Left=" & Me.Left & ", Top=" & Me.Top & " (preserving design size " & formWidth & "x" & formHeight & ")"
+    Exit Sub
+    
+CenterOnScreen:
+    ' Simple fallback: center on screen (also preserve size)
+    Debug.Print "ApplyOptimalPositioning: Error occurred, using center screen fallback"
+    Me.StartUpPosition = 1  ' Center on screen
+    ' DO NOT override Width/Height here either
+End Sub
+
 
 Private Sub UpdateInterface()
     ' DEBUG: Confirm this method is called
@@ -279,6 +324,10 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 ' - SMART DATA PREVIEW: Shows truncated view of your actual selected data
 ' - DYNAMIC BUTTON CAPTIONS: Buttons show previews of what each segment contains
 ' - CONTEXT-AWARE: Interface adapts to show your real data content
+' - SMART POSITIONING: Centers form within Excel window for optimal placement
+'   • Simple, reliable positioning using Excel's window properties
+'   • Always appears in the center of Excel's application window
+'   • Falls back to screen center if positioning fails
 ' - No typing required - just click the segment you want
 ' - Immediate visual feedback of both data content and extraction results
 ' - Much faster workflow for frequent use with live previews

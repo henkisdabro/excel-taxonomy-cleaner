@@ -16,6 +16,7 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - **Smart Data Preview**: Displays truncated view (12 chars + "...") of selected data
 - **Dynamic Button Captions**: Shows preview of each segment content on buttons
 - **Context-Aware Parsing**: Automatically parses first selected cell into individual segments
+- **Smart Positioning**: Centers UserForm within Excel window while respecting design-time dimensions
 - **Flexible Text Processing**: Extracts specific segments (1-9) or activation IDs from pipe-delimited data
 - **Batch Processing**: Processes multiple cells simultaneously with progress feedback
 - **Custom Undo System**: Full undo functionality since Excel's built-in undo doesn't work with VBA
@@ -29,6 +30,10 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - **Activation ID Extraction** (`ExtractActivationID`): Extracts text after colon characters
 - **Undo System** (`UndoTaxonomyCleaning`): Custom undo functionality with automatic value storage
 - **User Interface** (`TaxonomyExtractorForm`): Professional 9-button interface with dynamic content preview
+- **Smart Positioning System**: Simple, reliable UserForm positioning for optimal placement
+  - `ApplyOptimalPositioning`: Centers form within Excel window using Application properties
+  - Respects UserForm design-time Width and Height settings
+  - Falls back to screen center if positioning fails
 - **Comprehensive Validation**: Checks for text content, proper selections, and data format
 
 ## Development Environment
