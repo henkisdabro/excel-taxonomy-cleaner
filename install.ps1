@@ -1,6 +1,8 @@
 # Excel Taxonomy Cleaner v1.2.0 - One-Click Installation Script
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
-# Usage: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+# Usage: 
+#   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+#   Uninstall: $script = irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1"; Invoke-Expression "$script -Uninstall"
 
 [CmdletBinding()]
 param(
@@ -192,6 +194,9 @@ To uninstall: Run the same PowerShell command with -Uninstall flag
         Write-Host "📂 Add-in location: $AddInPath" -ForegroundColor Gray
         Write-Host "🏠 Native Excel AddIns folder used for optimal compatibility" -ForegroundColor Gray
         Write-Host "🎯 IPG Taxonomy Extractor button will appear in IPG Tools group on Home tab" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "To uninstall later:" -ForegroundColor Yellow
+        Write-Host "`$script = irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`"; Invoke-Expression `"`$script -Uninstall`"" -ForegroundColor Gray
         Write-Host ""
 
     }
