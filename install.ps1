@@ -106,46 +106,31 @@ function Install-AddIn {
         
         # Get all XLAM files in the AddIns directory
         $allXlamFiles = Get-ChildItem -Path $AddInsPath -Filter "*.xlam" -ErrorAction SilentlyContinue
-        Write-Status "Found $($allXlamFiles.Count) XLAM files in AddIns folder" "Gray"
         
         foreach ($file in $allXlamFiles) {
             $fileName = $file.Name
-            Write-Status "Checking file: $fileName" "Gray"
             $shouldDelete = $false
             
             # Check if it matches our taxonomy extractor patterns
-            if ($fileName -like "ipg_taxonomy_extractor_addon*") {
-                Write-Status "  Matches ipg_taxonomy_extractor_addon* pattern" "Gray"
+            if ($fileName -like "ipg_taxonomy_extractor_addon*" -or 
+                $fileName -like "TaxonomyExtractor*" -or 
+                $fileName -like "taxonomy_extractor*") {
                 $shouldDelete = $true
-            } elseif ($fileName -like "TaxonomyExtractor*") {
-                Write-Status "  Matches TaxonomyExtractor* pattern" "Gray"
-                $shouldDelete = $true
-            } elseif ($fileName -like "taxonomy_extractor*") {
-                Write-Status "  Matches taxonomy_extractor* pattern" "Gray"
-                $shouldDelete = $true
-            } else {
-                Write-Status "  Does not match any taxonomy extractor patterns" "Gray"
             }
             
             # Skip the current version we're about to install
             if ($fileName -eq $AddInName) {
-                Write-Status "  This is the current version ($AddInName) - keeping" "Cyan"
                 $shouldDelete = $false
-            } else {
-                Write-Status "  This is NOT the current version ($AddInName)" "Gray"
             }
             
             # Delete old versions
             if ($shouldDelete) {
-                Write-Status "  DELETING: $fileName" "Yellow"
                 try {
                     Remove-Item $file.FullName -Force -ErrorAction Stop
-                    Write-Status "  Successfully removed: $fileName" "Yellow"
+                    Write-Status "Removed old version: $fileName" "Yellow"
                 } catch {
-                    Write-Status "  Failed to remove $fileName`: $($_.Exception.Message)" "Red"
+                    Write-Status "Failed to remove $fileName`: $($_.Exception.Message)" "Red"
                 }
-            } else {
-                Write-Status "  KEEPING: $fileName" "Cyan"
             }
         }
 
@@ -206,10 +191,12 @@ HOW TO USE:
 1. Open Microsoft Excel
 2. Go to File → Options → Add-ins
 3. At the bottom, select "Excel Add-ins" and click "Go..."
-4. Browse and select: $AddInPath
+4. Look for "Excel Taxonomy Cleaner v1.4.0" in the list and CHECK the box
 5. Click OK - the add-in will load and ribbon button will appear
 
-Or simply restart Excel - the add-in should load automatically from the native AddIns folder!
+FALLBACK (if add-in doesn't appear automatically):
+- In step 4 above, click "Browse..." and navigate to: $AddInPath
+- Select the file and click OK, then check the box to enable it
 
 The add-in provides a professional interface for extracting segments from pipe-delimited taxonomy data.
 The IPG Taxonomy Extractor button will appear in the IPG Tools group on Excel's Home tab.
@@ -232,9 +219,12 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Yellow
         Write-Host "1. Open Microsoft Excel" -ForegroundColor White
-        Write-Host "2. Go to File → Options → Add-ins → Excel Add-ins → Go → Browse" -ForegroundColor White
-        Write-Host "3. Select: $AddInPath" -ForegroundColor Gray
-        Write-Host "4. The add-in will load with its ribbon button" -ForegroundColor White
+        Write-Host "2. Go to File → Options → Add-ins → Excel Add-ins → Go" -ForegroundColor White
+        Write-Host "3. Look for 'Excel Taxonomy Cleaner v1.4.0' and CHECK the box" -ForegroundColor White
+        Write-Host "4. Click OK - the ribbon button will appear!" -ForegroundColor White
+        Write-Host ""
+        Write-Host "Fallback (if not auto-detected):" -ForegroundColor Yellow
+        Write-Host "In step 3, click 'Browse...' and select: $AddInPath" -ForegroundColor Gray
         Write-Host ""
         Write-Host "📄 Full instructions saved to desktop: Excel Taxonomy Cleaner - Instructions.txt" -ForegroundColor Green
         Write-Host "📂 Add-in location: $AddInPath" -ForegroundColor Gray
