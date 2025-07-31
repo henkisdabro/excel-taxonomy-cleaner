@@ -2,7 +2,34 @@
 
 A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, with support for activation ID extraction and custom undo functionality.
 
-## Quick Start
+## 🚀 **One-Click Installation** (Recommended)
+
+Install instantly with this PowerShell one-liner:
+
+```powershell
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+```
+
+**What this does:**
+- ✅ Downloads latest XLAM version from GitHub Releases
+- ✅ Installs to native Excel AddIns folder (optimal compatibility)
+- ✅ Configures security settings (trusted location + unblocked file)
+- ✅ Registers with Excel for automatic loading
+- ✅ Works without admin rights
+- ✅ Complete setup in under 30 seconds
+
+**After installation:**
+- The add-in loads automatically when Excel starts
+- The **IPG Taxonomy Extractor** button appears in the **IPG Tools** group on the Home tab
+- If ribbon doesn't appear, see `RIBBON_SOLUTION.md` for CustomUI XML setup
+- Alternative access: File → Options → Add-ins → Excel Add-ins → Go → Browse
+
+**To uninstall:**
+```powershell
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex -Args "-Uninstall"
+```
+
+## Manual Installation (Alternative)
 
 1. **Copy the main code**: Use `TaxonomyExtractorModule.vb` - copy this code into an Excel VBA module
 2. **Create the UserForm**: Follow instructions in `TaxonomyExtractorForm.vb` to create the 9-button interface
@@ -23,9 +50,12 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 ## Files
 
 - **`TaxonomyExtractorModule.vb`** - Main VBA code with all functionality
-- **`TaxonomyExtractorForm.vb`** - UserForm setup instructions and button code
-- **`ADDON_INSTRUCTIONS.md`** - Complete guide for creating Excel Add-in
-- **`CLAUDE.md`** - Development documentation
+- **`TaxonomyExtractorForm.vb`** - UserForm setup instructions and button code  
+- **`install.ps1`** - PowerShell installation script for GitHub one-liner deployment
+- **`RIBBON_SOLUTION.md`** - Complete guide for embedding CustomUI ribbon buttons in XLAM
+- **`DEPLOYMENT_CHECKLIST.md`** - Production deployment guide and testing procedures
+- **`ADDON_INSTRUCTIONS.md`** - Manual Excel Add-in creation guide
+- **`CLAUDE.md`** - Development documentation and architecture notes
 
 ## Interface Options
 
@@ -64,10 +94,11 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 - **Smart**: Undo data cleared after each new operation
 
 ### 📦 Excel Add-in Ready
-- **Professional Distribution**: Save as .xlam file for easy sharing
+- **Professional Distribution**: PowerShell one-liner installation from GitHub
 - **Universal Access**: Available in all Excel workbooks once installed
-- **Ribbon Integration**: Add custom button for instant access
-- **Follow instructions**: Complete guide in `ADDON_INSTRUCTIONS.md`
+- **Ribbon Integration**: CustomUI XML embedded in XLAM for permanent ribbon buttons
+- **Native Folder**: Installs to `%APPDATA%\Microsoft\AddIns` for optimal Excel integration
+- **Follow instructions**: See `RIBBON_SOLUTION.md` for ribbon setup and `DEPLOYMENT_CHECKLIST.md` for distribution
 
 ## Installation
 
@@ -95,7 +126,7 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 
 ### With UserForm Interface
 1. **Select cells** with pipe-delimited data
-2. **Click ribbon button** (or run `TaxonomyExtractor`)
+2. **Click "IPG Taxonomy Extractor"** button in the IPG Tools group on Home tab
 3. **See your data preview** - label shows truncated content, buttons show segment previews
 4. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
 5. **Review results** - keep dialog open for more extractions
@@ -153,6 +184,9 @@ Ready to streamline your taxonomy data extraction! 🚀
 - **Dynamic Button Captions**: Buttons show actual segment content from your data
 - **Smart Label Display**: Truncated preview (12 chars + "...") of selected data
 - **Context-Aware Parsing**: Automatically analyzes first selected cell
+- **PowerShell One-Liner Installation**: GitHub-hosted automated deployment
+- **Native AddIns Folder**: Optimal Excel integration and compatibility
+- **CustomUI Ribbon Support**: Embedded ribbon buttons for professional distribution
 - **Improved Error Handling**: More robust validation and processing
 - **Silent Operation**: No unnecessary confirmation dialogs
 - **Performance Optimizations**: Better memory management and screen updating

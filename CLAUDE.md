@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
 
-**Version 1.2.0 introduces enhanced UI capabilities with smart data preview, dynamic button captions, and context-aware parsing for a truly professional user experience.**
+**Version 1.2.0 introduces enhanced UI capabilities with smart data preview, dynamic button captions, context-aware parsing, and modern GitHub-based PowerShell deployment for a truly professional user experience.**
 
 ## Architecture
 
@@ -40,8 +40,11 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 ### File Structure
 - **TaxonomyExtractorModule.vb**: Main VBA module with core functionality and undo system
 - **TaxonomyExtractorForm.vb**: UserForm code and detailed setup instructions
-- **ADDON_INSTRUCTIONS.md**: Complete guide for creating and installing Excel Add-in
-- **README.md**: User-friendly quick start guide
+- **install.ps1**: PowerShell installation script for GitHub one-liner deployment
+- **RIBBON_SOLUTION.md**: Complete guide for embedding CustomUI ribbon buttons in XLAM files
+- **DEPLOYMENT_CHECKLIST.md**: Production deployment guide and testing procedures
+- **ADDON_INSTRUCTIONS.md**: Manual Excel Add-in creation guide (legacy approach)
+- **README.md**: User-friendly quick start guide with modern installation methods
 
 ### Testing the VBA Code
 1. Open Microsoft Excel
@@ -142,25 +145,42 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 
 ## Deployment Options
 
-### Option 1: Basic Workbook (Quick Setup)
+### Option 1: GitHub PowerShell Installation (Recommended)
+**User Experience:**
+```powershell
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+```
+
+**What it does:**
+1. Downloads latest XLAM from GitHub Releases automatically
+2. Installs to native Excel AddIns folder (`%APPDATA%\Microsoft\AddIns`)
+3. Configures security settings (trusted location + file unblocking)
+4. Registers with Excel for automatic loading
+5. Works without admin rights
+6. Creates desktop instructions file
+
+**Requirements:**
+- XLAM file must include embedded CustomUI ribbon XML (see `RIBBON_SOLUTION.md`)
+- XLAM file uploaded as GitHub Release asset
+- PowerShell script hosted in repository root
+
+### Option 2: Basic Workbook (Development/Testing)
 1. Copy code from `TaxonomyExtractorModule.vb` into an Excel VBA module
 2. Create UserForm following instructions in `TaxonomyExtractorForm.vb`
 3. Save workbook as `.xlsm` (macro-enabled) format
-4. Assign `TaxonomyExtractor` to a ribbon button
+4. Manual ribbon button creation or use InputBox fallback
 
-### Option 2: Excel Add-in (Professional Distribution)
-1. Follow Option 1 setup
+### Option 3: Manual XLAM Installation (Legacy)
+1. Follow Option 2 setup
 2. Save as Excel Add-in (`.xlam`) format
-3. Install via File > Options > Add-ins
-4. Available in all Excel workbooks automatically
-5. Follow complete instructions in `ADDON_INSTRUCTIONS.md`
+3. Manually install via File > Options > Add-ins
+4. Follow complete instructions in `ADDON_INSTRUCTIONS.md`
 
-### Recommended Setup
-- Use Excel Add-in format for professional deployment
-- Create ribbon button for easy access
-- Test with sample data before production use
-- Take advantage of custom undo system for safe experimentation
-- UserForm provides much better user experience than InputBox fallback
+### Recommended Modern Workflow
+1. **Development**: Use Option 2 for coding and testing
+2. **Ribbon Integration**: Embed CustomUI XML using Custom UI Editor
+3. **Distribution**: Use Option 1 for professional deployment
+4. **Maintenance**: Update XLAM file in GitHub Releases, users auto-update
 
 ### Advanced Features
 - **Custom Undo System**: Works where Excel's built-in Undo cannot (VBA changes)
@@ -170,11 +190,29 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Context-Aware Interface**: Shows your actual data content in truncated form
 - **Dynamic Button Previews**: See what each segment contains before extracting
 - **Smart Data Parsing**: Automatically breaks down first selected cell into individual segments
-- **Add-in Distribution**: Package as .xlam for easy sharing and installation
+- **GitHub-based Distribution**: PowerShell one-liner installation with auto-updates
+- **Native AddIns Integration**: Installs to optimal Excel folder for best compatibility
+- **CustomUI Ribbon Support**: Embedded ribbon buttons that survive distribution
+- **Security-Aware Deployment**: Automatic trusted location setup and file unblocking
 - **Activation ID Support**: Extract unique identifiers from colon-delimited text
 - **9 Segment Support**: Handle complex taxonomy structures up to 9 segments
 
 ## Technical Notes
+
+### Modern Distribution Architecture
+- **PowerShell Script**: `install.ps1` handles GitHub Releases API integration
+- **Native Folder**: Uses `%APPDATA%\Microsoft\AddIns` for optimal Excel compatibility
+- **Security Configuration**: Automatic trusted location setup and file unblocking
+- **Registry Integration**: Registers add-in for automatic Excel loading
+- **GitHub Releases**: XLAM file distributed as binary release asset
+
+### Ribbon Button Integration
+- **CustomUI XML**: Must be embedded in XLAM file using Custom UI Editor
+- **IPG Branding**: Button appears as "IPG Taxonomy Extractor" in "IPG Tools" group on Home tab
+- **Callback Functions**: Ribbon buttons call `RibbonTaxonomyExtractor` function in the module
+- **Pre-embedded**: Ribbon callbacks already included in `TaxonomyExtractorModule.vb`
+- **Not Automated**: PowerShell script cannot create ribbon buttons - must be pre-embedded
+- **Professional UI**: Embedded ribbon survives distribution and provides native Excel integration
 
 ### UserForm Naming
 - UserForm must be named exactly `TaxonomyExtractorForm` in the Excel VBA project
@@ -246,7 +284,7 @@ User Selection → ParseFirstCellData → SetParsedData → UserForm Display →
 #### Version Evolution
 - **v1.0**: Basic functionality with InputBox
 - **v1.1**: Added UserForm with static buttons
-- **v1.2**: Enhanced with dynamic content and smart preview
+- **v1.2**: Enhanced with dynamic content, smart preview, and GitHub PowerShell distribution
 
 #### Testing Approach
 - Always test with real taxonomy data, not just simple examples

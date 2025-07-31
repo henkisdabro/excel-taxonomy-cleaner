@@ -48,6 +48,9 @@ Dim UndoArray() As UndoData
 Dim UndoCount As Integer
 Dim LastSegmentNumber As Integer
 
+' Global variable to hold ribbon reference (optional)
+Public myRibbon As IRibbonUI
+
 ' Main macro to be called when button is pressed
 Sub TaxonomyExtractor()
     ' Check if cells are selected
@@ -409,4 +412,27 @@ Sub TestActivationIDDirect()
     Range("A1").Value = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
     Range("A1").Select
     Call ExtractActivationID
+End Sub
+
+'================================================================================
+' RIBBON CALLBACK FUNCTIONS
+'================================================================================
+' These functions are called by the CustomUI ribbon buttons embedded in the XLAM file.
+' DO NOT MODIFY the function names - they must match the onAction attributes in customUI.xml
+
+' Ribbon callback function - called when IPG Taxonomy Extractor ribbon button is clicked
+Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
+    On Error GoTo ErrorHandler
+    
+    ' Call the main extractor function
+    TaxonomyExtractor
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.2.0"
+End Sub
+
+' Optional: Ribbon load callback - called when the ribbon is loaded
+Public Sub RibbonOnLoad(ribbon As IRibbonUI)
+    Set myRibbon = ribbon
 End Sub
