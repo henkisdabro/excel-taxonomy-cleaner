@@ -106,34 +106,46 @@ function Install-AddIn {
         
         # Get all XLAM files in the AddIns directory
         $allXlamFiles = Get-ChildItem -Path $AddInsPath -Filter "*.xlam" -ErrorAction SilentlyContinue
+        Write-Status "Found $($allXlamFiles.Count) XLAM files in AddIns folder" "Gray"
         
         foreach ($file in $allXlamFiles) {
             $fileName = $file.Name
+            Write-Status "Checking file: $fileName" "Gray"
             $shouldDelete = $false
             
             # Check if it matches our taxonomy extractor patterns
             if ($fileName -like "ipg_taxonomy_extractor_addon*") {
+                Write-Status "  Matches ipg_taxonomy_extractor_addon* pattern" "Gray"
                 $shouldDelete = $true
             } elseif ($fileName -like "TaxonomyExtractor*") {
+                Write-Status "  Matches TaxonomyExtractor* pattern" "Gray"
                 $shouldDelete = $true
             } elseif ($fileName -like "taxonomy_extractor*") {
+                Write-Status "  Matches taxonomy_extractor* pattern" "Gray"
                 $shouldDelete = $true
+            } else {
+                Write-Status "  Does not match any taxonomy extractor patterns" "Gray"
             }
             
             # Skip the current version we're about to install
             if ($fileName -eq $AddInName) {
+                Write-Status "  This is the current version ($AddInName) - keeping" "Cyan"
                 $shouldDelete = $false
-                Write-Status "Keeping current version: $fileName" "Cyan"
+            } else {
+                Write-Status "  This is NOT the current version ($AddInName)" "Gray"
             }
             
             # Delete old versions
             if ($shouldDelete) {
+                Write-Status "  DELETING: $fileName" "Yellow"
                 try {
                     Remove-Item $file.FullName -Force -ErrorAction Stop
-                    Write-Status "Removed old version: $fileName" "Yellow"
+                    Write-Status "  Successfully removed: $fileName" "Yellow"
                 } catch {
-                    Write-Status "Failed to remove $fileName`: $($_.Exception.Message)" "Red"
+                    Write-Status "  Failed to remove $fileName`: $($_.Exception.Message)" "Red"
                 }
+            } else {
+                Write-Status "  KEEPING: $fileName" "Cyan"
             }
         }
 
