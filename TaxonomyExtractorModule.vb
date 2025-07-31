@@ -93,9 +93,9 @@ Sub TaxonomyExtractor()
     
     ' Show the UserForm and pass the parsed data
     Debug.Print "TaxonomyExtractor: Calling SetParsedData..."
-    TaxonomyCleanerForm_2.SetParsedData parsedData
+    TaxonomyExtractorForm.SetParsedData parsedData
     Debug.Print "TaxonomyExtractor: Showing form..."
-    TaxonomyCleanerForm_2.Show
+    TaxonomyExtractorForm.Show
 End Sub
 
 ' Simple input dialog interface (fallback when UserForm doesn't exist)

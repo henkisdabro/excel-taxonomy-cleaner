@@ -53,7 +53,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 
 Your add-in contains:
 - **`TaxonomyExtractorModule.vb`** - Main VBA code
-- **`TaxonomyCleanerForm_2`** - UserForm with buttons
+- **`TaxonomyExtractorForm`** - UserForm with buttons
 - **Ribbon customization** - Your custom button
 
 ## Distribution
@@ -70,11 +70,11 @@ To share with others:
 - Try **Browse** to find the `.xlam` file again
 
 ### Button not working
-- Make sure UserForm is named exactly `TaxonomyCleanerForm_2`
+- Make sure UserForm is named exactly `TaxonomyExtractorForm`
 - Verify all button names match the VBA code
 
 ### "File not found" error
-- The module code is already updated for `TaxonomyCleanerForm_2`
+- The module code is already updated for `TaxonomyExtractorForm`
 - Make sure the UserForm exists in the add-in
 
 ## Benefits of Add-in Format

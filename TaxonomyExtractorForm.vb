@@ -1,14 +1,14 @@
 '================================================================================
-' EXCEL TAXONOMY EXTRACTOR - UserForm Code (TaxonomyCleanerForm_2)
+' EXCEL TAXONOMY EXTRACTOR - UserForm Code (TaxonomyExtractorForm)
 '================================================================================
 ' 
 ' This file contains the VBA code for the working UserForm with 9 segment buttons + Activation ID button.
-' This is the code that should be placed in your UserForm named "TaxonomyCleanerForm_2"
+' This is the code that should be placed in your UserForm named "TaxonomyExtractorForm"
 '
 ' USERFORM SETUP (Already completed if your form is working):
 ' ==========================================================
 ' 
-' UserForm Name: TaxonomyCleanerForm_2
+' UserForm Name: TaxonomyExtractorForm
 ' UserForm Properties:
 '    - Width: 480
 '    - Height: 320
@@ -73,7 +73,7 @@
 '
 ' VBA CODE FOR THE USERFORM:
 ' ==========================
-' After creating all controls above, copy and paste this code into the UserForm module (double-click TaxonomyCleanerForm_2):
+' After creating all controls above, copy and paste this code into the UserForm module (double-click TaxonomyExtractorForm):
 ' 
 ' IMPORTANT: The code below expects the exact control names listed above.
 ' If lblInstructions doesn't exist, the line lblInstructions.Caption will cause an error.
@@ -304,7 +304,7 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 '
 ' QUICK SETUP GUIDE FOR SMART INTERFACE:
 ' =======================================
-' 1. Insert UserForm → Name it "TaxonomyCleanerForm_2"
+' 1. Insert UserForm → Name it "TaxonomyExtractorForm"
 ' 2. Add Label → Name: "lblInstructions" (for data preview)
 ' 3. Add 9 CommandButtons → Names: "btn1" through "btn9" (for segments)
 ' 4. Add 1 CommandButton → Name: "btnActivationID" (for activation ID)

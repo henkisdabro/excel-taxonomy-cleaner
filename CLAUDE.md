@@ -177,7 +177,7 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 ## Technical Notes
 
 ### UserForm Naming
-- UserForm must be named exactly `TaxonomyCleanerForm_2` in the Excel VBA project
+- UserForm must be named exactly `TaxonomyExtractorForm` in the Excel VBA project
 - This name is referenced in the module code for proper functionality
 - UserForm must have `SetParsedData` method to receive parsed cell data
 - If UserForm doesn't exist, code automatically falls back to InputBox interface
