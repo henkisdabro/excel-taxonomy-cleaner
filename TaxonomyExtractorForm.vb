@@ -304,6 +304,46 @@ Private Sub UpdateButtonCaptions()
     Debug.Print "UpdateButtonCaptions completed"
 End Sub
 
+' New method for modeless operation - called when user changes selection
+Public Sub UpdateForNewSelection(target As Range)
+    On Error GoTo ErrorHandler
+    
+    ' Only update if the selection contains valid taxonomy data
+    If target.Cells.Count > 0 And Len(Trim(target.Cells(1).Value)) > 0 Then
+        Dim firstCellContent As String
+        firstCellContent = target.Cells(1).Value
+        
+        ' Check if it looks like taxonomy data (contains pipes)
+        If InStr(firstCellContent, "|") > 0 Then
+            ' Parse the new data
+            Dim newParsedData As ParsedCellData
+            newParsedData = ParseFirstCellData(firstCellContent)
+            
+            ' Update our internal data
+            cellData = newParsedData
+            
+            ' Refresh the interface
+            UpdateInterface
+            
+            Debug.Print "UpdateForNewSelection: Updated form for new selection: " & firstCellContent
+        Else
+            ' Not taxonomy data, but provide feedback
+            lblInstructions.Caption = "Selected: " & firstCellContent & " (no pipe-delimited data)"
+            Debug.Print "UpdateForNewSelection: Selected data has no pipes, not updating buttons"
+        End If
+    Else
+        ' Empty selection
+        lblInstructions.Caption = "Selected: (empty selection)"
+        Debug.Print "UpdateForNewSelection: Empty selection"
+    End If
+    
+    Exit Sub
+
+ErrorHandler:
+    Debug.Print "UpdateForNewSelection Error: " & Err.Description
+    ' Don't show message box in modeless mode - would interrupt user workflow
+End Sub
+
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
 Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
 Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
@@ -317,6 +357,13 @@ Private Sub btnActivationID_Click(): Call ExtractActivationID: End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
 Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub
+
+' Cleanup when form is terminated (important for modeless operation)
+Private Sub UserForm_Terminate()
+    ' Cleanup application events if this was used in modeless mode
+    Call CleanupModelessEvents
+    Debug.Print "UserForm_Terminate: Cleaned up modeless events"
+End Sub
 
 ' BENEFITS OF THIS SMART USERFORM:
 ' =================================

@@ -19,7 +19,7 @@ This is the **proven method that works** for embedding ribbon buttons in XLAM fi
 ### Step 2: Open XLAM in Office RibbonX Editor
 
 1. **Launch** Office RibbonX Editor
-2. **Open** your `TaxonomyExtractor.xlam` file in the editor
+2. **Open** your `ipg_taxonomy_extractor_addonvX.Y.Z.xlam` file in the editor
 3. **Insert** → Office 2010+ Custom UI Part
 4. **Replace** the default XML with this IPG-branded CustomUI:
 
@@ -83,17 +83,4 @@ After completing these steps:
 
 ## 🎯 **Final Distribution**
 
-Once your XLAM file contains the embedded ribbon:
-
-```powershell
-# Users install with:
-irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
-```
-
-The PowerShell installer handles:
-- ✅ Downloads the ribbon-enabled XLAM from GitHub Releases
-- ✅ Installs to native Excel AddIns folder
-- ✅ Configures security and trust settings
-- ✅ Registers for automatic loading
-
-**Result**: Users get the IPG Taxonomy Extractor button automatically!
+Once your XLAM file contains the embedded ribbon, follow the Developer instructions in README.md for details on how to deploy and distribute the file.

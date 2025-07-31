@@ -51,6 +51,9 @@ Dim LastSegmentNumber As Integer
 ' Global variable to hold ribbon reference (optional)
 Public myRibbon As IRibbonUI
 
+' Global variable for modeless form event handling
+Public AppEvents As clsAppEvents
+
 
 ' Main macro to be called when button is pressed
 Sub TaxonomyExtractor()
@@ -100,6 +103,51 @@ Sub TaxonomyExtractor()
     TaxonomyExtractorForm.SetParsedData parsedData
     Debug.Print "TaxonomyExtractor: Showing form..."
     TaxonomyExtractorForm.Show
+End Sub
+
+' Modeless version - allows interaction with Excel while form is open
+Sub TaxonomyExtractorModeless()
+    ' Check if cells are selected
+    If Selection.Cells.Count = 0 Then
+        MsgBox "Please select cells containing text before running this tool.", vbExclamation, "No Selection"
+        Exit Sub
+    End If
+    
+    ' Check if selection contains text
+    Dim hasText As Boolean
+    hasText = False
+    Dim cell As Range
+    For Each cell In Selection
+        If Len(Trim(cell.Value)) > 0 Then
+            hasText = True
+            Exit For
+        End If
+    Next cell
+    
+    If Not hasText Then
+        MsgBox "Please select cells that contain text.", vbExclamation, "No Text Found"
+        Exit Sub
+    End If
+    
+    ' Initialize application events for selection tracking
+    Set AppEvents = New clsAppEvents
+    Set AppEvents.App = Application
+    
+    ' Parse the first selected cell
+    Dim firstCellContent As String
+    firstCellContent = Selection.Cells(1).Value
+    
+    Dim parsedData As ParsedCellData
+    parsedData = ParseFirstCellData(firstCellContent)
+    
+    ' Show the UserForm as modeless and pass the parsed data
+    TaxonomyExtractorForm.SetParsedData parsedData
+    TaxonomyExtractorForm.Show vbModeless
+    
+    ' Keep Excel window active and responsive
+    On Error Resume Next
+    AppActivate Application.Caption
+    On Error GoTo 0
 End Sub
 
 ' Simple input dialog interface (fallback when UserForm doesn't exist)
@@ -447,6 +495,28 @@ Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
     
 ErrorHandler:
     MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"
+End Sub
+
+' Ribbon callback function - called when IPG Taxonomy Extractor (Modeless) ribbon button is clicked
+Public Sub RibbonTaxonomyExtractorModeless(control As IRibbonControl)
+    On Error GoTo ErrorHandler
+    
+    ' Call the modeless extractor function
+    TaxonomyExtractorModeless
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"
+End Sub
+
+' Cleanup function for modeless form - called when UserForm is closed
+Public Sub CleanupModelessEvents()
+    On Error Resume Next
+    If Not AppEvents Is Nothing Then
+        AppEvents.Cleanup
+        Set AppEvents = Nothing
+    End If
+    On Error GoTo 0
 End Sub
 
 ' Optional: Ribbon load callback - called when the ribbon is loaded
