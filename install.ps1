@@ -104,16 +104,19 @@ function Install-AddIn {
         # Remove old versions before installing new one
         Write-Status "Cleaning up old versions..."
         $oldVersionPatterns = @(
-            "ipg_taxonomy_extractor_addonv1.0.0.xlam",
-            "ipg_taxonomy_extractor_addonv1.1.0.xlam", 
-            "ipg_taxonomy_extractor_addonv1.2.0.xlam",
-            "TaxonomyExtractor*.xlam",
-            "taxonomy_extractor*.xlam"
+            "ipg_taxonomy_extractor_addonv*.xlam",  # Catches all versioned files
+            "TaxonomyExtractor*.xlam",               # Legacy naming patterns
+            "taxonomy_extractor*.xlam"               # Alternative naming patterns
         )
         
         foreach ($pattern in $oldVersionPatterns) {
             $oldFiles = Get-ChildItem -Path $AddInsPath -Name $pattern -ErrorAction SilentlyContinue
             foreach ($oldFile in $oldFiles) {
+                # Skip the current version we're about to install
+                if ($oldFile -eq $AddInName) {
+                    continue
+                }
+                
                 $oldFilePath = Join-Path $AddInsPath $oldFile
                 if (Test-Path $oldFilePath) {
                     Remove-Item $oldFilePath -Force -ErrorAction SilentlyContinue
