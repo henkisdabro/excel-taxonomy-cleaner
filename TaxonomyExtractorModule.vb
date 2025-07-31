@@ -212,20 +212,27 @@ Function ParseFirstCellData(cellContent As String) As ParsedCellData
         result.ActivationID = ""
     End If
     
-    ' Split main content by pipes
-    Dim segments() As String
-    segments = Split(mainContent, "|")
-    
-    ' Assign segments (with bounds checking)
-    If UBound(segments) >= 0 Then result.Segment1 = Trim(segments(0))
-    If UBound(segments) >= 1 Then result.Segment2 = Trim(segments(1))
-    If UBound(segments) >= 2 Then result.Segment3 = Trim(segments(2))
-    If UBound(segments) >= 3 Then result.Segment4 = Trim(segments(3))
-    If UBound(segments) >= 4 Then result.Segment5 = Trim(segments(4))
-    If UBound(segments) >= 5 Then result.Segment6 = Trim(segments(5))
-    If UBound(segments) >= 6 Then result.Segment7 = Trim(segments(6))
-    If UBound(segments) >= 7 Then result.Segment8 = Trim(segments(7))
-    If UBound(segments) >= 8 Then result.Segment9 = Trim(segments(8))
+    ' Only parse segments if there are actual pipe characters
+    ' Without pipes, this is not taxonomy data and all segments should be empty
+    If InStr(mainContent, "|") > 0 Then
+        ' Split main content by pipes
+        Dim segments() As String
+        segments = Split(mainContent, "|")
+        
+        ' Assign segments (with bounds checking)
+        If UBound(segments) >= 0 Then result.Segment1 = Trim(segments(0))
+        If UBound(segments) >= 1 Then result.Segment2 = Trim(segments(1))
+        If UBound(segments) >= 2 Then result.Segment3 = Trim(segments(2))
+        If UBound(segments) >= 3 Then result.Segment4 = Trim(segments(3))
+        If UBound(segments) >= 4 Then result.Segment5 = Trim(segments(4))
+        If UBound(segments) >= 5 Then result.Segment6 = Trim(segments(5))
+        If UBound(segments) >= 6 Then result.Segment7 = Trim(segments(6))
+        If UBound(segments) >= 7 Then result.Segment8 = Trim(segments(7))
+        If UBound(segments) >= 8 Then result.Segment9 = Trim(segments(8))
+    Else
+        ' No pipes found - leave all segments empty (they default to empty strings)
+        ' This will cause all buttons to show "N/A" as intended
+    End If
     
     ParseFirstCellData = result
 End Function
