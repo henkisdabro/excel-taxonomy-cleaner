@@ -4,6 +4,13 @@
 ' 
 ' This file contains the VBA code for the working UserForm with 9 segment buttons + Activation ID button.
 ' This is the code that should be placed in your UserForm named "TaxonomyExtractorForm"
+
+' Windows API functions for screen metrics (must be at module level)
+#If VBA7 Then
+    Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+#Else
+    Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+#End If
 '
 ' USERFORM SETUP (Already completed if your form is working):
 ' ==========================================================
@@ -121,50 +128,86 @@ Private Sub UserForm_Initialize()
 End Sub
 
 Private Sub ApplyOptimalPositioning()
-    ' Smart positioning: center the form within the active Excel worksheet window
+    ' Center the form within Excel's main window on the correct monitor
     ' Respects the UserForm's design-time Width and Height properties
-    ' Works correctly with multi-monitor setups
+    ' Includes bounds checking to prevent off-screen positioning
     
     On Error GoTo CenterOnScreen
     
-    ' Get the active worksheet window position and size (not the application window)
+    ' Get Excel application window position and size (this is the main Excel window)
     Dim excelLeft As Long, excelTop As Long, excelWidth As Long, excelHeight As Long
+    excelLeft = Application.Left
+    excelTop = Application.Top
+    excelWidth = Application.Width
+    excelHeight = Application.Height
     
-    ' Use ActiveWindow properties for multi-monitor compatibility
-    ' This centers on the actual worksheet window, not the Excel application frame
-    With Application.ActiveWindow
-        excelLeft = Application.Left + .Left
-        excelTop = Application.Top + .Top
-        excelWidth = .Width
-        excelHeight = .Height
-    End With
-    
-    ' Use the form's actual design-time dimensions (don't override them)
+    ' Get the form's design-time dimensions (don't override them)
     Dim formWidth As Long, formHeight As Long
     formWidth = Me.Width
     formHeight = Me.Height
     
-    ' Calculate center position within the active worksheet window
+    ' Calculate center position within Excel window
     Dim centerLeft As Long, centerTop As Long
     centerLeft = excelLeft + (excelWidth - formWidth) / 2
     centerTop = excelTop + (excelHeight - formHeight) / 2
     
-    ' Apply ONLY the positioning (preserve original width/height)
+    ' Get system metrics for bounds checking
+    Dim screenWidth As Long, screenHeight As Long
+    screenWidth = GetSystemMetrics(0)  ' SM_CXSCREEN - primary monitor width
+    screenHeight = GetSystemMetrics(1) ' SM_CYSCREEN - primary monitor height
+    
+    ' For multi-monitor setups, we need virtual screen dimensions
+    Dim virtualLeft As Long, virtualTop As Long, virtualWidth As Long, virtualHeight As Long
+    virtualLeft = GetSystemMetrics(76)   ' SM_XVIRTUALSCREEN
+    virtualTop = GetSystemMetrics(77)    ' SM_YVIRTUALSCREEN  
+    virtualWidth = GetSystemMetrics(78)  ' SM_CXVIRTUALSCREEN
+    virtualHeight = GetSystemMetrics(79) ' SM_CYVIRTUALSCREEN
+    
+    ' If virtual screen metrics failed, use primary screen
+    If virtualWidth = 0 Or virtualHeight = 0 Then
+        virtualLeft = 0
+        virtualTop = 0
+        virtualWidth = screenWidth
+        virtualHeight = screenHeight
+    End If
+    
+    ' Bounds checking to ensure window stays within virtual screen bounds
+    Dim minMargin As Long
+    minMargin = 50  ' Minimum distance from screen edges
+    
+    ' Ensure the window stays within the virtual screen bounds
+    If centerLeft < virtualLeft + minMargin Then
+        centerLeft = virtualLeft + minMargin
+    ElseIf centerLeft + formWidth > virtualLeft + virtualWidth - minMargin Then
+        centerLeft = virtualLeft + virtualWidth - formWidth - minMargin
+    End If
+    
+    If centerTop < virtualTop + minMargin Then
+        centerTop = virtualTop + minMargin
+    ElseIf centerTop + formHeight > virtualTop + virtualHeight - minMargin Then
+        centerTop = virtualTop + virtualHeight - formHeight - minMargin
+    End If
+    
+    ' Final sanity check - if position is still invalid, fall back
+    If centerLeft < virtualLeft Or centerTop < virtualTop Or _
+       centerLeft + formWidth > virtualLeft + virtualWidth Or _
+       centerTop + formHeight > virtualTop + virtualHeight Then
+        GoTo CenterOnScreen
+    End If
+    
+    ' Apply the calculated position
     Me.StartUpPosition = 0  ' Manual positioning
     Me.Left = centerLeft
     Me.Top = centerTop
-    ' DO NOT set Width or Height - respect design-time settings
     
-    Debug.Print "ApplyOptimalPositioning: Centered in active worksheet window - Left=" & Me.Left & ", Top=" & Me.Top & " (preserving design size " & formWidth & "x" & formHeight & ")"
+    Debug.Print "ApplyOptimalPositioning: Positioned at (" & centerLeft & ", " & centerTop & ") within Excel window (" & excelLeft & ", " & excelTop & ", " & excelWidth & "x" & excelHeight & ") on virtual screen (" & virtualLeft & ", " & virtualTop & ", " & virtualWidth & "x" & virtualHeight & ")"
     Exit Sub
     
 CenterOnScreen:
-    ' Simple fallback: center on screen (also preserve size)
-    Debug.Print "ApplyOptimalPositioning: Error occurred, using center screen fallback"
+    ' Fallback: center on primary screen
+    Debug.Print "ApplyOptimalPositioning: Using fallback - center on primary screen"
     Me.StartUpPosition = 1  ' Center on screen
-    ' DO NOT override Width/Height here either
 End Sub
-
 
 Private Sub UpdateInterface()
     ' DEBUG: Confirm this method is called
