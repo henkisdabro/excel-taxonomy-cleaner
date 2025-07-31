@@ -27,6 +27,47 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 **To uninstall:**
 Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
 
+## 🔄 Upgrading to a New Version
+
+### Automatic Upgrade (Recommended)
+```powershell
+# Simply run the installer again - it handles everything
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+```
+
+**What the installer does automatically:**
+- ✅ Downloads the latest version from GitHub
+- ✅ Removes all old versions from your AddIns folder
+- ✅ Installs the new version
+- ✅ Updates registry entries
+- ✅ Preserves your settings
+
+### Manual Upgrade
+If you prefer manual control:
+
+1. **Download new version** from [Releases](https://github.com/henkisdabro/excel-taxonomy-cleaner/releases/latest)
+2. **In Excel**: File → Options → Add-ins → Excel Add-ins → Go
+3. **Uncheck old version** (e.g., previous version)
+4. **Click Browse** → Navigate to new XLAM file → OK
+5. **Check the new version** → OK
+
+**After Upgrade:**
+- The new version ribbon button will appear in the IPG Tools group
+- All your Excel workbooks will use the updated add-in
+- Old functionality remains the same with new improvements
+
+### Troubleshooting Upgrades
+
+**If you see multiple versions:**
+1. Go to File → Options → Add-ins → Excel Add-ins → Go
+2. Uncheck ALL old versions
+3. Only keep the latest version checked
+
+**If upgrade fails:**
+1. Manually delete old files from: `%APPDATA%\Microsoft\AddIns`
+2. Run the PowerShell installer again
+3. Restart Excel
+
 ## Manual Installation (Alternative)
 
 1. **Copy the main code**: Use `TaxonomyExtractorModule.vb` - copy this code into an Excel VBA module
@@ -182,17 +223,16 @@ This section is for developers maintaining and improving the Excel Taxonomy Extr
 
 ### When to Increment Version
 
-**Increment the version number when:**
-- ✅ **Major Features**: New functionality, UI improvements, or significant enhancements (e.g., v1.2.0 → v1.3.0)
-- ✅ **Bug Fixes**: Important fixes that affect user experience (e.g., v1.3.0 → v1.3.1)
-- ✅ **Breaking Changes**: Changes that affect existing functionality (e.g., v1.3.0 → v2.0.0)
-- ✅ **Performance**: Significant performance improvements or optimizations
+**Follow Semantic Versioning (SemVer):**
+- ✅ **Major (X.0.0)**: Breaking changes that affect existing functionality
+- ✅ **Minor (X.Y.0)**: New features, UI improvements, or significant enhancements
+- ✅ **Patch (X.Y.Z)**: Bug fixes, small improvements, or performance optimizations
 
-**Current Version Locations to Update:**
-1. `TaxonomyExtractorForm.vb` - UserForm caption: `"IPG Mediabrands Taxonomy Extractor v1.3.0"`
-2. `TaxonomyExtractorModule.vb` - Error messages: `"IPG Taxonomy Extractor v1.3.0"`
-3. `install.ps1` - Multiple locations including script header, AddInName, DisplayName
-4. `README.md` - Version history section and documentation references
+**Version Locations to Update:**
+1. `TaxonomyExtractorForm.vb` - UserForm caption with new version number
+2. `TaxonomyExtractorModule.vb` - Error messages with new version number
+3. `install.ps1` - Script header, AddInName, DisplayName with new version
+4. `README.md` - Main heading and version history section
 5. `CLAUDE.md` - Project overview version references
 
 ### Step-by-Step Release Process
@@ -221,7 +261,7 @@ git checkout -b feature-name
 ```bash
 # Download the current release XLAM file
 # Go to: https://github.com/henkisdabro/excel-taxonomy-cleaner/releases/latest
-# Download: ipg_taxonomy_extractor_addonv1.2.0.xlam (or current version)
+# Download the latest XLAM file (e.g., ipg_taxonomy_extractor_addonvX.Y.Z.xlam)
 ```
 
 **In Excel:**
@@ -232,7 +272,7 @@ git checkout -b feature-name
    - Update `TaxonomyExtractorForm` with new form code
 4. **Verify the ribbon CustomUI XML** is still embedded (should be preserved)
 5. **Test the functionality** thoroughly
-6. **Save as new version**: `File → Save As` → `ipg_taxonomy_extractor_addonv1.3.0.xlam`
+6. **Save as new version**: `File → Save As` → `ipg_taxonomy_extractor_addonvX.Y.Z.xlam` (using semantic versioning)
 7. **Close Excel**
 
 #### 4. **Create GitHub Release**
@@ -244,17 +284,17 @@ git push origin feature-name
 git checkout main
 git pull origin main
 
-# Create and push tag
-git tag v1.3.0
-git push origin v1.3.0
+# Create and push tag (using semantic versioning)
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
 **On GitHub:**
 1. Go to **Releases** → **Create a new release**
-2. **Tag**: `v1.3.0`
-3. **Title**: `Excel Taxonomy Extractor v1.3.0`
+2. **Tag**: `vX.Y.Z` (semantic version)
+3. **Title**: `Excel Taxonomy Extractor vX.Y.Z`
 4. **Description**: List new features, improvements, and bug fixes
-5. **Upload the XLAM file**: `ipg_taxonomy_extractor_addonv1.3.0.xlam`
+5. **Upload the XLAM file**: `ipg_taxonomy_extractor_addonvX.Y.Z.xlam`
 6. **Publish release**
 
 #### 5. **Verify Installation**
@@ -264,57 +304,14 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 ```
 
 ### 🎯 **Developer Checklist**
-- [ ] Version numbers updated in all 5 locations
+- [ ] Version numbers updated in all 5 locations (following semantic versioning)
 - [ ] VB code tested in Excel environment
 - [ ] Documentation updated (README.md, CLAUDE.md)
 - [ ] XLAM built from previous release (preserves CustomUI)
-- [ ] GitHub release created with proper tag
-- [ ] XLAM binary uploaded to release
+- [ ] GitHub release created with proper semantic version tag
+- [ ] XLAM binary uploaded to release with correct filename
 - [ ] PowerShell installer tested with new version
 - [ ] Old version cleanup verified in install script
-
-## 🔄 User Upgrade Instructions
-
-### Upgrading to a New Version
-
-**Method 1: Automatic Upgrade (Recommended)**
-```powershell
-# Simply run the installer again - it handles everything
-irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
-```
-
-**What the installer does automatically:**
-- ✅ Downloads the latest version from GitHub
-- ✅ Removes all old versions from your AddIns folder
-- ✅ Installs the new version
-- ✅ Updates registry entries
-- ✅ Preserves your settings
-
-**Method 2: Manual Upgrade**
-If you prefer manual control:
-
-1. **Download new version** from [Releases](https://github.com/henkisdabro/excel-taxonomy-cleaner/releases/latest)
-2. **In Excel**: File → Options → Add-ins → Excel Add-ins → Go
-3. **Uncheck old version** (e.g., "IPG Taxonomy Extractor v1.2.0")
-4. **Click Browse** → Navigate to new XLAM file → OK
-5. **Check the new version** → OK
-
-**After Upgrade:**
-- The new version ribbon button will appear in the IPG Tools group
-- All your Excel workbooks will use the updated add-in
-- Old functionality remains the same with new improvements
-
-### Troubleshooting Upgrades
-
-**If you see multiple versions:**
-1. Go to File → Options → Add-ins → Excel Add-ins → Go
-2. Uncheck ALL old versions
-3. Only keep the latest version checked
-
-**If upgrade fails:**
-1. Manually delete old files from: `%APPDATA%\Microsoft\AddIns`
-2. Run the PowerShell installer again
-3. Restart Excel
 
 ## Version History
 
