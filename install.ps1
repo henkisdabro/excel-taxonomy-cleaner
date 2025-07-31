@@ -2,7 +2,7 @@
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
-#   Uninstall: $script = irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1"; Invoke-Expression "$script -Uninstall"
+#   Uninstall: $env:TAXONOMY_UNINSTALL="true"; irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
 
 [CmdletBinding()]
 param(
@@ -196,7 +196,7 @@ To uninstall: Run the same PowerShell command with -Uninstall flag
         Write-Host "🎯 IPG Taxonomy Extractor button will appear in IPG Tools group on Home tab" -ForegroundColor Gray
         Write-Host ""
         Write-Host "To uninstall later:" -ForegroundColor Yellow
-        Write-Host "`$script = irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`"; Invoke-Expression `"`$script -Uninstall`"" -ForegroundColor Gray
+        Write-Host "`$env:TAXONOMY_UNINSTALL=`"true`"; irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`" | iex" -ForegroundColor Gray
         Write-Host ""
 
     }
@@ -253,6 +253,11 @@ function Uninstall-AddIn {
     }
 }
 
+# Check for uninstall environment variable (for one-liner compatibility)
+if ($env:TAXONOMY_UNINSTALL -eq "true") {
+    $Uninstall = $true
+}
+
 # Main execution
 try {
     Write-Host ""
@@ -269,4 +274,10 @@ try {
 catch {
     Write-Error "Script execution failed: $($_.Exception.Message)"
     exit 1
+}
+finally {
+    # Clean up environment variable
+    if ($env:TAXONOMY_UNINSTALL) {
+        Remove-Item Env:TAXONOMY_UNINSTALL -ErrorAction SilentlyContinue
+    }
 }
