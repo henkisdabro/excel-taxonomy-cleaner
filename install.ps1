@@ -11,7 +11,7 @@ param(
 # Configuration
 $RepoOwner = "henkisdabro"
 $RepoName = "excel-taxonomy-cleaner"
-$AddInName = "TaxonomyExtractor.xlam"
+$AddInName = "ipg_taxonomy_extractor_addonv1.2.0.xlam"
 $DisplayName = "Excel Taxonomy Cleaner v1.2.0"
 
 # Paths
