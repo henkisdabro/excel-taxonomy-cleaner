@@ -256,12 +256,17 @@ function Uninstall-AddIn {
 # Check for uninstall environment variable (for one-liner compatibility)
 if ($env:TAXONOMY_UNINSTALL -eq "true") {
     $Uninstall = $true
+    Write-Host "DEBUG: Environment variable detected, setting Uninstall=true" -ForegroundColor Yellow
 }
 
 # Main execution
 try {
     Write-Host ""
-    Write-Host "Excel Taxonomy Cleaner v1.2.0 - Installer" -ForegroundColor Cyan
+    if ($Uninstall) {
+        Write-Host "Excel Taxonomy Cleaner v1.2.0 - Uninstaller" -ForegroundColor Red
+    } else {
+        Write-Host "Excel Taxonomy Cleaner v1.2.0 - Installer" -ForegroundColor Cyan
+    }
     Write-Host "Repository: https://github.com/$RepoOwner/$RepoName" -ForegroundColor Gray
     Write-Host ""
 
