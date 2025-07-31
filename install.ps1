@@ -1,4 +1,4 @@
-# Excel Taxonomy Cleaner v1.2.0 - One-Click Installation Script
+# Excel Taxonomy Cleaner v1.3.0 - One-Click Installation Script
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
@@ -11,8 +11,8 @@ param(
 # Configuration
 $RepoOwner = "henkisdabro"
 $RepoName = "excel-taxonomy-cleaner"
-$AddInName = "ipg_taxonomy_extractor_addonv1.2.0.xlam"
-$DisplayName = "Excel Taxonomy Cleaner v1.2.0"
+$AddInName = "ipg_taxonomy_extractor_addonv1.3.0.xlam"
+$DisplayName = "Excel Taxonomy Cleaner v1.3.0"
 
 # Paths
 $AddInsPath = "$env:APPDATA\Microsoft\AddIns"
@@ -101,6 +101,27 @@ function Install-AddIn {
             New-Item -ItemType Directory -Path $AddInsPath -Force | Out-Null
         }
 
+        # Remove old versions before installing new one
+        Write-Status "Cleaning up old versions..."
+        $oldVersionPatterns = @(
+            "ipg_taxonomy_extractor_addonv1.0.0.xlam",
+            "ipg_taxonomy_extractor_addonv1.1.0.xlam", 
+            "ipg_taxonomy_extractor_addonv1.2.0.xlam",
+            "TaxonomyExtractor*.xlam",
+            "taxonomy_extractor*.xlam"
+        )
+        
+        foreach ($pattern in $oldVersionPatterns) {
+            $oldFiles = Get-ChildItem -Path $AddInsPath -Name $pattern -ErrorAction SilentlyContinue
+            foreach ($oldFile in $oldFiles) {
+                $oldFilePath = Join-Path $AddInsPath $oldFile
+                if (Test-Path $oldFilePath) {
+                    Remove-Item $oldFilePath -Force -ErrorAction SilentlyContinue
+                    Write-Status "Removed old version: $oldFile" "Yellow"
+                }
+            }
+        }
+
         # Install to AddIns folder (native Excel add-in location)
         Write-Status "Installing to native Excel AddIns folder..."
         Copy-Item $tempAddInPath -Destination $AddInPath -Force
@@ -148,7 +169,7 @@ function Install-AddIn {
         $shortcutPath = Join-Path $desktopPath "Excel Taxonomy Cleaner - Instructions.txt"
         
         $instructions = @"
-Excel Taxonomy Cleaner v1.2.0 - Installation Complete!
+Excel Taxonomy Cleaner v1.3.0 - Installation Complete!
 
 ✓ Add-in installed successfully to: $AddInPath
 ✓ Registered with Excel for automatic loading
@@ -180,7 +201,7 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
 
         Write-Success "Installation completed successfully!"
         Write-Host ""
-        Write-Host "🎉 Excel Taxonomy Cleaner v1.2.0 is now installed!" -ForegroundColor Cyan
+        Write-Host "🎉 Excel Taxonomy Cleaner v1.3.0 is now installed!" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Yellow
         Write-Host "1. Open Microsoft Excel" -ForegroundColor White
@@ -213,7 +234,7 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
 # Main execution
 try {
     Write-Host ""
-    Write-Host "Excel Taxonomy Cleaner v1.2.0 - Installer" -ForegroundColor Cyan
+    Write-Host "Excel Taxonomy Cleaner v1.3.0 - Installer" -ForegroundColor Cyan
     Write-Host "Repository: https://github.com/$RepoOwner/$RepoName" -ForegroundColor Gray
     Write-Host ""
 

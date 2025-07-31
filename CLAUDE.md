@@ -2,11 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview - Version 1.2.0
+## Project Overview - Version 1.3.0
 
 This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
 
-**Version 1.2.0 introduces enhanced UI capabilities with smart data preview, dynamic button captions, context-aware parsing, and modern GitHub-based PowerShell deployment for a truly professional user experience.**
+**Version 1.3.0 introduces smart UserForm positioning that centers within Excel's window while preserving design dimensions, enhanced upgrade capabilities, and comprehensive developer workflow documentation.**
 
 ## Architecture
 
@@ -244,7 +244,63 @@ Users can uninstall via Excel's built-in interface: File → Options → Add-ins
 - Screen updating control for better performance and visual feedback
 - Graceful fallback from UserForm to InputBox if form doesn't exist
 
-## Development Lessons Learned - v1.2.0
+## Version Management Guidelines
+
+### When to Increment Version Numbers
+
+Claude Code should recommend version increments in the following scenarios:
+
+#### Major Version (X.0.0)
+- **Breaking Changes**: Modifications that change existing functionality or require user action
+- **Architecture Changes**: Fundamental changes to how the tool works
+- **UI Overhauls**: Complete interface redesigns
+
+#### Minor Version (X.Y.0) 
+- **New Features**: Adding new functionality like positioning improvements (v1.2.0 → v1.3.0)
+- **Significant Enhancements**: Major improvements to existing features
+- **Performance Improvements**: Notable speed or efficiency gains
+- **UI Improvements**: Enhanced user interface elements
+
+#### Patch Version (X.Y.Z)
+- **Bug Fixes**: Corrections to existing functionality  
+- **Small Improvements**: Minor tweaks and refinements
+- **Documentation Updates**: Significant documentation improvements
+
+### Version Update Locations
+
+When incrementing versions, Claude Code must update ALL of these locations:
+
+1. **TaxonomyExtractorForm.vb**
+   - Line ~101: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.3.0"`
+
+2. **TaxonomyExtractorModule.vb** 
+   - Line ~449: `MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"`
+
+3. **install.ps1**
+   - Line 1: Script header comment
+   - Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.3.0.xlam"`
+   - Line 15: `$DisplayName = "Excel Taxonomy Cleaner v1.3.0"`
+   - Lines 172, 204, 237: Display messages
+
+4. **README.md**
+   - Line 1: Main heading
+   - Version history section (add new version at top)
+
+5. **CLAUDE.md**
+   - Line 5: Project overview heading
+   - Line 9: Version introduction text
+
+### Automation Reminder
+
+Claude Code should proactively suggest version increments when:
+- Implementing new features (like the positioning system)
+- Making significant improvements 
+- Fixing important bugs
+- Completing feature branches
+
+Always provide a comprehensive commit message that explains the changes and increment reasoning.
+
+## Development Lessons Learned - v1.3.0
 
 ### Key Improvements Made
 1. **Smart Data Preview System**: 

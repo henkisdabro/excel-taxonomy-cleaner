@@ -446,7 +446,7 @@ Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.2.0"
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"
 End Sub
 
 ' Optional: Ribbon load callback - called when the ribbon is loaded

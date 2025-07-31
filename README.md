@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor v1.2.0
+# Excel Taxonomy Extractor v1.3.0
 
 A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, with support for activation ID extraction and custom undo functionality.
 
@@ -176,9 +176,157 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 
 Ready to streamline your taxonomy data extraction! 🚀
 
+## 🛠️ Developer Workflow - Building New Releases
+
+This section is for developers maintaining and improving the Excel Taxonomy Extractor codebase.
+
+### When to Increment Version
+
+**Increment the version number when:**
+- ✅ **Major Features**: New functionality, UI improvements, or significant enhancements (e.g., v1.2.0 → v1.3.0)
+- ✅ **Bug Fixes**: Important fixes that affect user experience (e.g., v1.3.0 → v1.3.1)
+- ✅ **Breaking Changes**: Changes that affect existing functionality (e.g., v1.3.0 → v2.0.0)
+- ✅ **Performance**: Significant performance improvements or optimizations
+
+**Current Version Locations to Update:**
+1. `TaxonomyExtractorForm.vb` - UserForm caption: `"IPG Mediabrands Taxonomy Extractor v1.3.0"`
+2. `TaxonomyExtractorModule.vb` - Error messages: `"IPG Taxonomy Extractor v1.3.0"`
+3. `install.ps1` - Multiple locations including script header, AddInName, DisplayName
+4. `README.md` - Version history section and documentation references
+5. `CLAUDE.md` - Project overview version references
+
+### Step-by-Step Release Process
+
+#### 1. **Code Development & Testing**
+```bash
+# Create feature branch
+git checkout -b feature-name
+
+# Make your VB code changes in:
+# - TaxonomyExtractorModule.vb
+# - TaxonomyExtractorForm.vb
+
+# Update version numbers in all files listed above
+# Test thoroughly in Excel VBA environment
+```
+
+#### 2. **Update Documentation**
+- Update `README.md` version history with new features
+- Update `CLAUDE.md` with technical changes
+- Commit all code and documentation changes
+
+#### 3. **Build XLAM Binary**
+**Critical: Build the XLAM from the PREVIOUS release, not from scratch**
+
+```bash
+# Download the current release XLAM file
+# Go to: https://github.com/henkisdabro/excel-taxonomy-cleaner/releases/latest
+# Download: ipg_taxonomy_extractor_addonv1.2.0.xlam (or current version)
+```
+
+**In Excel:**
+1. **Open the downloaded XLAM** from the previous release
+2. **Press Alt+F11** to open VBA Editor
+3. **Replace the VB code** with your updated code:
+   - Copy new `TaxonomyExtractorModule.vb` content into the existing module
+   - Update `TaxonomyExtractorForm` with new form code
+4. **Verify the ribbon CustomUI XML** is still embedded (should be preserved)
+5. **Test the functionality** thoroughly
+6. **Save as new version**: `File → Save As` → `ipg_taxonomy_extractor_addonv1.3.0.xlam`
+7. **Close Excel**
+
+#### 4. **Create GitHub Release**
+```bash
+# Push your branch and create PR
+git push origin feature-name
+
+# After merging to main:
+git checkout main
+git pull origin main
+
+# Create and push tag
+git tag v1.3.0
+git push origin v1.3.0
+```
+
+**On GitHub:**
+1. Go to **Releases** → **Create a new release**
+2. **Tag**: `v1.3.0`
+3. **Title**: `Excel Taxonomy Extractor v1.3.0`
+4. **Description**: List new features, improvements, and bug fixes
+5. **Upload the XLAM file**: `ipg_taxonomy_extractor_addonv1.3.0.xlam`
+6. **Publish release**
+
+#### 5. **Verify Installation**
+Test the PowerShell installer picks up the new version:
+```powershell
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+```
+
+### 🎯 **Developer Checklist**
+- [ ] Version numbers updated in all 5 locations
+- [ ] VB code tested in Excel environment
+- [ ] Documentation updated (README.md, CLAUDE.md)
+- [ ] XLAM built from previous release (preserves CustomUI)
+- [ ] GitHub release created with proper tag
+- [ ] XLAM binary uploaded to release
+- [ ] PowerShell installer tested with new version
+- [ ] Old version cleanup verified in install script
+
+## 🔄 User Upgrade Instructions
+
+### Upgrading to a New Version
+
+**Method 1: Automatic Upgrade (Recommended)**
+```powershell
+# Simply run the installer again - it handles everything
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+```
+
+**What the installer does automatically:**
+- ✅ Downloads the latest version from GitHub
+- ✅ Removes all old versions from your AddIns folder
+- ✅ Installs the new version
+- ✅ Updates registry entries
+- ✅ Preserves your settings
+
+**Method 2: Manual Upgrade**
+If you prefer manual control:
+
+1. **Download new version** from [Releases](https://github.com/henkisdabro/excel-taxonomy-cleaner/releases/latest)
+2. **In Excel**: File → Options → Add-ins → Excel Add-ins → Go
+3. **Uncheck old version** (e.g., "IPG Taxonomy Extractor v1.2.0")
+4. **Click Browse** → Navigate to new XLAM file → OK
+5. **Check the new version** → OK
+
+**After Upgrade:**
+- The new version ribbon button will appear in the IPG Tools group
+- All your Excel workbooks will use the updated add-in
+- Old functionality remains the same with new improvements
+
+### Troubleshooting Upgrades
+
+**If you see multiple versions:**
+1. Go to File → Options → Add-ins → Excel Add-ins → Go
+2. Uncheck ALL old versions
+3. Only keep the latest version checked
+
+**If upgrade fails:**
+1. Manually delete old files from: `%APPDATA%\Microsoft\AddIns`
+2. Run the PowerShell installer again
+3. Restart Excel
+
 ## Version History
 
-### v1.2.0 (Latest)
+### v1.3.0 (Latest)
+- **Smart Positioning System**: UserForm now centers perfectly within Excel window
+- **Respects Design Dimensions**: Preserves UserForm's design-time Width and Height properties
+- **Enhanced Install Script**: Automatically removes old versions during upgrades
+- **Improved Developer Workflow**: Comprehensive release process documentation
+- **User Upgrade Instructions**: Clear upgrade path for existing users
+- **Version Management**: Systematic approach to version increments and releases
+
+### v1.2.0
 - **Enhanced UserForm Interface**: Modern professional UI with smart data preview
 - **Dynamic Button Captions**: Buttons show actual segment content from your data
 - **Smart Label Display**: Truncated preview (12 chars + "...") of selected data
