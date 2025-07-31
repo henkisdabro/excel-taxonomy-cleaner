@@ -291,9 +291,71 @@ Users can uninstall via Excel's built-in interface: File → Options → Add-ins
 
 ## Version Management Guidelines
 
-### When to Increment Version Numbers
+### ⚠️ CRITICAL VERSION UPDATE CHECKLIST
 
-Claude Code should recommend version increments in the following scenarios:
+**Every time a version is incremented, Claude Code must update ALL these locations:**
+
+#### 🎯 PRIMARY VERSION LOCATIONS (Must be updated simultaneously):
+
+1. **install.ps1** - CRITICAL for downloads to work:
+   - Line 1: `# Excel Taxonomy Cleaner v1.X.X - One-Click Installation Script`
+   - Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.X.X.xlam"`
+   - Line 15: `$DisplayName = "Excel Taxonomy Cleaner v1.X.X"`
+   - Line ~172: `Excel Taxonomy Cleaner v1.X.X - Installation Complete!`
+   - Line ~204: `🎉 Excel Taxonomy Cleaner v1.X.X is now installed!`
+   - Line ~237: `Excel Taxonomy Cleaner v1.X.X - Installer`
+
+2. **TaxonomyExtractorForm.vb**:
+   - Line ~101: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.X.X"`
+
+3. **TaxonomyExtractorModule.vb**:
+   - Line ~449: `MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.X.X"`
+   - Line ~461: `MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.X.X"`
+
+4. **README.md**:
+   - Line 1: `# Excel Taxonomy Extractor v1.X.X`
+
+5. **CLAUDE.md**:
+   - Line 5: `## Project Overview - Version 1.X.X`
+   - Line 9: Version introduction text
+
+### 🚨 FAILURE CONSEQUENCES
+
+**If install.ps1 is not updated:**
+- Users cannot download the new version (404 errors)
+- Installation script references wrong file names
+- Completely breaks the user installation experience
+
+**If VBA files are not updated:**
+- Users see old version numbers in interface
+- Error messages show incorrect version info
+- Confusion about which version is actually installed
+
+### 📋 VERSION UPDATE WORKFLOW
+
+**When releasing a new version:**
+1. **FIRST**: Update install.ps1 with new filename and all version references
+2. **SECOND**: Update all VBA version strings
+3. **THIRD**: Update documentation files
+4. **VERIFY**: Search entire repository for old version numbers
+5. **TEST**: Ensure install.ps1 references match planned release asset filename
+
+### 🔍 SEARCH COMMANDS FOR VERIFICATION
+
+Before releasing, run these searches to find missed version references:
+```bash
+grep -r "v1\.[0-9]\.[0-9]" .
+grep -r "1\.[0-9]\.[0-9]" .
+```
+
+### 📦 RELEASE ASSET NAMING
+
+**XLAM file must be named exactly as specified in install.ps1:**
+- install.ps1 Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.X.X.xlam"`
+- GitHub Release asset must have this exact filename
+- Any mismatch breaks the installer
+
+### When to Increment Version Numbers
 
 #### Major Version (X.0.0)
 - **Breaking Changes**: Modifications that change existing functionality or require user action
@@ -301,7 +363,7 @@ Claude Code should recommend version increments in the following scenarios:
 - **UI Overhauls**: Complete interface redesigns
 
 #### Minor Version (X.Y.0) 
-- **New Features**: Adding new functionality like positioning improvements (v1.2.0 → v1.3.0)
+- **New Features**: Adding new functionality like modeless operation (v1.3.0 → v1.4.0)
 - **Significant Enhancements**: Major improvements to existing features
 - **Performance Improvements**: Notable speed or efficiency gains
 - **UI Improvements**: Enhanced user interface elements
@@ -311,34 +373,10 @@ Claude Code should recommend version increments in the following scenarios:
 - **Small Improvements**: Minor tweaks and refinements
 - **Documentation Updates**: Significant documentation improvements
 
-### Version Update Locations
-
-When incrementing versions, Claude Code must update ALL of these locations:
-
-1. **TaxonomyExtractorForm.vb**
-   - Line ~101: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.3.0"`
-
-2. **TaxonomyExtractorModule.vb** 
-   - Line ~449: `MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.3.0"`
-
-3. **install.ps1**
-   - Line 1: Script header comment
-   - Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.3.0.xlam"`
-   - Line 15: `$DisplayName = "Excel Taxonomy Cleaner v1.3.0"`
-   - Lines 172, 204, 237: Display messages
-
-4. **README.md**
-   - Line 1: Main heading
-   - Version history section (add new version at top)
-
-5. **CLAUDE.md**
-   - Line 5: Project overview heading
-   - Line 9: Version introduction text
-
 ### Automation Reminder
 
 Claude Code should proactively suggest version increments when:
-- Implementing new features (like the positioning system)
+- Implementing new features (like the modeless system)
 - Making significant improvements 
 - Fixing important bugs
 - Completing feature branches

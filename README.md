@@ -333,7 +333,17 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 
 ## Version History
 
-### v1.3.0 (Latest)
+### v1.4.0 (Latest)
+- **Revolutionary Modeless Operation**: Keep form open while Excel remains fully interactive
+- **Real-time Interface Updates**: Buttons automatically refresh when selecting new cells
+- **Smart Pipe Validation**: Buttons show "N/A" for single values without pipe delimiters
+- **Post-extraction Refresh**: Interface immediately reflects extraction results
+- **Selected Cell Count Display**: Shows exactly how many cells will be processed
+- **Enhanced UX Workflow**: Seamless batch processing for multiple data ranges 
+- **Application Event Management**: Proper Excel integration with automatic cleanup
+- **Ribbon Button Enhancement**: Launches superior modeless version by default
+
+### v1.3.0
 - **Smart Positioning System**: UserForm now centers perfectly within Excel window
 - **Respects Design Dimensions**: Preserves UserForm's design-time Width and Height properties
 - **Enhanced Install Script**: Automatically removes old versions during upgrades
