@@ -134,86 +134,126 @@ Private Sub UpdateButtonCaptions()
     Debug.Print "    Segment3: '" & cellData.Segment3 & "' (length: " & Len(cellData.Segment3) & ")"
     Debug.Print "    ActivationID: '" & cellData.ActivationID & "' (length: " & Len(cellData.ActivationID) & ")"
     
-    ' Update button captions to show what each segment contains (12 chars + prefix)
+    ' Update button captions with hybrid approach: disable buttons and grey out text for unavailable segments
     If Len(cellData.Segment1) > 0 Then 
+        btn1.Enabled = True
         btn1.Caption = "1: " & Left(cellData.Segment1, 12)
-        Debug.Print "  Updated btn1 to: " & btn1.Caption
+        btn1.ForeColor = RGB(0, 0, 0)  ' Black text for available segments
+        Debug.Print "  Updated btn1 to: " & btn1.Caption & " (enabled)"
     Else
+        btn1.Enabled = False
         btn1.Caption = "1: N/A"
-        Debug.Print "  Updated btn1 to N/A (no segment1 data)"
+        btn1.ForeColor = RGB(128, 128, 128)  ' Grey text for unavailable segments
+        Debug.Print "  Updated btn1 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment2) > 0 Then 
+        btn2.Enabled = True
         btn2.Caption = "2: " & Left(cellData.Segment2, 12)
-        Debug.Print "  Updated btn2 to: " & btn2.Caption
+        btn2.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn2 to: " & btn2.Caption & " (enabled)"
     Else
+        btn2.Enabled = False
         btn2.Caption = "2: N/A"
-        Debug.Print "  Updated btn2 to N/A (no segment2 data)"
+        btn2.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn2 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment3) > 0 Then 
+        btn3.Enabled = True
         btn3.Caption = "3: " & Left(cellData.Segment3, 12)
-        Debug.Print "  Updated btn3 to: " & btn3.Caption
+        btn3.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn3 to: " & btn3.Caption & " (enabled)"
     Else
+        btn3.Enabled = False
         btn3.Caption = "3: N/A"
-        Debug.Print "  Updated btn3 to N/A (no segment3 data)"
+        btn3.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn3 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment4) > 0 Then 
+        btn4.Enabled = True
         btn4.Caption = "4: " & Left(cellData.Segment4, 12)
-        Debug.Print "  Updated btn4 to: " & btn4.Caption
+        btn4.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn4 to: " & btn4.Caption & " (enabled)"
     Else
+        btn4.Enabled = False
         btn4.Caption = "4: N/A"
-        Debug.Print "  Updated btn4 to N/A (no segment4 data)"
+        btn4.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn4 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment5) > 0 Then 
+        btn5.Enabled = True
         btn5.Caption = "5: " & Left(cellData.Segment5, 12)
-        Debug.Print "  Updated btn5 to: " & btn5.Caption
+        btn5.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn5 to: " & btn5.Caption & " (enabled)"
     Else
+        btn5.Enabled = False
         btn5.Caption = "5: N/A"
-        Debug.Print "  Updated btn5 to N/A (no segment5 data)"
+        btn5.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn5 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment6) > 0 Then 
+        btn6.Enabled = True
         btn6.Caption = "6: " & Left(cellData.Segment6, 12)
-        Debug.Print "  Updated btn6 to: " & btn6.Caption
+        btn6.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn6 to: " & btn6.Caption & " (enabled)"
     Else
+        btn6.Enabled = False
         btn6.Caption = "6: N/A"
-        Debug.Print "  Updated btn6 to N/A (no segment6 data)"
+        btn6.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn6 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment7) > 0 Then 
+        btn7.Enabled = True
         btn7.Caption = "7: " & Left(cellData.Segment7, 12)
-        Debug.Print "  Updated btn7 to: " & btn7.Caption
+        btn7.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn7 to: " & btn7.Caption & " (enabled)"
     Else
+        btn7.Enabled = False
         btn7.Caption = "7: N/A"
-        Debug.Print "  Updated btn7 to N/A (no segment7 data)"
+        btn7.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn7 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment8) > 0 Then 
+        btn8.Enabled = True
         btn8.Caption = "8: " & Left(cellData.Segment8, 12)
-        Debug.Print "  Updated btn8 to: " & btn8.Caption
+        btn8.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn8 to: " & btn8.Caption & " (enabled)"
     Else
+        btn8.Enabled = False
         btn8.Caption = "8: N/A"
-        Debug.Print "  Updated btn8 to N/A (no segment8 data)"
+        btn8.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn8 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.Segment9) > 0 Then 
+        btn9.Enabled = True
         btn9.Caption = "9: " & Left(cellData.Segment9, 12)
-        Debug.Print "  Updated btn9 to: " & btn9.Caption
+        btn9.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btn9 to: " & btn9.Caption & " (enabled)"
     Else
+        btn9.Enabled = False
         btn9.Caption = "9: N/A"
-        Debug.Print "  Updated btn9 to N/A (no segment9 data)"
+        btn9.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btn9 to N/A (disabled and greyed)"
     End If
     
     If Len(cellData.ActivationID) > 0 Then 
-        ' Show full activation ID (12 chars) since they're always exactly 12 characters
+        btnActivationID.Enabled = True
+        ' Show full activation ID since they're always exactly 12 characters
         btnActivationID.Caption = "ID: " & cellData.ActivationID
-        Debug.Print "  Updated btnActivationID to: " & btnActivationID.Caption
+        btnActivationID.ForeColor = RGB(0, 0, 0)
+        Debug.Print "  Updated btnActivationID to: " & btnActivationID.Caption & " (enabled)"
     Else
+        btnActivationID.Enabled = False
         btnActivationID.Caption = "ID: N/A"
-        Debug.Print "  Updated btnActivationID to N/A (no activation ID data)"
+        btnActivationID.ForeColor = RGB(128, 128, 128)
+        Debug.Print "  Updated btnActivationID to N/A (disabled and greyed)"
     End If
     
     Debug.Print "UpdateButtonCaptions completed"
@@ -274,6 +314,6 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 ' 8. Label should show "Selected: FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123" (complete text)
 ' 9. Buttons should show "1: FY24_26", "2: Q1-4", "3: Tourism WA", etc. (12 chars each)
 ' 10. ID button should show "ID: ABC123" (full activation ID)
-' 11. Missing segments/ID will show "N/A" (e.g., "7: N/A", "ID: N/A")
+' 11. Missing segments/ID will show "N/A" with disabled state and grey text (e.g., "7: N/A" greyed out)
 '
 '================================================================================
