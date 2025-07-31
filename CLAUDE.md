@@ -2,9 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Project Overview - Version 1.2.0
 
 This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
+
+**Version 1.2.0 introduces enhanced UI capabilities with smart data preview, dynamic button captions, and context-aware parsing for a truly professional user experience.**
 
 ## Architecture
 
@@ -195,3 +197,81 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - Robust error handling prevents crashes during batch processing
 - Screen updating control for better performance and visual feedback
 - Graceful fallback from UserForm to InputBox if form doesn't exist
+
+## Development Lessons Learned - v1.2.0
+
+### Key Improvements Made
+1. **Smart Data Preview System**: 
+   - Implemented truncated display (12 chars + "...") for better UX
+   - Shows actual user data rather than generic text
+   - Helps users understand what they're working with
+
+2. **Dynamic Button Interface**:
+   - Button captions now show actual segment content from user's data
+   - Real-time preview of what each extraction will produce
+   - Context-aware interface that adapts to user's specific data
+
+3. **Enhanced Data Parsing**:
+   - Added `ParseFirstCellData` function for smart analysis
+   - Automatic breakdown of first selected cell into individual segments
+   - Structured data passing between module and UserForm
+
+4. **Professional UI Polish**:
+   - Removed unnecessary confirmation dialogs
+   - Silent operation for smooth workflow
+   - Better integration between main module and UserForm
+
+### Technical Architecture Insights
+
+#### Data Flow Pattern
+```
+User Selection → ParseFirstCellData → SetParsedData → UserForm Display → Button Click → Extraction
+```
+
+#### Key VBA Patterns Used
+- **Type Definitions**: `ParsedCellData` for structured data passing
+- **Method Injection**: `SetParsedData` method on UserForm for loose coupling
+- **Graceful Degradation**: Automatic fallback to InputBox if UserForm missing
+- **Screen Updating Control**: Performance optimization during batch operations
+
+#### UI/UX Best Practices Applied
+- **Context Awareness**: Show user's actual data, not generic examples
+- **Progressive Disclosure**: Preview before action
+- **Silent Operation**: No unnecessary confirmations
+- **Immediate Feedback**: Instant extraction with visible results
+- **Easy Reversal**: One-click undo system
+
+### Development Workflow Insights
+
+#### Version Evolution
+- **v1.0**: Basic functionality with InputBox
+- **v1.1**: Added UserForm with static buttons
+- **v1.2**: Enhanced with dynamic content and smart preview
+
+#### Testing Approach
+- Always test with real taxonomy data, not just simple examples
+- Verify graceful handling of missing segments
+- Test batch processing with mixed data types
+- Validate undo functionality across different scenarios
+
+#### Code Organization Principles
+- **Single Responsibility**: Each function has one clear purpose
+- **Data Encapsulation**: Use Type definitions for complex data structures
+- **Error Boundary**: Centralized error handling prevents cascading failures
+- **Performance Awareness**: Screen updating control and memory management
+
+### Future Enhancement Opportunities
+1. **Configuration Storage**: Save user preferences between sessions
+2. **Custom Delimiters**: Support for different separator characters
+3. **Export Capabilities**: Direct export to CSV or other formats
+4. **Batch Templates**: Predefined extraction patterns
+5. **Advanced Validation**: Content format checking and suggestions
+
+### Best Practices for VBA Development
+1. **Always provide fallback interfaces** (InputBox when UserForm fails)
+2. **Use Type definitions** for complex data structures
+3. **Implement custom undo** when Excel's built-in won't work
+4. **Show real user data** in previews, not generic examples
+5. **Make operations silent** - avoid confirmation dialogs
+6. **Test with edge cases** - missing segments, empty cells, etc.
+7. **Optimize for batch processing** - screen updating control essential

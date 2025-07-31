@@ -66,9 +66,9 @@
 '
 ' LAYOUT SUMMARY:
 ' - Form dimensions: 480 x 250
-' - lblInstructions shows: "Selected: [12 chars]..."
-' - Segment buttons show: "1: [8 chars]", "2: [8 chars]", etc.
-' - ID button shows: "ID: [6 chars]"
+' - lblInstructions shows: "Selected: [complete original text - no truncation]"
+' - Segment buttons show: "1: [12 chars]", "2: [12 chars]", etc. (or "N/A" if missing)
+' - ID button shows: "ID: [full activation ID]" (or "ID: N/A" if missing)
 ' - All previews update automatically when UserForm opens
 '
 ' VBA CODE FOR THE USERFORM:
@@ -83,30 +83,140 @@ Private cellData As ParsedCellData
 
 Public Sub SetParsedData(parsedData As ParsedCellData)
     cellData = parsedData
+    
+    ' DEBUG: Show what data was received
+    Debug.Print "SetParsedData called with:"
+    Debug.Print "  Original: " & cellData.OriginalText
+    Debug.Print "  Truncated: " & cellData.TruncatedDisplay
+    Debug.Print "  Segment1: " & cellData.Segment1
+    Debug.Print "  Segment2: " & cellData.Segment2
+    Debug.Print "  Segment3: " & cellData.Segment3
+    Debug.Print "  ActivationID: " & cellData.ActivationID
+    
+    ' Update the interface immediately after receiving data
+    UpdateInterface
 End Sub
 
 Private Sub UserForm_Initialize()
     Me.Caption = "Taxonomy Extractor v1.1.0 - Segment Selector"
     
-    ' Set the main label to show truncated content
-    lblInstructions.Caption = "Selected: " & cellData.TruncatedDisplay
+    ' DEBUG: Check if cellData has been populated
+    Debug.Print "UserForm_Initialize called"
+    Debug.Print "  cellData.OriginalText length: " & Len(cellData.OriginalText)
     
-    ' Optional: Update button captions with segment previews
+    ' Note: SetParsedData will handle interface updates
+    ' Don't try to update interface here as cellData may not be set yet
+End Sub
+
+Private Sub UpdateInterface()
+    ' DEBUG: Confirm this method is called
+    Debug.Print "UpdateInterface called"
+    
+    ' Set the main label to show the entire string (no truncation)
+    If Len(cellData.OriginalText) > 0 Then
+        lblInstructions.Caption = "Selected: " & cellData.OriginalText
+        Debug.Print "  Updated lblInstructions to show full text: " & lblInstructions.Caption
+    Else
+        lblInstructions.Caption = "Selected: [No data]"
+        Debug.Print "  No original text data available"
+    End If
+    
+    ' Update button captions with segment previews
     UpdateButtonCaptions
 End Sub
 
 Private Sub UpdateButtonCaptions()
-    ' Update button captions to show what each segment contains
-    If Len(cellData.Segment1) > 0 Then btn1.Caption = "1: " & Left(cellData.Segment1, 8)
-    If Len(cellData.Segment2) > 0 Then btn2.Caption = "2: " & Left(cellData.Segment2, 8)
-    If Len(cellData.Segment3) > 0 Then btn3.Caption = "3: " & Left(cellData.Segment3, 8)
-    If Len(cellData.Segment4) > 0 Then btn4.Caption = "4: " & Left(cellData.Segment4, 8)
-    If Len(cellData.Segment5) > 0 Then btn5.Caption = "5: " & Left(cellData.Segment5, 8)
-    If Len(cellData.Segment6) > 0 Then btn6.Caption = "6: " & Left(cellData.Segment6, 8)
-    If Len(cellData.Segment7) > 0 Then btn7.Caption = "7: " & Left(cellData.Segment7, 8)
-    If Len(cellData.Segment8) > 0 Then btn8.Caption = "8: " & Left(cellData.Segment8, 8)
-    If Len(cellData.Segment9) > 0 Then btn9.Caption = "9: " & Left(cellData.Segment9, 8)
-    If Len(cellData.ActivationID) > 0 Then btnActivationID.Caption = "ID: " & Left(cellData.ActivationID, 6)
+    ' DEBUG: Confirm this method is called and show segment data
+    Debug.Print "UpdateButtonCaptions called"
+    Debug.Print "  Segment data available:"
+    Debug.Print "    Segment1: '" & cellData.Segment1 & "' (length: " & Len(cellData.Segment1) & ")"
+    Debug.Print "    Segment2: '" & cellData.Segment2 & "' (length: " & Len(cellData.Segment2) & ")"
+    Debug.Print "    Segment3: '" & cellData.Segment3 & "' (length: " & Len(cellData.Segment3) & ")"
+    Debug.Print "    ActivationID: '" & cellData.ActivationID & "' (length: " & Len(cellData.ActivationID) & ")"
+    
+    ' Update button captions to show what each segment contains (12 chars + prefix)
+    If Len(cellData.Segment1) > 0 Then 
+        btn1.Caption = "1: " & Left(cellData.Segment1, 12)
+        Debug.Print "  Updated btn1 to: " & btn1.Caption
+    Else
+        btn1.Caption = "1: N/A"
+        Debug.Print "  Updated btn1 to N/A (no segment1 data)"
+    End If
+    
+    If Len(cellData.Segment2) > 0 Then 
+        btn2.Caption = "2: " & Left(cellData.Segment2, 12)
+        Debug.Print "  Updated btn2 to: " & btn2.Caption
+    Else
+        btn2.Caption = "2: N/A"
+        Debug.Print "  Updated btn2 to N/A (no segment2 data)"
+    End If
+    
+    If Len(cellData.Segment3) > 0 Then 
+        btn3.Caption = "3: " & Left(cellData.Segment3, 12)
+        Debug.Print "  Updated btn3 to: " & btn3.Caption
+    Else
+        btn3.Caption = "3: N/A"
+        Debug.Print "  Updated btn3 to N/A (no segment3 data)"
+    End If
+    
+    If Len(cellData.Segment4) > 0 Then 
+        btn4.Caption = "4: " & Left(cellData.Segment4, 12)
+        Debug.Print "  Updated btn4 to: " & btn4.Caption
+    Else
+        btn4.Caption = "4: N/A"
+        Debug.Print "  Updated btn4 to N/A (no segment4 data)"
+    End If
+    
+    If Len(cellData.Segment5) > 0 Then 
+        btn5.Caption = "5: " & Left(cellData.Segment5, 12)
+        Debug.Print "  Updated btn5 to: " & btn5.Caption
+    Else
+        btn5.Caption = "5: N/A"
+        Debug.Print "  Updated btn5 to N/A (no segment5 data)"
+    End If
+    
+    If Len(cellData.Segment6) > 0 Then 
+        btn6.Caption = "6: " & Left(cellData.Segment6, 12)
+        Debug.Print "  Updated btn6 to: " & btn6.Caption
+    Else
+        btn6.Caption = "6: N/A"
+        Debug.Print "  Updated btn6 to N/A (no segment6 data)"
+    End If
+    
+    If Len(cellData.Segment7) > 0 Then 
+        btn7.Caption = "7: " & Left(cellData.Segment7, 12)
+        Debug.Print "  Updated btn7 to: " & btn7.Caption
+    Else
+        btn7.Caption = "7: N/A"
+        Debug.Print "  Updated btn7 to N/A (no segment7 data)"
+    End If
+    
+    If Len(cellData.Segment8) > 0 Then 
+        btn8.Caption = "8: " & Left(cellData.Segment8, 12)
+        Debug.Print "  Updated btn8 to: " & btn8.Caption
+    Else
+        btn8.Caption = "8: N/A"
+        Debug.Print "  Updated btn8 to N/A (no segment8 data)"
+    End If
+    
+    If Len(cellData.Segment9) > 0 Then 
+        btn9.Caption = "9: " & Left(cellData.Segment9, 12)
+        Debug.Print "  Updated btn9 to: " & btn9.Caption
+    Else
+        btn9.Caption = "9: N/A"
+        Debug.Print "  Updated btn9 to N/A (no segment9 data)"
+    End If
+    
+    If Len(cellData.ActivationID) > 0 Then 
+        ' Show full activation ID (12 chars) since they're always exactly 12 characters
+        btnActivationID.Caption = "ID: " & cellData.ActivationID
+        Debug.Print "  Updated btnActivationID to: " & btnActivationID.Caption
+    Else
+        btnActivationID.Caption = "ID: N/A"
+        Debug.Print "  Updated btnActivationID to N/A (no activation ID data)"
+    End If
+    
+    Debug.Print "UpdateButtonCaptions completed"
 End Sub
 
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
@@ -161,8 +271,9 @@ Private Sub btnClose_Click(): Unload Me: End Sub
 ' 5. Add 3 CommandButtons → Names: "btnUndo", "btnCancel", "btnClose"
 ' 6. Copy VBA code above into UserForm module
 ' 7. Test with sample data: "FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123"
-' 8. Label should show "Selected: FY24_26|Q1-4..."
-' 9. Buttons should show "1: FY24_26", "2: Q1-4", "3: Tourism", etc.
-' 10. ID button should show "ID: ABC123"
+' 8. Label should show "Selected: FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123" (complete text)
+' 9. Buttons should show "1: FY24_26", "2: Q1-4", "3: Tourism WA", etc. (12 chars each)
+' 10. ID button should show "ID: ABC123" (full activation ID)
+' 11. Missing segments/ID will show "N/A" (e.g., "7: N/A", "ID: N/A")
 '
 '================================================================================

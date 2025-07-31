@@ -76,11 +76,25 @@ Sub TaxonomyExtractor()
     Dim firstCellContent As String
     firstCellContent = Selection.Cells(1).Value
     
+    ' DEBUG: Show what we're parsing
+    Debug.Print "TaxonomyExtractor: First cell content: " & firstCellContent
+    
     Dim parsedData As ParsedCellData
     parsedData = ParseFirstCellData(firstCellContent)
     
+    ' DEBUG: Show parsed results
+    Debug.Print "TaxonomyExtractor: Parsed data:"
+    Debug.Print "  Original: " & parsedData.OriginalText
+    Debug.Print "  Truncated: " & parsedData.TruncatedDisplay
+    Debug.Print "  Segment1: " & parsedData.Segment1
+    Debug.Print "  Segment2: " & parsedData.Segment2
+    Debug.Print "  Segment3: " & parsedData.Segment3
+    Debug.Print "  ActivationID: " & parsedData.ActivationID
+    
     ' Show the UserForm and pass the parsed data
+    Debug.Print "TaxonomyExtractor: Calling SetParsedData..."
     TaxonomyCleanerForm_2.SetParsedData parsedData
+    Debug.Print "TaxonomyExtractor: Showing form..."
     TaxonomyCleanerForm_2.Show
 End Sub
 

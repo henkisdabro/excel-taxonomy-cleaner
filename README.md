@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor
+# Excel Taxonomy Extractor v1.2.0
 
 A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, with support for activation ID extraction and custom undo functionality.
 
@@ -45,7 +45,7 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 - Type 1-9 to select segment, or 'A' for Activation ID
 - Run `UndoTaxonomyCleaning` macro to undo changes
 
-## Key Features
+## Key Features v1.2.0
 
 ### 🎯 Flexible Extraction
 - **9 Segments**: Extract any of the first 9 pipe-delimited segments
@@ -53,6 +53,7 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 - **Batch Processing**: Works with single cells or multiple selected ranges
 - **Smart Parsing**: Handles missing segments gracefully
 - **Live Preview**: See segment content before extraction
+- **Enhanced UI**: Modern professional interface with smart data preview
 
 ### 🔄 Custom Undo System
 Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
@@ -144,6 +145,26 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Anyone**: Working with complex delimited data structures
 
 Ready to streamline your taxonomy data extraction! 🚀
+
+## Version History
+
+### v1.2.0 (Latest)
+- **Enhanced UserForm Interface**: Modern professional UI with smart data preview
+- **Dynamic Button Captions**: Buttons show actual segment content from your data
+- **Smart Label Display**: Truncated preview (12 chars + "...") of selected data
+- **Context-Aware Parsing**: Automatically analyzes first selected cell
+- **Improved Error Handling**: More robust validation and processing
+- **Silent Operation**: No unnecessary confirmation dialogs
+- **Performance Optimizations**: Better memory management and screen updating
+
+### v1.1.0
+- Added professional UserForm with 9 segment buttons
+- Custom undo functionality
+- Excel Add-in support
+
+### v1.0.0
+- Initial release with basic InputBox interface
+- Core segment extraction functionality
 
 ## Support
 
