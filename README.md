@@ -7,7 +7,7 @@ A professional VBA utility for extracting specific segments from pipe-delimited 
 Install instantly with this PowerShell one-liner:
 
 ```powershell
-irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1?$(Get-Date -UFormat %s)" | iex
 ```
 
 **What this does:**
@@ -32,7 +32,7 @@ Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-
 ### Automatic Upgrade (Recommended)
 ```powershell
 # Simply run the installer again - it handles everything
-irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1?$(Get-Date -UFormat %s)" | iex
 ```
 
 **What the installer does automatically:**
@@ -318,7 +318,7 @@ git push origin vX.Y.Z
 #### 5. **Verify Installation**
 Test the PowerShell installer picks up the new version:
 ```powershell
-irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
+irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1?$(Get-Date -UFormat %s)" | iex
 ```
 
 ### 🎯 **Developer Checklist**
