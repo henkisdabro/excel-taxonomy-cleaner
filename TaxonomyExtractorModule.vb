@@ -28,9 +28,28 @@ Type UndoData
     OriginalValue As String
 End Type
 
+' Data structure to hold parsed segments from first selected cell
+Type ParsedCellData
+    OriginalText As String
+    TruncatedDisplay As String
+    Segment1 As String
+    Segment2 As String
+    Segment3 As String
+    Segment4 As String
+    Segment5 As String
+    Segment6 As String
+    Segment7 As String
+    Segment8 As String
+    Segment9 As String
+    ActivationID As String
+End Type
+
 Dim UndoArray() As UndoData
 Dim UndoCount As Integer
 Dim LastSegmentNumber As Integer
+
+' Global variable to hold ribbon reference (optional)
+Public myRibbon As IRibbonUI
 
 ' Main macro to be called when button is pressed
 Sub TaxonomyExtractor()
@@ -56,8 +75,30 @@ Sub TaxonomyExtractor()
         Exit Sub
     End If
     
-    ' Show the custom UserForm
-    TaxonomyCleanerForm_2.Show
+    ' Parse the first selected cell
+    Dim firstCellContent As String
+    firstCellContent = Selection.Cells(1).Value
+    
+    ' DEBUG: Show what we're parsing
+    Debug.Print "TaxonomyExtractor: First cell content: " & firstCellContent
+    
+    Dim parsedData As ParsedCellData
+    parsedData = ParseFirstCellData(firstCellContent)
+    
+    ' DEBUG: Show parsed results
+    Debug.Print "TaxonomyExtractor: Parsed data:"
+    Debug.Print "  Original: " & parsedData.OriginalText
+    Debug.Print "  Truncated: " & parsedData.TruncatedDisplay
+    Debug.Print "  Segment1: " & parsedData.Segment1
+    Debug.Print "  Segment2: " & parsedData.Segment2
+    Debug.Print "  Segment3: " & parsedData.Segment3
+    Debug.Print "  ActivationID: " & parsedData.ActivationID
+    
+    ' Show the UserForm and pass the parsed data
+    Debug.Print "TaxonomyExtractor: Calling SetParsedData..."
+    TaxonomyExtractorForm.SetParsedData parsedData
+    Debug.Print "TaxonomyExtractor: Showing form..."
+    TaxonomyExtractorForm.Show
 End Sub
 
 ' Simple input dialog interface (fallback when UserForm doesn't exist)
@@ -93,6 +134,52 @@ Sub ShowSegmentSelector()
         MsgBox "Please enter a valid number between 1 and 9, or 'A' for Activation ID.", vbExclamation, "Invalid Input"
     End If
 End Sub
+
+' Parse first selected cell into individual segments
+Function ParseFirstCellData(cellContent As String) As ParsedCellData
+    Dim result As ParsedCellData
+    
+    ' Store original text
+    result.OriginalText = cellContent
+    
+    ' Create truncated display (12 chars + "...")
+    If Len(cellContent) > 15 Then
+        result.TruncatedDisplay = Left(cellContent, 12) & "..."
+    Else
+        result.TruncatedDisplay = cellContent
+    End If
+    
+    ' Split by colon first to separate activation ID
+    Dim colonParts() As String
+    colonParts = Split(cellContent, ":")
+    
+    Dim mainContent As String
+    mainContent = colonParts(0)
+    
+    ' Extract activation ID if colon exists
+    If UBound(colonParts) > 0 Then
+        result.ActivationID = Trim(colonParts(1))
+    Else
+        result.ActivationID = ""
+    End If
+    
+    ' Split main content by pipes
+    Dim segments() As String
+    segments = Split(mainContent, "|")
+    
+    ' Assign segments (with bounds checking)
+    If UBound(segments) >= 0 Then result.Segment1 = Trim(segments(0))
+    If UBound(segments) >= 1 Then result.Segment2 = Trim(segments(1))
+    If UBound(segments) >= 2 Then result.Segment3 = Trim(segments(2))
+    If UBound(segments) >= 3 Then result.Segment4 = Trim(segments(3))
+    If UBound(segments) >= 4 Then result.Segment5 = Trim(segments(4))
+    If UBound(segments) >= 5 Then result.Segment6 = Trim(segments(5))
+    If UBound(segments) >= 6 Then result.Segment7 = Trim(segments(6))
+    If UBound(segments) >= 7 Then result.Segment8 = Trim(segments(7))
+    If UBound(segments) >= 8 Then result.Segment9 = Trim(segments(8))
+    
+    ParseFirstCellData = result
+End Function
 
 ' Core function to extract specific segment from pipe-delimited text
 Sub ExtractPipeSegment(segmentNumber As Integer)
@@ -325,4 +412,27 @@ Sub TestActivationIDDirect()
     Range("A1").Value = "FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725"
     Range("A1").Select
     Call ExtractActivationID
+End Sub
+
+'================================================================================
+' RIBBON CALLBACK FUNCTIONS
+'================================================================================
+' These functions are called by the CustomUI ribbon buttons embedded in the XLAM file.
+' DO NOT MODIFY the function names - they must match the onAction attributes in customUI.xml
+
+' Ribbon callback function - called when IPG Taxonomy Extractor ribbon button is clicked
+Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
+    On Error GoTo ErrorHandler
+    
+    ' Call the main extractor function
+    TaxonomyExtractor
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.2.0"
+End Sub
+
+' Optional: Ribbon load callback - called when the ribbon is loaded
+Public Sub RibbonOnLoad(ribbon As IRibbonUI)
+    Set myRibbon = ribbon
 End Sub
