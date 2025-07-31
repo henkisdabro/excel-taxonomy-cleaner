@@ -538,8 +538,8 @@ End Sub
 Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
     On Error GoTo ErrorHandler
     
-    ' Call the main extractor function
-    TaxonomyExtractor
+    ' Call the modeless extractor function (v1.4.0 - superior user experience)
+    TaxonomyExtractorModeless
     Exit Sub
     
 ErrorHandler:

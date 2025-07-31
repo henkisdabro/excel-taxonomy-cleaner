@@ -6,16 +6,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
 
-**Version 1.4.0 introduces modeless UserForm operation that allows continuous Excel interaction while the form remains open, enabling real-time selection updates and seamless multi-range processing workflows.**
+**Version 1.4.0 introduces modeless UserForm operation that allows continuous Excel interaction while the form remains open, enabling real-time selection updates, seamless multi-range processing workflows, intelligent button refresh after extractions, proper pipe validation logic, and selected cell count display.**
 
 ## Architecture
 
 ### Core Functionality
 - **Enhanced Range Support**: Works with single cells or multiple selected cell ranges
 - **Professional UserForm**: Custom interface with 9 segment buttons + Activation ID button
-- **Smart Data Preview**: Displays truncated view (12 chars + "...") of selected data
+- **Modeless Operation** (v1.4.0): Form stays open while Excel remains fully interactive
+- **Real-time Updates** (v1.4.0): Button content updates automatically when selection changes
+- **Smart Data Preview**: Displays full selected data with dynamic button captions
+- **Selected Cell Count** (v1.4.0): Shows number of cells that will be processed
 - **Dynamic Button Captions**: Shows preview of each segment content on buttons
 - **Context-Aware Parsing**: Automatically parses first selected cell into individual segments
+- **Pipe Validation** (v1.4.0): Requires pipe characters for segment display, shows "N/A" for single values
+- **Post-Extraction Refresh** (v1.4.0): Buttons immediately update after extraction operations
 - **Smart Positioning**: Centers UserForm within Excel window while respecting design-time dimensions
 - **Flexible Text Processing**: Extracts specific segments (1-9) or activation IDs from pipe-delimited data
 - **Batch Processing**: Processes multiple cells simultaneously with progress feedback
@@ -113,27 +118,32 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 - Enables real-time updates when user changes selection
 - Perfect for batch processing multiple ranges without reopening form
 
-#### `ParseFirstCellData(cellContent As String) As ParsedCellData`
+#### `ParseFirstCellData(cellContent As String, selectedCellCount As Long) As ParsedCellData` (Updated v1.4.0)
 - Parses pipe-delimited text into individual segments (1-9) and activation ID
 - Creates truncated display text (12 characters + "...")
+- Includes selected cell count for UserForm display
+- Validates pipe characters - requires pipes for segment parsing (v1.4.0 improvement)
 - Handles missing segments gracefully with bounds checking
 - Returns structured data for UserForm consumption
 
-#### `ExtractPipeSegment(segmentNumber As Integer)`
+#### `ExtractPipeSegment(segmentNumber As Integer)` (Enhanced v1.4.0)
 - Core extraction logic for segments 1-9
 - Handles segment extraction with colon delimiter support
 - Silent operation - only shows errors if no cells processed
 - Stores original values for undo functionality
+- Automatically refreshes modeless UserForm after extraction (v1.4.0)
 
-#### `ExtractActivationID()`
+#### `ExtractActivationID()` (Enhanced v1.4.0)
 - Specialized function for extracting activation IDs (text after colon)
 - Silent operation - only shows errors if no cells processed
 - Integrates with undo system
+- Automatically refreshes modeless UserForm after extraction (v1.4.0)
 
-#### `UndoTaxonomyCleaning()`
+#### `UndoTaxonomyCleaning()` (Enhanced v1.4.0)
 - Custom undo system that works with VBA changes
 - Restores original cell values before extraction
 - Silent operation - no confirmation dialogs needed
+- Automatically refreshes modeless UserForm after undo (v1.4.0)
 
 #### UserForm Event Handlers
 - `SetParsedData(parsedData As ParsedCellData)` - Receives parsed cell data from main module
@@ -147,6 +157,7 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 
 #### Application Events and Cleanup (New v1.4.0)
 - `clsAppEvents.App_SheetSelectionChange()` - Monitors Excel selection changes and updates UserForm
+- `RefreshModelessFormIfOpen()` - Refreshes UserForm after extraction operations
 - `CleanupModelessEvents()` - Proper cleanup of application event handlers
 - Prevents memory leaks and ensures stable operation across multiple form uses
 

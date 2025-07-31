@@ -1,6 +1,6 @@
-# Excel Taxonomy Extractor v1.3.0
+# Excel Taxonomy Extractor v1.4.0
 
-A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, with support for activation ID extraction and custom undo functionality.
+A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, featuring modeless operation, real-time updates, activation ID extraction, and custom undo functionality.
 
 ## 🚀 **One-Click Installation** (Recommended)
 
@@ -74,6 +74,24 @@ If you prefer manual control:
 2. **Create the UserForm**: Follow instructions in `TaxonomyExtractorForm.vb` to create the 9-button interface
 3. **Run macro**: Execute `TaxonomyExtractor` macro (assign to ribbon button)
 4. **Choose option**: Click segment button (1-9) or Activation ID button
+
+## ✨ New in v1.4.0
+
+### 🚀 Modeless Operation
+- **Keep form open** while working with Excel
+- **No need to reopen** - select different cells and extract continuously
+- **Real-time updates** - buttons automatically refresh when you select new cells
+
+### 🎯 Smart Interface
+- **Pipe validation** - buttons show "N/A" for single values (no pipes)
+- **Post-extraction refresh** - buttons immediately update after extraction
+- **Cell count display** - shows how many cells will be processed
+- **Professional workflow** - seamless batch processing
+
+### 🔄 Enhanced UX
+- **Instant feedback** - see results immediately
+- **Clear state indication** - no confusion about current data
+- **Intelligent button behavior** - only show extractable segments
 
 ## Example
 
