@@ -25,9 +25,7 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 - Alternative access: File → Options → Add-ins → Excel Add-ins → Go → Browse
 
 **To uninstall:**
-```powershell
-(irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex
-```
+Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
 
 ## Manual Installation (Alternative)
 

@@ -2,11 +2,9 @@
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
-#   Uninstall: (irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex
 
 [CmdletBinding()]
 param(
-    [switch]$Uninstall,
     [string]$Version = "latest"
 )
 
@@ -172,7 +170,7 @@ Support: https://github.com/$RepoOwner/$RepoName
 Version: $($releaseInfo.Version)
 Installed: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 
-To uninstall: Run the same PowerShell command with -Uninstall flag
+To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
 "@
         
         $instructions | Out-File -FilePath $shortcutPath -Encoding UTF8
@@ -195,8 +193,8 @@ To uninstall: Run the same PowerShell command with -Uninstall flag
         Write-Host "🏠 Native Excel AddIns folder used for optimal compatibility" -ForegroundColor Gray
         Write-Host "🎯 IPG Taxonomy Extractor button will appear in IPG Tools group on Home tab" -ForegroundColor Gray
         Write-Host ""
-        Write-Host "To uninstall later:" -ForegroundColor Yellow
-        Write-Host "(irm `"https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1`") -replace 'INSTALL_MODE', 'UNINSTALL_MODE' | iex" -ForegroundColor Gray
+        Write-Host "To uninstall:" -ForegroundColor Yellow
+        Write-Host "Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in" -ForegroundColor Gray
         Write-Host ""
 
     }
@@ -211,81 +209,17 @@ To uninstall: Run the same PowerShell command with -Uninstall flag
     }
 }
 
-function Uninstall-AddIn {
-    try {
-        Write-Status "Uninstalling Excel Taxonomy Cleaner..."
-
-        # Remove add-in file
-        if (Test-Path $AddInPath) {
-            Remove-Item $AddInPath -Force
-            Write-Success "Removed add-in file"
-        }
-
-        # Remove registry entries
-        $regPath = "HKCU:\Software\Microsoft\Office\16.0\Excel\Options"
-        $counter = 0
-        do {
-            $keyName = if ($counter -eq 0) { "OPEN" } else { "OPEN$counter" }
-            $value = Get-ItemProperty -Path $regPath -Name $keyName -ErrorAction SilentlyContinue
-            if ($value -and $value.$keyName -eq $AddInPath) {
-                Remove-ItemProperty -Path $regPath -Name $keyName -Force
-                Write-Success "Removed registry entry: $keyName"
-                break
-            }
-            $counter++
-        } while ($counter -lt 50)
-
-        # Clean up desktop instructions
-        $desktopPath = [Environment]::GetFolderPath("Desktop")
-        $shortcutPath = Join-Path $desktopPath "Excel Taxonomy Cleaner - Instructions.txt"
-        if (Test-Path $shortcutPath) {
-            Remove-Item $shortcutPath -Force
-        }
-
-        Write-Success "Uninstallation completed successfully!"
-        Write-Host ""
-        Write-Host "Excel Taxonomy Cleaner has been removed from your system." -ForegroundColor Green
-        Write-Host "You may need to restart Excel to complete the removal." -ForegroundColor Yellow
-    }
-    catch {
-        Write-Error "Uninstallation failed: $($_.Exception.Message)"
-        exit 1
-    }
-}
-
-# Mode detection - default is INSTALL_MODE
-$ScriptMode = "INSTALL_MODE"
-
-# Check for uninstall mode marker (changed via string replacement)
-if ($ScriptMode -eq "UNINSTALL_MODE") {
-    $Uninstall = $true
-    Write-Host "DEBUG: Uninstall mode detected via string replacement" -ForegroundColor Yellow
-}
 
 # Main execution
 try {
     Write-Host ""
-    if ($Uninstall) {
-        Write-Host "Excel Taxonomy Cleaner v1.2.0 - Uninstaller" -ForegroundColor Red
-    } else {
-        Write-Host "Excel Taxonomy Cleaner v1.2.0 - Installer" -ForegroundColor Cyan
-    }
+    Write-Host "Excel Taxonomy Cleaner v1.2.0 - Installer" -ForegroundColor Cyan
     Write-Host "Repository: https://github.com/$RepoOwner/$RepoName" -ForegroundColor Gray
     Write-Host ""
 
-    if ($Uninstall) {
-        Uninstall-AddIn
-    } else {
-        Install-AddIn
-    }
+    Install-AddIn
 }
 catch {
     Write-Error "Script execution failed: $($_.Exception.Message)"
     exit 1
-}
-finally {
-    # Clean up environment variable
-    if ($env:TAXONOMY_UNINSTALL) {
-        Remove-Item Env:TAXONOMY_UNINSTALL -ErrorAction SilentlyContinue
-    }
 }

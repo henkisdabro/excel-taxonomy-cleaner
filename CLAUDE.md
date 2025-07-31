@@ -159,6 +159,9 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 5. Works without admin rights
 6. Creates desktop instructions file
 
+**Uninstall:**
+Users can uninstall via Excel's built-in interface: File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
+
 **Requirements:**
 - XLAM file must include embedded CustomUI ribbon XML (see `RIBBON_SOLUTION.md`)
 - XLAM file uploaded as GitHub Release asset
