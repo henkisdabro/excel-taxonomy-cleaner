@@ -171,6 +171,9 @@ This is an advanced VBA (Visual Basic for Applications) utility for Excel that p
 
 ## Data Format Expectations and Examples
 
+### IPG Interact Taxonomy Format
+The utility is specifically designed to work with the taxonomy format outputted from the **IPG Interact Taxonomy tool**. This format is used consistently across Campaign names, Insertion Order names, Ad group names, Line item names, and Ad names.
+
 The utility works with pipe-delimited data with activation IDs in this format:
 ```
 segment1|segment2|segment3|segment4|segment5|segment6|segment7|segment8|segment9:activationID

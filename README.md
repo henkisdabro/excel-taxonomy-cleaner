@@ -1,6 +1,20 @@
 # Excel Taxonomy Extractor v1.4.0
 
+![Release](https://img.shields.io/github/v/release/henkisdabro/excel-taxonomy-cleaner)
+![Language](https://img.shields.io/badge/language-VBA-blue)
+![Platform](https://img.shields.io/badge/platform-Excel-green)
+![License](https://img.shields.io/badge/license-MIT-yellow)
+
+**Owner & Maintainer:** [@henkisdabro](https://github.com/henkisdabro)  
+**Original Concept by:** [@stueydubs](https://github.com/stueydubs)
+
 A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, featuring modeless operation, real-time updates, activation ID extraction, and custom undo functionality.
+
+## 🎬 Demonstration
+
+*[Demo GIF/Video to be added - showing usage workflow and key features]*
+
+---
 
 ## 🚀 **One-Click Installation** (Recommended)
 
@@ -26,6 +40,8 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 
 **To uninstall:**
 Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
+
+---
 
 ## 🔄 Upgrading to a New Version
 
@@ -68,32 +84,28 @@ If you prefer manual control:
 2. Run the PowerShell installer again
 3. Restart Excel
 
-## Manual Installation (Alternative)
+---
 
-1. **Copy the main code**: Use `TaxonomyExtractorModule.vb` - copy this code into an Excel VBA module
-2. **Create the UserForm**: Follow instructions in `TaxonomyExtractorForm.vb` to create the 9-button interface
-3. **Run macro**: Execute `TaxonomyExtractor` macro (assign to ribbon button)
-4. **Choose option**: Click segment button (1-9) or Activation ID button
+## ✨ What's New in v1.4.0
 
-## ✨ New in v1.4.0
+### 🚀 Revolutionary Modeless Operation
+- **Keep form open** while working with Excel - no more reopening the form for each extraction
+- **Excel remains fully interactive** - click, select, and navigate normally with the form still open
+- **Continuous workflow** - select different ranges and extract without interruption
 
-### 🚀 Modeless Operation
-- **Keep form open** while working with Excel
-- **No need to reopen** - select different cells and extract continuously
-- **Real-time updates** - buttons automatically refresh when you select new cells
+### 🎯 Real-time Interface Updates
+- **Automatic refresh** - buttons update instantly when you select new cells with taxonomy data
+- **Live preview** - see exactly what segments are available in your currently selected data
+- **Cell count display** - shows how many cells will be processed with each extraction
 
-### 🎯 Smart Interface
-- **Pipe validation** - buttons show "N/A" for single values (no pipes)
-- **Post-extraction refresh** - buttons immediately update after extraction
-- **Cell count display** - shows how many cells will be processed
-- **Professional workflow** - seamless batch processing
+### 🔄 Smart Data Validation
+- **Pipe validation** - buttons show "N/A" and are disabled for data without pipe delimiters
+- **Post-extraction refresh** - interface immediately updates after extraction to show current state
+- **Intelligent button behavior** - only show extractable segments for cleaner interface
 
-### 🔄 Enhanced UX
-- **Instant feedback** - see results immediately
-- **Clear state indication** - no confusion about current data
-- **Intelligent button behavior** - only show extractable segments
+---
 
-## Example
+## Example Usage
 
 For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagram|Conversions:DJTDOM060725`
 
@@ -104,36 +116,9 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 - **Segment 9** → `Conversions` (text after 8th pipe, before colon)
 - **Activation ID** → `DJTDOM060725` (text after colon)
 
-## Files
+---
 
-- **`TaxonomyExtractorModule.vb`** - Main VBA code with all functionality
-- **`TaxonomyExtractorForm.vb`** - UserForm setup instructions and button code  
-- **`install.ps1`** - PowerShell installation script for GitHub one-liner deployment
-- **`RIBBON_SOLUTION.md`** - Complete guide for embedding CustomUI ribbon buttons in XLAM
-- **`DEPLOYMENT_CHECKLIST.md`** - Production deployment guide and testing procedures
-- **`ADDON_INSTRUCTIONS.md`** - Manual Excel Add-in creation guide
-- **`CLAUDE.md`** - Development documentation and architecture notes
-
-## Interface Options
-
-### Professional UserForm (Recommended)
-- Beautiful interface with 9 segment buttons + Activation ID button
-- **Smart Label Display**: Shows truncated preview of selected data (12 chars + "...")
-- **Dynamic Button Captions**: Buttons show preview of each segment content
-- **Context-Aware Interface**: Adapts to your selected data automatically
-- **Smart Positioning**: Centers within Excel window while preserving your form size
-- Built-in "Undo Last" button for quick reversal
-- Keep dialog open to experiment with different extractions
-- Click buttons instead of typing numbers
-- Follow setup instructions in `TaxonomyExtractorForm.vb`
-
-### Basic InputBox (Fallback)
-- Simple text input dialog
-- Works immediately if UserForm not created
-- Type 1-9 to select segment, or 'A' for Activation ID
-- Run `UndoTaxonomyCleaning` macro to undo changes
-
-## Key Features v1.2.0
+## Key Features
 
 ### 🎯 Flexible Extraction
 - **9 Segments**: Extract any of the first 9 pipe-delimited segments
@@ -158,47 +143,66 @@ Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
 - **Native Folder**: Installs to `%APPDATA%\Microsoft\AddIns` for optimal Excel integration
 - **Follow instructions**: See `RIBBON_SOLUTION.md` for ribbon setup and `DEPLOYMENT_CHECKLIST.md` for distribution
 
-## Installation
+---
 
-### Quick Setup (Basic)
-1. Open Excel → Alt+F11 (VBA Editor)
-2. Right-click project → Insert → Module  
-3. Copy code from `TaxonomyExtractorModule.vb`
-4. Save as `.xlsm` file
-5. Ready to use with InputBox interface!
+## Interface Options
 
-### Professional Setup (Recommended)
-1. Follow Quick Setup above
-2. Create UserForm using `TaxonomyExtractorForm.vb` instructions
-3. Get beautiful 9-button interface with built-in undo
-4. Assign `TaxonomyExtractor` to ribbon button
+### Modeless UserForm (Recommended - New in v1.4.0)
+- **Continuous operation** - form stays open while Excel remains interactive
+- **Real-time updates** - interface automatically refreshes when you select new cells
+- **Multi-range workflow** - process different ranges without reopening the form
+- **Cell count display** - shows exactly how many cells will be processed
+- **Smart validation** - only shows available segments, disables unavailable ones
+- Run `TaxonomyExtractorModeless` macro to launch
 
-### Excel Add-in (Advanced)
-1. Complete Professional Setup
-2. Save as Excel Add-in (.xlam) format
-3. Install via File → Options → Add-ins
-4. Available in ALL Excel workbooks automatically
-5. Perfect for team distribution
+### Traditional Modal UserForm
+- Beautiful interface with 9 segment buttons + Activation ID button
+- **Smart Label Display**: Shows complete preview of selected data
+- **Dynamic Button Captions**: Buttons show preview of each segment content
+- **Context-Aware Interface**: Adapts to your selected data automatically
+- **Smart Positioning**: Centers within Excel window while preserving your form size
+- Built-in "Undo Last" button for quick reversal
+- Run `TaxonomyExtractor` macro to launch
+
+### Basic InputBox (Fallback)
+- Simple text input dialog
+- Works immediately if UserForm not created
+- Type 1-9 to select segment, or 'A' for Activation ID
+- Run `UndoTaxonomyCleaning` macro to undo changes
+
+---
 
 ## Usage Workflow
 
-### With UserForm Interface
-1. **Select cells** with pipe-delimited data
+### Modeless Interface (Continuous Operation - v1.4.0)
+1. **Select cells** with pipe-delimited taxonomy data
 2. **Click "IPG Taxonomy Extractor"** button in the IPG Tools group on Home tab
-3. **See your data preview** - label shows truncated content, buttons show segment previews
-4. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
-5. **Review results** - keep dialog open for more extractions
-6. **Experiment freely** - use "Undo Last" button for instant reversal
-7. **Click "Close"** when finished
+3. **Form stays open** - Excel remains fully interactive
+4. **Select different cells** - form automatically updates to show new data
+5. **Click segment button** (1-9) or "Activation ID" - processes currently selected cells
+6. **Continue selecting** new ranges and extracting without reopening form
+7. **Use "Undo Last"** button for instant reversal
+8. **Click "Close"** when finished
 
-### With InputBox Interface
-1. **Select cells** with pipe-delimited data  
-2. **Run `TaxonomyExtractor`** macro
-3. **Type segment number** (1-9) or 'A' for Activation ID
-4. **Results applied** immediately and silently
-5. **Run `UndoTaxonomyCleaning`** to reverse if needed
+### Traditional Modal Interface
+1. **Select cells** with pipe-delimited data
+2. **Run `TaxonomyExtractor`** macro or click ribbon button
+3. **See your data preview** - label shows complete content, buttons show segment previews
+4. **Click segment button** (1-9) or "Activation ID" - extraction happens instantly
+5. **Review results** - use "Undo Last" button for instant reversal if needed
+6. **Click "Close"** when finished
+
+---
 
 ## Data Format Support
+
+### IPG Interact Taxonomy Format
+This tool is specifically designed to work with the taxonomy format outputted from the **IPG Interact Taxonomy tool**. This format is used consistently across:
+- **Campaign names**
+- **Insertion Order names** 
+- **Ad group names**
+- **Line item names**
+- **Ad names**
 
 ### Standard Format
 ```
@@ -216,24 +220,98 @@ FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Facebook_Instagr
 - **Empty cells**: Skipped automatically
 - **Mixed data**: Each cell processed independently
 
+---
+
+## Installation Methods
+
+### Method 1: One-Click PowerShell (Recommended)
+Use the PowerShell command at the top of this README - it handles everything automatically.
+
+### Method 2: Manual VBA Setup (Development)
+1. **Copy the main code**: Use `TaxonomyExtractorModule.vb` - copy this code into an Excel VBA module
+2. **Create the UserForm**: Follow instructions in `TaxonomyExtractorForm.vb` to create the interface
+3. **Run macro**: Execute `TaxonomyExtractor` or `TaxonomyExtractorModeless` macro
+4. **Choose option**: Click segment button (1-9) or Activation ID button
+
+### Method 3: Manual Add-in Installation (Legacy)
+1. Complete Method 2 setup above
+2. Save as Excel Add-in (.xlam) format
+3. Install via File → Options → Add-ins
+4. Available in ALL Excel workbooks automatically
+5. Perfect for team distribution
+
+---
+
 ## Technical Highlights
 
+- **Modeless Operation**: Revolutionary continuous workflow without interrupting Excel
+- **Real-time Updates**: Interface adapts instantly to new data selections
+- **Application Event Management**: Proper Excel integration with automatic cleanup
 - **Robust Error Handling**: Prevents crashes during batch processing
 - **Performance Optimized**: Screen updating control for smooth operation
-- **Memory Efficient**: Automatic cleanup of undo data
+- **Memory Efficient**: Automatic cleanup of undo data and event handlers
 - **Silent Operation**: No interruptions - only error messages when needed
 - **Professional UI**: Looks and feels like built-in Excel tools
 - **Context-Aware Display**: Interface adapts to show your actual data content
 
-## Perfect For
+---
 
-- **Marketing Teams**: Extract campaign segments from taxonomy strings
-- **Data Analysts**: Parse structured pipe-delimited datasets  
-- **Business Users**: No programming required - just click buttons
-- **IT Departments**: Deploy as add-in for organization-wide use
-- **Anyone**: Working with complex delimited data structures
+## Files
 
-Ready to streamline your taxonomy data extraction! 🚀
+- **`TaxonomyExtractorModule.vb`** - Main VBA code with all functionality and modeless operation
+- **`TaxonomyExtractorForm.vb`** - UserForm setup instructions and button code  
+- **`clsAppEvents.vb`** - Application event handler for modeless operation
+- **`install.ps1`** - PowerShell installation script for GitHub one-liner deployment
+- **`RIBBON_SOLUTION.md`** - Complete guide for embedding CustomUI ribbon buttons in XLAM
+- **`DEPLOYMENT_CHECKLIST.md`** - Production deployment guide and testing procedures
+- **`ADDON_INSTRUCTIONS.md`** - Manual Excel Add-in creation guide
+- **`CLAUDE.md`** - Development documentation and architecture notes
+
+---
+
+## Version History
+
+### v1.4.0 (Latest)
+- **Revolutionary Modeless Operation**: Keep form open while Excel remains fully interactive
+- **Real-time Interface Updates**: Buttons automatically refresh when selecting new cells
+- **Smart Pipe Validation**: Buttons show "N/A" for single values without pipe delimiters
+- **Post-extraction Refresh**: Interface immediately reflects extraction results
+- **Selected Cell Count Display**: Shows exactly how many cells will be processed
+- **Enhanced UX Workflow**: Seamless batch processing for multiple data ranges 
+- **Application Event Management**: Proper Excel integration with automatic cleanup
+- **Ribbon Button Enhancement**: Launches superior modeless version by default
+
+### v1.3.0
+- **Smart Positioning System**: UserForm now centers perfectly within Excel window
+- **Respects Design Dimensions**: Preserves UserForm's design-time Width and Height properties
+- **Enhanced Install Script**: Automatically removes old versions during upgrades
+- **Improved Developer Workflow**: Comprehensive release process documentation
+- **User Upgrade Instructions**: Clear upgrade path for existing users
+- **Version Management**: Systematic approach to version increments and releases
+
+### v1.2.0
+- **Enhanced UserForm Interface**: Modern professional UI with smart data preview
+- **Dynamic Button Captions**: Buttons show actual segment content from your data
+- **Smart Label Display**: Complete preview of selected data
+- **Context-Aware Parsing**: Automatically analyzes first selected cell
+- **Smart Positioning**: Centers UserForm within Excel window while respecting design dimensions
+- **PowerShell One-Liner Installation**: GitHub-hosted automated deployment
+- **Native AddIns Folder**: Optimal Excel integration and compatibility
+- **CustomUI Ribbon Support**: Embedded ribbon buttons for professional distribution
+- **Improved Error Handling**: More robust validation and processing
+- **Silent Operation**: No unnecessary confirmation dialogs
+- **Performance Optimizations**: Better memory management and screen updating
+
+### v1.1.0
+- Added professional UserForm with 9 segment buttons
+- Custom undo functionality
+- Excel Add-in support
+
+### v1.0.0
+- Initial release with basic InputBox interface
+- Core segment extraction functionality
+
+---
 
 ## 🛠️ Developer Workflow - Building New Releases
 
@@ -331,48 +409,10 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 - [ ] PowerShell installer tested with new version
 - [ ] Old version cleanup verified in install script
 
-## Version History
-
-### v1.4.0 (Latest)
-- **Revolutionary Modeless Operation**: Keep form open while Excel remains fully interactive
-- **Real-time Interface Updates**: Buttons automatically refresh when selecting new cells
-- **Smart Pipe Validation**: Buttons show "N/A" for single values without pipe delimiters
-- **Post-extraction Refresh**: Interface immediately reflects extraction results
-- **Selected Cell Count Display**: Shows exactly how many cells will be processed
-- **Enhanced UX Workflow**: Seamless batch processing for multiple data ranges 
-- **Application Event Management**: Proper Excel integration with automatic cleanup
-- **Ribbon Button Enhancement**: Launches superior modeless version by default
-
-### v1.3.0
-- **Smart Positioning System**: UserForm now centers perfectly within Excel window
-- **Respects Design Dimensions**: Preserves UserForm's design-time Width and Height properties
-- **Enhanced Install Script**: Automatically removes old versions during upgrades
-- **Improved Developer Workflow**: Comprehensive release process documentation
-- **User Upgrade Instructions**: Clear upgrade path for existing users
-- **Version Management**: Systematic approach to version increments and releases
-
-### v1.2.0
-- **Enhanced UserForm Interface**: Modern professional UI with smart data preview
-- **Dynamic Button Captions**: Buttons show actual segment content from your data
-- **Smart Label Display**: Truncated preview (12 chars + "...") of selected data
-- **Context-Aware Parsing**: Automatically analyzes first selected cell
-- **Smart Positioning**: Centers UserForm within Excel window while respecting design dimensions
-- **PowerShell One-Liner Installation**: GitHub-hosted automated deployment
-- **Native AddIns Folder**: Optimal Excel integration and compatibility
-- **CustomUI Ribbon Support**: Embedded ribbon buttons for professional distribution
-- **Improved Error Handling**: More robust validation and processing
-- **Silent Operation**: No unnecessary confirmation dialogs
-- **Performance Optimizations**: Better memory management and screen updating
-
-### v1.1.0
-- Added professional UserForm with 9 segment buttons
-- Custom undo functionality
-- Excel Add-in support
-
-### v1.0.0
-- Initial release with basic InputBox interface
-- Core segment extraction functionality
+---
 
 ## Support
 
 See `CLAUDE.md` for detailed development documentation and `ADDON_INSTRUCTIONS.md` for complete add-in creation guide.
+
+Ready to streamline your taxonomy data extraction! 🚀
