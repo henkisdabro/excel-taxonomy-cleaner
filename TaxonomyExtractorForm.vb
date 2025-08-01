@@ -73,15 +73,30 @@
 '    - Position: X: 12, Y: 180
 '    - Size: Width: 140, Height: 30
 '
-' 5. ACTION BUTTONS:
+' 5. TARGETING ACRONYM CLEAN CONTROLS (overlaid on Segment 1 button):
+'    - Control Type: CommandButton
+'    - Name: TargetingAcronymCleanButton
+'    - Caption: "Trim ^ABC^" (dynamically updated to show actual pattern)
+'    - Position: Same as btn1 (overlaid on top)
+'    - Size: Same as btn1
+'    - Visible: Only when no pipes present AND caret pattern found
+'    - Note: Removes text in format ^any_characters^ with optional trailing space
+'    
+'    - Control Type: Label (optional companion label)
+'    - Name: AcronymCleanLabel
+'    - Caption: Any descriptive text you want
+'    - Position: Near TargetingAcronymCleanButton
+'    - Visible: Same logic as button (only when targeting pattern detected)
+'
+' 6. ACTION BUTTONS:
 '    - Control Type: CommandButton (3 buttons)
 '    - Names: btnUndo, btnCancel, btnClose
 '    - Captions: "Undo Last", "Cancel", "Close"
-'    - Position: X: 164, Y: 180 (btnUndo), X: 238, Y: 180 (btnCancel), X: 316, Y: 180 (btnClose)
+'    - Position: X: 12, Y: 220 (btnUndo), X: 164, Y: 220 (btnCancel), X: 316, Y: 220 (btnClose)
 '    - Size: Width: 68, Height: 30
 '
 ' LAYOUT SUMMARY:
-' - Form dimensions: 480 x 250
+' - Form dimensions: 480 x 280
 ' - lblInstructions shows: "Selected: [complete original text - no truncation]"
 ' - Segment buttons show: "1: [12 chars]", "2: [12 chars]", etc. (or "N/A" if missing)
 ' - ID button shows: "ID: [full activation ID]" (or "ID: N/A" if missing)
@@ -367,6 +382,35 @@ Private Sub UpdateButtonCaptions()
         Debug.Print "  Updated btnActivationID to N/A (disabled and greyed)"
     End If
     
+    ' Handle TargetingAcronymCleanButton - only visible when no pipes present and caret pattern exists
+    On Error Resume Next
+    If InStr(cellData.OriginalText, "|") > 0 Then
+        ' Data has pipes - this is taxonomy data, hide targeting button and label
+        TargetingAcronymCleanButton.Visible = False
+        AcronymCleanLabel.Visible = False
+        Debug.Print "  Hidden TargetingAcronymCleanButton and AcronymCleanLabel (pipes present)"
+    Else
+        ' No pipes - check for targeting acronym pattern
+        Dim targetingPattern As String
+        targetingPattern = ExtractTargetingPattern(cellData.OriginalText)
+        
+        If Len(targetingPattern) > 0 Then
+            ' Found targeting pattern - show button and label with pattern
+            TargetingAcronymCleanButton.Visible = True
+            TargetingAcronymCleanButton.Enabled = True
+            TargetingAcronymCleanButton.Caption = "Trim: " & targetingPattern
+            TargetingAcronymCleanButton.ForeColor = RGB(0, 0, 0)
+            AcronymCleanLabel.Visible = True
+            Debug.Print "  Shown TargetingAcronymCleanButton and AcronymCleanLabel: " & TargetingAcronymCleanButton.Caption
+        Else
+            ' No targeting pattern found - hide button and label
+            TargetingAcronymCleanButton.Visible = False
+            AcronymCleanLabel.Visible = False
+            Debug.Print "  Hidden TargetingAcronymCleanButton and AcronymCleanLabel (no pattern)"
+        End If
+    End If
+    On Error GoTo 0
+    
     Debug.Print "UpdateButtonCaptions completed"
 End Sub
 
@@ -420,6 +464,7 @@ Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
 Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
 Private Sub btn9_Click(): Call ExtractPipeSegment(9): End Sub
 Private Sub btnActivationID_Click(): Call ExtractActivationID: End Sub
+Private Sub TargetingAcronymCleanButton_Click(): Call CleanTargetingAcronyms: End Sub
 Private Sub btnCancel_Click(): Unload Me: End Sub
 Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub
@@ -452,6 +497,7 @@ End Sub
 ' ==============
 ' - Segments 1-9: Extract specific pipe-delimited segments
 ' - Activation ID: Extract text after colon character
+' - Trim ^ABC^: Remove targeting acronyms in format ^any_characters^ with optional trailing space (only visible when pattern detected)
 ' - Undo Last: Restore original values before extraction
 ' - Cancel/Close: Close the dialog
 '
@@ -463,6 +509,9 @@ End Sub
 ' - Segment 5 → "Always On Remarketing"
 ' - Segment 9 → "Conversions"
 ' - Activation ID → "DJTDOM060725"
+'
+' For targeting acronym text: "^AT^ testing string", "^ACX123^Acxiom Targeting", or "^FB_Campaign^ Facebook data"
+' - Clean ^ABC^ → "testing string", "Acxiom Targeting", or "Facebook data" (removes any ^pattern^ with optional trailing space)
 '
 ' QUICK SETUP GUIDE FOR SMART INTERFACE:
 ' =======================================

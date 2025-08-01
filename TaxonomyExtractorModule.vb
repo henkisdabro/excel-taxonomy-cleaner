@@ -50,7 +50,7 @@ Dim UndoCount As Integer
 Dim LastSegmentNumber As Integer
 
 ' Global variable to hold ribbon reference (optional)
-Public myRibbon As IRibbonUI
+Public myRibbon As Object
 
 ' Global variable for modeless form event handling
 Public AppEvents As clsAppEvents
@@ -237,6 +237,35 @@ Function ParseFirstCellData(cellContent As String, selectedCellCount As Long) As
     End If
     
     ParseFirstCellData = result
+End Function
+
+' Extract the first targeting pattern found in text (for button caption display)
+Function ExtractTargetingPattern(inputText As String) As String
+    Dim regex As Object
+    Dim matches As Object
+    
+    On Error GoTo ErrorHandler
+    
+    ' Create regex object for pattern matching
+    Set regex = CreateObject("VBScript.RegExp")
+    With regex
+        .Global = False  ' Only find first match
+        .Pattern = "\^[^^]+\^"  ' Matches ^any characters except caret^ (no optional space for display)
+    End With
+    
+    ' Find the first match
+    Set matches = regex.Execute(inputText)
+    
+    If matches.Count > 0 Then
+        ExtractTargetingPattern = matches(0).Value
+    Else
+        ExtractTargetingPattern = ""
+    End If
+    
+    Exit Function
+    
+ErrorHandler:
+    ExtractTargetingPattern = ""
 End Function
 
 ' Core function to extract specific segment from pipe-delimited text
@@ -452,6 +481,74 @@ NextCell:
     Call RefreshModelessFormIfOpen
 End Sub
 
+' Clean targeting acronyms (removes text in format ^ABC^ with optional trailing space)
+Sub CleanTargetingAcronyms()
+    Dim cell As Range
+    Dim cellText As String
+    Dim cleanedText As String
+    Dim processedCount As Integer
+    Dim regex As Object
+    
+    ' Initialize undo functionality
+    UndoCount = 0
+    LastSegmentNumber = -1 ' Special marker for targeting acronym cleaning
+    ReDim UndoArray(1 To Selection.Cells.Count)
+    
+    ' Create regex object for pattern matching
+    Set regex = CreateObject("VBScript.RegExp")
+    With regex
+        .Global = True
+        .Pattern = "\^[^^]+\^ ?" ' Matches ^any characters except caret^ with optional trailing space
+    End With
+    
+    ' Disable screen updating for better performance
+    Application.ScreenUpdating = False
+    
+    processedCount = 0
+    
+    For Each cell In Selection
+        On Error GoTo NextCell ' Skip any problematic cells
+        cellText = CStr(cell.Value)
+        
+        ' Skip empty cells
+        If Len(Trim(cellText)) = 0 Then
+            GoTo NextCell
+        End If
+        
+        ' Check if cell contains targeting acronym pattern
+        If regex.Test(cellText) Then
+            ' Store original value for undo before changing
+            UndoCount = UndoCount + 1
+            UndoArray(UndoCount).CellAddress = cell.Address
+            UndoArray(UndoCount).OriginalValue = cellText
+            
+            ' Remove all targeting acronym patterns
+            cleanedText = regex.Replace(cellText, "")
+            cell.Value = cleanedText
+            processedCount = processedCount + 1
+        End If
+        
+NextCell:
+        On Error GoTo 0 ' Reset error handling
+    Next cell
+    
+    ' Re-enable screen updating to show all changes immediately
+    Application.ScreenUpdating = True
+    
+    ' Silent operation - only show errors when nothing processed
+    If processedCount = 0 Then
+        ' Only show error if nothing was processed
+        MsgBox "No cells were processed. Make sure your selected cells contain targeting acronyms in format ^ABC^.", vbExclamation, "No Changes Made"
+        UndoCount = 0 ' Clear undo data if nothing was processed
+    End If
+    
+    ' Ensure screen updating is always re-enabled
+    Application.ScreenUpdating = True
+    
+    ' Refresh modeless UserForm if it's open
+    Call RefreshModelessFormIfOpen
+End Sub
+
 ' Refresh modeless UserForm after extraction (v1.4.0 UX enhancement)
 Sub RefreshModelessFormIfOpen()
     On Error GoTo ErrorHandler
@@ -528,6 +625,36 @@ Sub TestSimplePositioning()
     Call TaxonomyExtractor
 End Sub
 
+' Test targeting acronym cleaning functionality with smart button behavior and expanded patterns
+Sub TestTargetingAcronymCleaning()
+    ' Create different types of test data to show smart button behavior with various patterns
+    Range("A1").Value = "FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123"  ' Taxonomy data with pipes
+    Range("A2").Value = "^AT^ testing string"                            ' Simple letters pattern
+    Range("A3").Value = "^ACX123^Acxiom Targeting"                      ' Letters + numbers pattern 
+    Range("A4").Value = "^FB_Campaign^ Facebook data"                   ' Letters + underscore pattern
+    Range("A5").Value = "^Multi-Word^ test content"                     ' Multi-word with hyphen pattern
+    Range("A6").Value = "^123ABC^ numeric start pattern"               ' Numbers + letters pattern
+    Range("A7").Value = "No acronyms here"                              ' Regular text (no pattern)
+    Range("A8").Value = "Regular taxonomy data without targeting"        ' Regular text (no pattern)
+    
+    MsgBox "EXPANDED TARGETING PATTERN TEST:" & vbCrLf & vbCrLf & _
+           "Test data placed in A1:A8. Select each row to see smart button visibility:" & vbCrLf & vbCrLf & _
+           "A1: 'FY24_26|Q1-4|...' → Trim button HIDDEN (has pipes)" & vbCrLf & _
+           "A2: '^AT^ testing string' → Trim button VISIBLE: ^AT^" & vbCrLf & _
+           "A3: '^ACX123^Acxiom...' → Trim button VISIBLE: ^ACX123^" & vbCrLf & _
+           "A4: '^FB_Campaign^ Facebook...' → Trim button VISIBLE: ^FB_Campaign^" & vbCrLf & _
+           "A5: '^Multi-Word^ test...' → Trim button VISIBLE: ^Multi-Word^" & vbCrLf & _
+           "A6: '^123ABC^ numeric...' → Trim button VISIBLE: ^123ABC^" & vbCrLf & _
+           "A7: 'No acronyms here' → Trim button HIDDEN (no pattern)" & vbCrLf & _
+           "A8: 'Regular taxonomy...' → Trim button HIDDEN (no pattern)" & vbCrLf & vbCrLf & _
+           "Button overlays Segment 1 and only appears when needed! Use MODELESS mode!", _
+           vbInformation, "Expanded Targeting Pattern Test"
+    
+    ' Select first row and launch modeless form for easy testing
+    Range("A1").Select
+    Call TaxonomyExtractorModeless
+End Sub
+
 '================================================================================
 ' RIBBON CALLBACK FUNCTIONS
 '================================================================================
@@ -535,7 +662,7 @@ End Sub
 ' DO NOT MODIFY the function names - they must match the onAction attributes in customUI.xml
 
 ' Ribbon callback function - called when IPG Taxonomy Extractor ribbon button is clicked
-Public Sub RibbonTaxonomyExtractor(control As IRibbonControl)
+Public Sub RibbonTaxonomyExtractor(control As Object)
     On Error GoTo ErrorHandler
     
     ' Call the modeless extractor function (v1.4.0 - superior user experience)
@@ -547,7 +674,7 @@ ErrorHandler:
 End Sub
 
 ' Ribbon callback function - called when IPG Taxonomy Extractor (Modeless) ribbon button is clicked
-Public Sub RibbonTaxonomyExtractorModeless(control As IRibbonControl)
+Public Sub RibbonTaxonomyExtractorModeless(control As Object)
     On Error GoTo ErrorHandler
     
     ' Call the modeless extractor function
@@ -569,6 +696,6 @@ Public Sub CleanupModelessEvents()
 End Sub
 
 ' Optional: Ribbon load callback - called when the ribbon is loaded
-Public Sub RibbonOnLoad(ribbon As IRibbonUI)
+Public Sub RibbonOnLoad(ribbon As Object)
     Set myRibbon = ribbon
 End Sub
