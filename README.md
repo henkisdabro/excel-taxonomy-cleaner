@@ -12,7 +12,8 @@ A professional VBA utility for extracting specific segments from pipe-delimited 
 
 ## 🎬 Demonstration
 
-*[Demo GIF/Video to be added - showing usage workflow and key features]*
+![EXCEL_MShpJHfWaV](https://github.com/user-attachments/assets/9854635c-3c22-489f-b9ff-059e3272b152)
+
 
 ---
 
