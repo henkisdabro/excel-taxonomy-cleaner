@@ -1,4 +1,4 @@
-# Excel Taxonomy Cleaner v1.4.0 - One-Click Installation Script
+# Excel Taxonomy Cleaner v1.5.0 - One-Click Installation Script
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
@@ -11,8 +11,8 @@ param(
 # Configuration
 $RepoOwner = "henkisdabro"
 $RepoName = "excel-taxonomy-cleaner"
-$AddInName = "ipg_taxonomy_extractor_addonv1.4.0.xlam"
-$DisplayName = "Excel Taxonomy Cleaner v1.4.0"
+$AddInName = "ipg_taxonomy_extractor_addonv1.5.0.xlam"
+$DisplayName = "Excel Taxonomy Cleaner v1.5.0"
 
 # Paths
 $AddInsPath = "$env:APPDATA\Microsoft\AddIns"
@@ -181,7 +181,7 @@ function Install-AddIn {
         $shortcutPath = Join-Path $desktopPath "Excel Taxonomy Cleaner - Instructions.txt"
         
         $instructions = @"
-Excel Taxonomy Cleaner v1.4.0 - Installation Complete!
+Excel Taxonomy Cleaner v1.5.0 - Installation Complete!
 
 ✓ Add-in installed successfully to: $AddInPath
 ✓ Registered with Excel for automatic loading
@@ -191,7 +191,7 @@ HOW TO USE:
 1. Open Microsoft Excel
 2. Go to File → Options → Add-ins
 3. At the bottom, select "Excel Add-ins" and click "Go..."
-4. Look for "Excel Taxonomy Cleaner v1.4.0" in the list and CHECK the box
+4. Look for "Excel Taxonomy Cleaner v1.5.0" in the list and CHECK the box
 5. Click OK - the add-in will load and ribbon button will appear
 
 FALLBACK (if add-in doesn't appear automatically):
@@ -215,12 +215,12 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
 
         Write-Success "Installation completed successfully!"
         Write-Host ""
-        Write-Host "🎉 Excel Taxonomy Cleaner v1.4.0 is now installed!" -ForegroundColor Cyan
+        Write-Host "🎉 Excel Taxonomy Cleaner v1.5.0 is now installed!" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Yellow
         Write-Host "1. Open Microsoft Excel" -ForegroundColor White
         Write-Host "2. Go to File → Options → Add-ins → Excel Add-ins → Go" -ForegroundColor White
-        Write-Host "3. Look for 'Excel Taxonomy Cleaner v1.4.0' and CHECK the box" -ForegroundColor White
+        Write-Host "3. Look for 'Excel Taxonomy Cleaner v1.5.0' and CHECK the box" -ForegroundColor White
         Write-Host "4. Click OK - the ribbon button will appear!" -ForegroundColor White
         Write-Host ""
         Write-Host "Fallback (if not auto-detected):" -ForegroundColor Yellow
@@ -251,7 +251,7 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
 # Main execution
 try {
     Write-Host ""
-    Write-Host "Excel Taxonomy Cleaner v1.4.0 - Installer" -ForegroundColor Cyan
+    Write-Host "Excel Taxonomy Cleaner v1.5.0 - Installer" -ForegroundColor Cyan
     Write-Host "Repository: https://github.com/$RepoOwner/$RepoName" -ForegroundColor Gray
     Write-Host ""
 

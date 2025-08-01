@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor v1.4.0
+# Excel Taxonomy Extractor v1.5.0
 
 ![Release](https://img.shields.io/github/v/release/henkisdabro/excel-taxonomy-cleaner)
 ![Language](https://img.shields.io/badge/language-VBA-blue)

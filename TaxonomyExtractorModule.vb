@@ -670,7 +670,7 @@ Public Sub RibbonTaxonomyExtractor(control As Object)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.4.0"
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.5.0"
 End Sub
 
 ' Ribbon callback function - called when IPG Taxonomy Extractor (Modeless) ribbon button is clicked
@@ -682,7 +682,7 @@ Public Sub RibbonTaxonomyExtractorModeless(control As Object)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.4.0"
+    MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.5.0"
 End Sub
 
 ' Cleanup function for modeless form - called when UserForm is closed

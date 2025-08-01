@@ -129,7 +129,7 @@ Public Sub SetParsedData(parsedData As ParsedCellData)
 End Sub
 
 Private Sub UserForm_Initialize()
-    Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.4.0"
+    Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.5.0"
     
     ' DEBUG: Check if cellData has been populated
     Debug.Print "UserForm_Initialize called"

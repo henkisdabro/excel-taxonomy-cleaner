@@ -2,11 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview - Version 1.4.0
+## Project Overview - Version 1.5.0
 
 This is an advanced VBA (Visual Basic for Applications) utility for Excel that provides flexible extraction of specific segments from pipe-delimited taxonomy data with activation ID support. The tool features a professional user interface with 9 segment buttons plus activation ID extraction, custom undo functionality, and Excel Add-in deployment capability.
 
-**Version 1.4.0 introduces modeless UserForm operation that allows continuous Excel interaction while the form remains open, enabling real-time selection updates, seamless multi-range processing workflows, intelligent button refresh after extractions, proper pipe validation logic, and selected cell count display.**
+**Version 1.5.0 introduces smart targeting acronym trimming with an intelligent overlay button that appears only when targeting patterns (^ABC^) are detected in cells without pipes, enabling seamless removal of text like ^AT^, ^ACX123^, ^FB_Campaign^ with full undo support and modeless operation integration.**
 
 ## Architecture
 
