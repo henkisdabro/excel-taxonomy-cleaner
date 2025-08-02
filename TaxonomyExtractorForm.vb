@@ -94,7 +94,7 @@
 '    - Captions: "Undo Last", "Close"
 '    - Position: X: 12, Y: 220 (btnUndo), X: 240, Y: 220 (btnClose)
 '    - Size: Width: 68, Height: 30
-'    - Undo Button: Dynamically enabled/disabled based on available undo data
+'    - Undo Button: Dynamically enabled/disabled with operation count (e.g., "Undo Last (3)")
 '
 ' LAYOUT SUMMARY:
 ' - Form dimensions: 480 x 280
@@ -459,21 +459,29 @@ ErrorHandler:
 End Sub
 
 Private Sub UpdateUndoButtonState()
-    ' Update Undo button appearance based on UndoCount from TaxonomyExtractorModule
-    ' Access the global UndoCount variable to determine if undo data is available
+    ' Update Undo button appearance and caption based on multi-step undo stack
+    ' Shows dynamic count of available undo operations
     
-    Debug.Print "UpdateUndoButtonState called - UndoCount: " & TaxonomyExtractorModule.UndoCount
+    Debug.Print "UpdateUndoButtonState called - UndoOperationCount: " & TaxonomyExtractorModule.UndoOperationCount
     
-    If TaxonomyExtractorModule.UndoCount > 0 Then
-        ' Enable button with normal appearance when undo data is available
-        btnUndo.Enabled = True
-        btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
-        Debug.Print "  Undo button enabled (undo data available)"
-    Else
-        ' Disable button with grey appearance when no undo data
+    If TaxonomyExtractorModule.UndoOperationCount = 0 Then
+        ' Disable button with grey appearance when no undo operations available
         btnUndo.Enabled = False
         btnUndo.ForeColor = RGB(128, 128, 128)  ' Grey text for disabled state
-        Debug.Print "  Undo button disabled (no undo data)"
+        btnUndo.Caption = "Undo Last"
+        Debug.Print "  Undo button disabled (no operations available)"
+    ElseIf TaxonomyExtractorModule.UndoOperationCount = 1 Then
+        ' Enable button with normal appearance for single operation
+        btnUndo.Enabled = True
+        btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
+        btnUndo.Caption = "Undo Last (1)"
+        Debug.Print "  Undo button enabled (1 operation available)"
+    Else
+        ' Enable button with operation count for multiple operations
+        btnUndo.Enabled = True
+        btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
+        btnUndo.Caption = "Undo Last (" & TaxonomyExtractorModule.UndoOperationCount & ")"
+        Debug.Print "  Undo button enabled (" & TaxonomyExtractorModule.UndoOperationCount & " operations available)"
     End If
 End Sub
 
@@ -520,7 +528,7 @@ End Sub
 ' - Segments 1-9: Extract specific pipe-delimited segments
 ' - Activation ID: Extract text after colon character
 ' - Trim ^ABC^: Remove targeting acronyms in format ^any_characters^ with optional trailing space (only visible when pattern detected)
-' - Undo Last: Restore original values before extraction (enabled only when undo data available)
+' - Undo Last: Multi-step undo with LIFO behavior, shows operation count (e.g., "Undo Last (3)")
 ' - Close: Close the dialog
 '
 ' EXAMPLE DATA:

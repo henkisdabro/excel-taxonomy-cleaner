@@ -45,6 +45,21 @@ Type ParsedCellData
     ActivationID As String
 End Type
 
+' Multi-step undo operation structure
+Type UndoOperation
+    Description As String           ' "Extract Segment 3", "Extract Activation ID"
+    CellChanges() As UndoData      ' Array of cell changes for this operation
+    CellCount As Integer           ' Number of cells changed in this operation
+    OperationId As Integer         ' Unique identifier for debugging
+    Timestamp As Date              ' When operation was performed
+End Type
+
+' Multi-step undo stack (up to 25 operations)
+Dim UndoStack(1 To 25) As UndoOperation
+Public UndoOperationCount As Integer    ' Number of operations in stack
+Dim NextOperationId As Integer          ' For assigning unique IDs
+
+' Legacy variables for backward compatibility during transition
 Dim UndoArray() As UndoData
 Public UndoCount As Integer
 Dim LastSegmentNumber As Integer
@@ -280,7 +295,10 @@ Sub ExtractPipeSegment(segmentNumber As Integer)
     Dim i As Integer
     Dim colonPos As Integer
     
-    ' Initialize undo functionality
+    ' Add operation to undo stack BEFORE making changes
+    Call AddUndoOperation("Extract Segment " & segmentNumber)
+    
+    ' Legacy variables for backward compatibility
     UndoCount = 0
     LastSegmentNumber = segmentNumber
     ReDim UndoArray(1 To Selection.Cells.Count)
@@ -380,40 +398,8 @@ End Sub
 
 ' Undo the last taxonomy cleaning operation
 Sub UndoTaxonomyCleaning()
-    Dim i As Integer
-    Dim cell As Range
-    Dim undoRange As Range
-    
-    ' Check if there's anything to undo
-    If UndoCount = 0 Then
-        MsgBox "No taxonomy cleaning operations to undo.", vbInformation, "Nothing to Undo"
-        Exit Sub
-    End If
-    
-    ' Silent undo operation - no confirmation dialog
-    
-    ' Disable screen updating for better performance, then re-enable for visual update
-    Application.ScreenUpdating = False
-    
-    ' Restore original values
-    For i = 1 To UndoCount
-        Set cell = Range(UndoArray(i).CellAddress)
-        cell.Value = UndoArray(i).OriginalValue
-    Next i
-    
-    ' Re-enable screen updating to show all changes immediately
-    Application.ScreenUpdating = True
-    
-    ' Clear undo data
-    UndoCount = 0
-    
-    ' Silent completion - no success message
-    
-    ' Ensure screen updating is always re-enabled
-    Application.ScreenUpdating = True
-    
-    ' Refresh modeless UserForm if it's open (v1.4.0 enhancement)
-    Call RefreshModelessFormIfOpen
+    ' Legacy function redirected to new multi-step undo system
+    Call UndoLastOperation
 End Sub
 
 ' Extract Activation ID (text after colon character)
@@ -424,7 +410,10 @@ Sub ExtractActivationID()
     Dim colonPos As Integer
     Dim processedCount As Integer
     
-    ' Initialize undo functionality
+    ' Add operation to undo stack BEFORE making changes
+    Call AddUndoOperation("Extract Activation ID")
+    
+    ' Legacy variables for backward compatibility
     UndoCount = 0
     LastSegmentNumber = 0 ' Special marker for Activation ID
     ReDim UndoArray(1 To Selection.Cells.Count)
@@ -489,7 +478,10 @@ Sub CleanTargetingAcronyms()
     Dim processedCount As Integer
     Dim regex As Object
     
-    ' Initialize undo functionality
+    ' Add operation to undo stack BEFORE making changes
+    Call AddUndoOperation("Clean Targeting Acronyms")
+    
+    ' Legacy variables for backward compatibility
     UndoCount = 0
     LastSegmentNumber = -1 ' Special marker for targeting acronym cleaning
     ReDim UndoArray(1 To Selection.Cells.Count)
@@ -694,6 +686,133 @@ Public Sub CleanupModelessEvents()
     End If
     On Error GoTo 0
 End Sub
+
+' ============================================================================
+' MULTI-STEP UNDO SYSTEM
+' ============================================================================
+
+' Add a new operation to the undo stack, capturing current cell states BEFORE changes
+Public Sub AddUndoOperation(description As String)
+    On Error GoTo ErrorHandler
+    
+    ' Increment operation count, managing 25-operation limit
+    If UndoOperationCount >= 25 Then
+        ' Remove oldest operation (shift array left)
+        Dim i As Integer
+        For i = 1 To 24
+            UndoStack(i) = UndoStack(i + 1)
+        Next i
+        UndoOperationCount = 24
+    End If
+    
+    UndoOperationCount = UndoOperationCount + 1
+    NextOperationId = NextOperationId + 1
+    
+    ' Initialize the new operation
+    With UndoStack(UndoOperationCount)
+        .Description = description
+        .OperationId = NextOperationId
+        .Timestamp = Now
+        .CellCount = 0
+        
+        ' Capture current state of all selected cells BEFORE any changes
+        ReDim .CellChanges(1 To Selection.Cells.Count)
+        
+        Dim cell As Range
+        Dim cellIndex As Integer
+        cellIndex = 0
+        
+        For Each cell In Selection
+            If Len(cell.Value) > 0 Then  ' Only capture cells with content
+                cellIndex = cellIndex + 1
+                .CellChanges(cellIndex).CellAddress = cell.Address
+                .CellChanges(cellIndex).OriginalValue = cell.Value
+                .CellCount = .CellCount + 1
+            End If
+        Next cell
+        
+        ' Resize array to actual count
+        If .CellCount > 0 Then
+            ReDim Preserve .CellChanges(1 To .CellCount)
+        End If
+    End With
+    
+    Debug.Print "AddUndoOperation: Added '" & description & "' (ID: " & NextOperationId & ") affecting " & UndoStack(UndoOperationCount).CellCount & " cells"
+    
+    Exit Sub
+    
+ErrorHandler:
+    Debug.Print "AddUndoOperation Error: " & Err.Description
+    ' Don't let undo system errors interrupt operations
+End Sub
+
+' Undo the most recent operation (LIFO - Last In, First Out)
+Public Sub UndoLastOperation()
+    On Error GoTo ErrorHandler
+    
+    ' Check if there are operations to undo
+    If UndoOperationCount = 0 Then
+        MsgBox "No operations to undo.", vbInformation, "Nothing to Undo"
+        Exit Sub
+    End If
+    
+    ' Get the most recent operation
+    Dim currentOp As UndoOperation
+    currentOp = UndoStack(UndoOperationCount)
+    
+    Debug.Print "UndoLastOperation: Undoing '" & currentOp.Description & "' (ID: " & currentOp.OperationId & ")"
+    
+    ' Disable screen updating for performance
+    Application.ScreenUpdating = False
+    
+    ' Restore all cells from this operation
+    Dim i As Integer
+    Dim cell As Range
+    
+    For i = 1 To currentOp.CellCount
+        On Error Resume Next  ' Handle invalid cell references gracefully
+        Set cell = Range(currentOp.CellChanges(i).CellAddress)
+        If Not cell Is Nothing Then
+            cell.Value = currentOp.CellChanges(i).OriginalValue
+            Debug.Print "  Restored " & cell.Address & " to: " & currentOp.CellChanges(i).OriginalValue
+        End If
+        On Error GoTo ErrorHandler
+    Next i
+    
+    ' Remove this operation from the stack
+    UndoOperationCount = UndoOperationCount - 1
+    
+    ' Re-enable screen updating
+    Application.ScreenUpdating = True
+    
+    Debug.Print "UndoLastOperation: Complete. Operations remaining: " & UndoOperationCount
+    
+    ' Refresh the UI to show updated state
+    Call RefreshModelessFormIfOpen
+    
+    Exit Sub
+    
+ErrorHandler:
+    Application.ScreenUpdating = True
+    Debug.Print "UndoLastOperation Error: " & Err.Description
+    MsgBox "Error during undo operation: " & Err.Description, vbCritical, "Undo Error"
+End Sub
+
+' Clear all operations from the undo stack
+Public Sub ClearUndoStack()
+    UndoOperationCount = 0
+    NextOperationId = 0
+    Debug.Print "ClearUndoStack: All undo operations cleared"
+End Sub
+
+' Get description of the most recent operation (for UI display)
+Public Function GetTopUndoDescription() As String
+    If UndoOperationCount > 0 Then
+        GetTopUndoDescription = UndoStack(UndoOperationCount).Description
+    Else
+        GetTopUndoDescription = ""
+    End If
+End Function
 
 ' Optional: Ribbon load callback - called when the ribbon is loaded
 Public Sub RibbonOnLoad(ribbon As Object)
