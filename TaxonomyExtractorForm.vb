@@ -139,7 +139,7 @@ Public Sub SetParsedData(parsedData As ParsedCellData)
 End Sub
 
 Private Sub UserForm_Initialize()
-    Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.5.0"
+    Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.6.0"
     
     ' DEBUG: Check if cellData has been populated
     Debug.Print "UserForm_Initialize called"
@@ -238,6 +238,12 @@ Private Sub UpdateInterface()
     ' DEBUG: Confirm this method is called
     Debug.Print "UpdateInterface called"
     
+    ' Preserve current focus to prevent Close button from stealing focus
+    Dim currentFocus As Control
+    On Error Resume Next
+    Set currentFocus = Me.ActiveControl
+    On Error GoTo 0
+    
     ' Set the main label to show the entire string (no truncation)
     If Len(cellData.OriginalText) > 0 Then
         lblInstructions.Caption = "Selected: " & cellData.OriginalText
@@ -262,6 +268,17 @@ Private Sub UpdateInterface()
     
     ' Update Undo button state based on available undo data
     UpdateUndoButtonState
+    
+    ' Restore focus to prevent unwanted focus changes
+    On Error Resume Next
+    If Not currentFocus Is Nothing Then
+        ' Only restore focus if the control is still enabled and visible
+        If currentFocus.Enabled And currentFocus.Visible Then
+            currentFocus.SetFocus
+            Debug.Print "  Restored focus to: " & currentFocus.Name
+        End If
+    End If
+    On Error GoTo 0
 End Sub
 
 Private Sub UpdateButtonCaptions()
@@ -467,11 +484,17 @@ ErrorHandler:
     ' Don't show message box in modeless mode - would interrupt user workflow
 End Sub
 
-Private Sub UpdateUndoButtonState()
+Public Sub UpdateUndoButtonState()
     ' Update Undo button appearance and caption based on multi-step undo stack
     ' Shows dynamic count of available undo operations and manages warning label
     
     Debug.Print "UpdateUndoButtonState called - UndoOperationCount: " & TaxonomyExtractorModule.UndoOperationCount
+    
+    ' Don't update button appearance if it's currently processing
+    If Me.Tag = "UNDO_PROCESSING" Then
+        Debug.Print "  Skipping button update - undo is processing"
+        Exit Sub
+    End If
     
     If TaxonomyExtractorModule.UndoOperationCount = 0 Then
         ' Disable button with grey appearance when no undo operations available
@@ -483,12 +506,14 @@ Private Sub UpdateUndoButtonState()
         ' Enable button with normal appearance for single operation
         btnUndo.Enabled = True
         btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
+        btnUndo.BackColor = RGB(240, 240, 240)  ' Normal button background
         btnUndo.Caption = "Undo Last (1)"
         Debug.Print "  Undo button enabled (1 operation available)"
     Else
         ' Enable button with operation count for multiple operations
         btnUndo.Enabled = True
         btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
+        btnUndo.BackColor = RGB(240, 240, 240)  ' Normal button background
         btnUndo.Caption = "Undo Last (" & TaxonomyExtractorModule.UndoOperationCount & ")"
         Debug.Print "  Undo button enabled (" & TaxonomyExtractorModule.UndoOperationCount & " operations available)"
     End If
@@ -505,18 +530,56 @@ Private Sub UpdateUndoButtonState()
     On Error GoTo 0
 End Sub
 
-Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
-Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
-Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
-Private Sub btn4_Click(): Call ExtractPipeSegment(4): End Sub
-Private Sub btn5_Click(): Call ExtractPipeSegment(5): End Sub
-Private Sub btn6_Click(): Call ExtractPipeSegment(6): End Sub
-Private Sub btn7_Click(): Call ExtractPipeSegment(7): End Sub
-Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
-Private Sub btn9_Click(): Call ExtractPipeSegment(9): End Sub
-Private Sub btnActivationID_Click(): Call ExtractActivationID: End Sub
-Private Sub TargetingAcronymCleanButton_Click(): Call CleanTargetingAcronyms: End Sub
-Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
+' Helper function to restore focus to a specific button after extraction operations
+Private Sub RestoreFocusToClickedButton(targetButton As Control)
+    On Error Resume Next
+    ' Small delay to let extraction operations complete
+    DoEvents
+    ' Restore focus to the button that was clicked
+    If targetButton.Enabled And targetButton.Visible Then
+        targetButton.SetFocus
+        Debug.Print "RestoreFocusToClickedButton: Focus restored to " & targetButton.Name
+    End If
+    On Error GoTo 0
+End Sub
+
+Private Sub btn1_Click(): Call ExtractPipeSegment(1): Call RestoreFocusToClickedButton(btn1): End Sub
+Private Sub btn2_Click(): Call ExtractPipeSegment(2): Call RestoreFocusToClickedButton(btn2): End Sub  
+Private Sub btn3_Click(): Call ExtractPipeSegment(3): Call RestoreFocusToClickedButton(btn3): End Sub
+Private Sub btn4_Click(): Call ExtractPipeSegment(4): Call RestoreFocusToClickedButton(btn4): End Sub
+Private Sub btn5_Click(): Call ExtractPipeSegment(5): Call RestoreFocusToClickedButton(btn5): End Sub
+Private Sub btn6_Click(): Call ExtractPipeSegment(6): Call RestoreFocusToClickedButton(btn6): End Sub
+Private Sub btn7_Click(): Call ExtractPipeSegment(7): Call RestoreFocusToClickedButton(btn7): End Sub
+Private Sub btn8_Click(): Call ExtractPipeSegment(8): Call RestoreFocusToClickedButton(btn8): End Sub
+Private Sub btn9_Click(): Call ExtractPipeSegment(9): Call RestoreFocusToClickedButton(btn9): End Sub
+Private Sub btnActivationID_Click(): Call ExtractActivationID: Call RestoreFocusToClickedButton(btnActivationID): End Sub
+Private Sub TargetingAcronymCleanButton_Click(): Call CleanTargetingAcronyms: Call RestoreFocusToClickedButton(TargetingAcronymCleanButton): End Sub
+Private Sub btnUndo_Click()
+    ' Check global flag first - exit immediately if undo already in progress
+    If TaxonomyExtractorModule.UndoInProgress Then
+        Debug.Print "btnUndo_Click: Blocked - undo already in progress"
+        Exit Sub
+    End If
+    
+    ' Set global flag and disable events immediately
+    TaxonomyExtractorModule.UndoInProgress = True
+    Application.EnableEvents = False
+    
+    ' Immediately disable button to prevent rapid clicking
+    btnUndo.Enabled = False
+    btnUndo.Caption = "Processing..."
+    btnUndo.ForeColor = RGB(128, 128, 128)
+    Me.Tag = "UNDO_PROCESSING"
+    
+    ' Re-enable events for normal operation
+    Application.EnableEvents = True
+    
+    ' Process pending events to ensure visual update
+    DoEvents
+    
+    ' Proceed with undo operation
+    Call UndoTaxonomyCleaning
+End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub
 
 ' Cleanup when form is terminated (important for modeless operation)

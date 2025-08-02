@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor v1.5.0
+# Excel Taxonomy Extractor v1.6.0
 
 ![Release](https://img.shields.io/github/v/release/henkisdabro/excel-taxonomy-cleaner)
 ![Language](https://img.shields.io/badge/language-VBA-blue)
@@ -97,7 +97,22 @@ If you prefer manual control:
 
 ---
 
-## ✨ What's New in v1.5.0
+## ✨ What's New in v1.6.0
+
+### 🔄 Multi-Step Undo System
+- **Professional Undo Stack** - Up to 10 sequential operations with LIFO (Last In, First Out) behavior
+- **Dynamic Button Captions** - Shows operation count: "Undo Last" → "Undo Last (3)" → "Undo Last (1)"
+- **Step-by-Step Reversal** - Undo operations individually in reverse order as expected
+- **Capacity Warning** - Visual warning when undo limit reached (10/10)
+- **Processing Feedback** - Button shows "Processing..." with disabled appearance during operations
+
+### 🎯 Enhanced User Experience
+- **Immediate Focus** - UserForm gets focus immediately when launched from ribbon
+- **Smart Focus Management** - Focus returns to clicked buttons after operations, preventing unwanted focus jumps
+- **Rapid Click Protection** - Prevents undo operation queuing with visual feedback during processing
+- **Consistent UI Behavior** - All extraction buttons maintain focus, Close button no longer steals focus
+
+## Previous Updates - v1.5.0
 
 ### 🎯 Smart Targeting Acronym Trimming
 - **Intelligent Detection** - Smart overlay button appears automatically when targeting patterns (^ABC^) are detected in cells without pipes
@@ -290,7 +305,14 @@ Use the PowerShell command at the top of this README - it handles everything aut
 
 ## Version History
 
-### v1.5.0 (Latest)
+### v1.6.0 (Latest)
+- **Multi-Step Undo System**: Professional undo stack supporting up to 10 sequential operations with LIFO behavior
+- **Dynamic Button Captions**: Real-time operation count display ("Undo Last (3)") with automatic updates
+- **Enhanced User Experience**: Immediate focus management, smart focus restoration, and rapid click protection
+- **Processing Feedback**: Visual "Processing..." state with disabled appearance during undo operations
+- **Capacity Management**: Warning label when undo limit reached with automatic oldest operation removal
+
+### v1.5.0
 - **Smart Targeting Acronym Trimming**: Intelligent overlay button for removing targeting patterns (^ABC^) from cells without pipes
 - **Enhanced Detection Logic**: Automatically detects targeting patterns and enables seamless removal
 - **Full Undo Integration**: Complete integration with existing undo system for acronym trimming

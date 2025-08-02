@@ -58,6 +58,7 @@ End Type
 Dim UndoStack(1 To 10) As UndoOperation
 Public UndoOperationCount As Integer    ' Number of operations in stack
 Dim NextOperationId As Integer          ' For assigning unique IDs
+Public UndoInProgress As Boolean        ' Global flag to prevent rapid clicking
 
 ' Legacy variables for backward compatibility during transition
 Dim UndoArray() As UndoData
@@ -160,9 +161,17 @@ Sub TaxonomyExtractorModeless()
     TaxonomyExtractorForm.SetParsedData parsedData
     TaxonomyExtractorForm.Show vbModeless
     
-    ' Keep Excel window active and responsive
+    ' Give the UserForm immediate focus and set focus to first available button
     On Error Resume Next
-    AppActivate Application.Caption
+    ' Set focus to the first available segment button for immediate usability
+    If TaxonomyExtractorForm.btn1.Enabled Then
+        TaxonomyExtractorForm.btn1.SetFocus
+    ElseIf TaxonomyExtractorForm.btnActivationID.Enabled Then
+        TaxonomyExtractorForm.btnActivationID.SetFocus
+    Else
+        ' Fallback to Close button if no segments available
+        TaxonomyExtractorForm.btnClose.SetFocus
+    End If
     On Error GoTo 0
 End Sub
 
@@ -662,7 +671,7 @@ Public Sub RibbonTaxonomyExtractor(control As Object)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.5.0"
+    MsgBox "Error launching IPG Taxonomy Extractor: " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.6.0"
 End Sub
 
 ' Ribbon callback function - called when IPG Taxonomy Extractor (Modeless) ribbon button is clicked
@@ -674,7 +683,7 @@ Public Sub RibbonTaxonomyExtractorModeless(control As Object)
     Exit Sub
     
 ErrorHandler:
-    MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.5.0"
+    MsgBox "Error launching IPG Taxonomy Extractor (Modeless): " & Err.Description, vbCritical, "IPG Taxonomy Extractor v1.6.0"
 End Sub
 
 ' Cleanup function for modeless form - called when UserForm is closed
@@ -756,6 +765,10 @@ Public Sub UndoLastOperation()
         Exit Sub
     End If
     
+    ' Button is already disabled by the click handler
+    ' Just proceed with the undo operation
+    On Error GoTo ErrorHandler
+    
     ' Get the most recent operation
     Dim currentOp As UndoOperation
     currentOp = UndoStack(UndoOperationCount)
@@ -790,12 +803,57 @@ Public Sub UndoLastOperation()
     ' Refresh the UI to show updated state
     Call RefreshModelessFormIfOpen
     
+    ' Re-enable undo button after brief delay to prevent rapid clicking issues
+    Call ReenableUndoButtonAfterDelay
+    
     Exit Sub
     
 ErrorHandler:
     Application.ScreenUpdating = True
     Debug.Print "UndoLastOperation Error: " & Err.Description
     MsgBox "Error during undo operation: " & Err.Description, vbCritical, "Undo Error"
+    ' Clear flags and re-enable undo button immediately if error occurred
+    UndoInProgress = False
+    On Error Resume Next
+    If Not TaxonomyExtractorForm Is Nothing Then
+        If TaxonomyExtractorForm.Visible Then
+            TaxonomyExtractorForm.Tag = ""
+            TaxonomyExtractorForm.btnUndo.Enabled = True
+            Call TaxonomyExtractorForm.UpdateUndoButtonState
+        End If
+    End If
+    On Error GoTo 0
+End Sub
+
+' Re-enable undo button after a brief delay to prevent rapid clicking issues
+Private Sub ReenableUndoButtonAfterDelay()
+    ' Use a simple timer approach with Application.Wait for 500ms delay
+    Dim startTime As Double
+    startTime = Timer
+    
+    ' Brief delay to allow cell operations to complete and provide visual feedback
+    Application.Wait Now + TimeValue("00:00:01")  ' 1 second delay for better responsiveness
+    
+    ' Re-enable the undo button and restore proper state
+    On Error Resume Next
+    If Not TaxonomyExtractorForm Is Nothing Then
+        If TaxonomyExtractorForm.Visible Then
+            ' Clear processing flags
+            TaxonomyExtractorForm.Tag = ""
+            UndoInProgress = False
+            ' Re-enable the button first
+            TaxonomyExtractorForm.btnUndo.Enabled = True
+            ' Update button state will handle caption and colors correctly
+            Call TaxonomyExtractorForm.UpdateUndoButtonState
+            ' Restore focus to undo button after re-enabling
+            If TaxonomyExtractorForm.btnUndo.Enabled Then
+                TaxonomyExtractorForm.btnUndo.SetFocus
+            End If
+            Debug.Print "ReenableUndoButtonAfterDelay: Focus restored to Undo button"
+            Debug.Print "ReenableUndoButtonAfterDelay: Undo button re-enabled"
+        End If
+    End If
+    On Error GoTo 0
 End Sub
 
 ' Clear all operations from the undo stack

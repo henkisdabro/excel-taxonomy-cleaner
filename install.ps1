@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor v1.5.0 - One-Click Installation Script
+# Excel Taxonomy Extractor v1.6.0 - One-Click Installation Script
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
@@ -11,8 +11,8 @@ param(
 # Configuration
 $RepoOwner = "henkisdabro"
 $RepoName = "excel-taxonomy-cleaner"
-$AddInName = "ipg_taxonomy_extractor_addonv1.5.0.xlam"
-$DisplayName = "Excel Taxonomy Extractor AddIn v1.5.0"
+$AddInName = "ipg_taxonomy_extractor_addonv1.6.0.xlam"
+$DisplayName = "Excel Taxonomy Extractor AddIn v1.6.0"
 
 # Paths
 $AddInsPath = "$env:APPDATA\Microsoft\AddIns"
@@ -205,7 +205,7 @@ function Write-Logo {
 ::::::::::     ::::::::::                  xxxxxxxxxxxxxxxxxxxxx       
 ::::::::::     ::::::::::                     xxxxxxxxxxxxxxX  
 
-🏢 IPG MEDIABRANDS TAXONOMY EXTRACTOR ADDIN FOR EXCEL v1.5.0 🏢
+🏢 IPG MEDIABRANDS TAXONOMY EXTRACTOR ADDIN FOR EXCEL v1.6.0 🏢
 
 "@
     Write-Host $logo -ForegroundColor Cyan
@@ -582,7 +582,7 @@ try {
     # Interactive prompt
     Write-Host "┌───────────────────────────────────────────────────────────────────────────────┐" -ForegroundColor White
     Write-Host "│" -ForegroundColor White -NoNewline
-    Write-Host "  🎯 Ready to install Excel Taxonomy Extractor AddIn v1.5.0?".PadRight(79) -ForegroundColor White -NoNewline
+    Write-Host "  🎯 Ready to install Excel Taxonomy Extractor AddIn v1.6.0?".PadRight(79) -ForegroundColor White -NoNewline
     Write-Host "│" -ForegroundColor White
     Write-Host "│" -ForegroundColor White -NoNewline
     Write-Host "  📦 This will automatically download, install, and configure the AddIn".PadRight(79) -ForegroundColor Gray -NoNewline
