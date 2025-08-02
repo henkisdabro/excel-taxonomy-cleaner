@@ -1,5 +1,5 @@
 ' clsAppEvents - Application Event Handler for Modeless UserForm
-' Part of IPG Mediabrands Taxonomy Extractor v1.4.0
+' Part of IPG Mediabrands Taxonomy Extractor v1.5.0
 ' 
 ' This class module handles Excel application events to enable real-time
 ' UserForm updates when users change their cell selection while the 

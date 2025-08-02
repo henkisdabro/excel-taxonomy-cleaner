@@ -125,15 +125,26 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
    - Line 1: `# Excel Taxonomy Cleaner v1.X.X - One-Click Installation Script`
    - Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.X.X.xlam"`
    - Line 15: `$DisplayName = "Excel Taxonomy Cleaner v1.X.X"`
-   - Multiple installer UI references
+   - Line ~208: ASCII logo header with version
+   - Line ~585: Installation prompt with version
 
-2. **TaxonomyExtractorForm.vb**: Line ~101: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.X.X"`
+2. **TaxonomyExtractorForm.vb**: 
+   - Line ~132: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.X.X"`
 
-3. **TaxonomyExtractorModule.vb**: Error message version strings
+3. **TaxonomyExtractorModule.vb**: 
+   - Line ~673: Error message version string
+   - Line ~685: Error message version string (Modeless)
 
 4. **README.md**: Line 1: `# Excel Taxonomy Extractor v1.X.X`
 
 5. **CLAUDE.md**: Line 5: `## Project Overview - Version 1.X.X`
+
+6. **clsAppEvents.vb**: 
+   - Line 2: `' Part of IPG Mediabrands Taxonomy Extractor v1.X.X`
+
+7. **DEPLOYMENT_CHECKLIST.md**:
+   - Line 1: Title with version
+   - GitHub release command examples
 
 #### 🚨 FAILURE CONSEQUENCES:
 - **install.ps1 not updated**: Users get 404 errors, broken installation

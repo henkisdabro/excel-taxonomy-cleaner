@@ -36,8 +36,8 @@ This is the **proven method that works** for embedding ribbon buttons in XLAM fi
                   imageMso="FontColorPicker"
                   size="large"
                   label="IPG Taxonomy Extractor"
-                  screentip="IPG Taxonomy Extractor v1.2.0"
-                  supertip="Extract specific segments from pipe-delimited taxonomy data with activation ID support. Professional interface with 9 segment buttons plus activation ID extraction."
+                  screentip="IPG Taxonomy Extractor"
+                  supertip="Extract specific segments from pipe-delimited IPG taxonomy data. Features 9 segment buttons plus activation ID extraction with modeless operation."
                   onAction="TaxonomyExtractorModule.RibbonTaxonomyExtractor" />
         </group>
       </tab>
