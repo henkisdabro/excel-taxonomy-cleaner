@@ -97,7 +97,15 @@ If you prefer manual control:
 
 ---
 
-## ✨ What's New in v1.4.0
+## ✨ What's New in v1.5.0
+
+### 🎯 Smart Targeting Acronym Trimming
+- **Intelligent Detection** - Smart overlay button appears automatically when targeting patterns (^ABC^) are detected in cells without pipes
+- **Seamless Removal** - One-click removal of targeting text like ^AT^, ^ACX123^, ^FB_Campaign^ 
+- **Full Undo Support** - Complete integration with existing undo system
+- **Modeless Integration** - Works perfectly with continuous workflow operation
+
+## Previous Updates - v1.4.0
 
 ### 🚀 Revolutionary Modeless Operation
 - **Keep form open** while working with Excel - no more reopening the form for each extraction
@@ -282,7 +290,13 @@ Use the PowerShell command at the top of this README - it handles everything aut
 
 ## Version History
 
-### v1.4.0 (Latest)
+### v1.5.0 (Latest)
+- **Smart Targeting Acronym Trimming**: Intelligent overlay button for removing targeting patterns (^ABC^) from cells without pipes
+- **Enhanced Detection Logic**: Automatically detects targeting patterns and enables seamless removal
+- **Full Undo Integration**: Complete integration with existing undo system for acronym trimming
+- **Modeless Operation Enhancement**: Perfect integration with continuous workflow operation
+
+### v1.4.0
 - **Revolutionary Modeless Operation**: Keep form open while Excel remains fully interactive
 - **Real-time Interface Updates**: Buttons automatically refresh when selecting new cells
 - **Smart Pipe Validation**: Buttons show "N/A" for single values without pipe delimiters

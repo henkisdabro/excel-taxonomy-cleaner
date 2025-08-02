@@ -49,7 +49,7 @@ function Write-ProgressBar {
     $percentStr = "$Percent%".PadLeft(4)
     $barText = "[$bar] $percentStr $Label"
     
-    Write-Host $barText.PadRight(75) -ForegroundColor $Color -NoNewline
+    Write-Host $barText.PadRight(77) -ForegroundColor $Color -NoNewline
 }
 
 function Update-StepStatus {
@@ -89,11 +89,11 @@ function Update-ProgressDisplay {
     Clear-Host
     
     # Header
-    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
-    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
-    Write-Host "  📊 INSTALLATION PROGRESS".PadRight(77) -ForegroundColor White -NoNewline
-    Write-Host "║" -ForegroundColor DarkCyan
-    Write-Host "╠═══════════════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkCyan
+    Write-Host "┌───────────────────────────────────────────────────────────────────────────────┐" -ForegroundColor White
+    Write-Host "│" -ForegroundColor White -NoNewline
+    Write-Host "  📊 INSTALLATION PROGRESS".PadRight(79) -ForegroundColor White -NoNewline
+    Write-Host "│" -ForegroundColor White
+    Write-Host "├───────────────────────────────────────────────────────────────────────────────┤" -ForegroundColor White
     
     # Progress steps
     for ($i = 0; $i -lt $Global:InstallSteps.Count; $i++) {
@@ -113,32 +113,59 @@ function Update-ProgressDisplay {
         }
         
         $timeStr = if ($step.Time) { " ({0:F1}s)" -f $step.Time.TotalSeconds } else { "" }
-        $stepText = "  $statusIcon $($step.Icon) $($step.Name)$timeStr"
+        $mainText = "  $statusIcon $($step.Icon) $($step.Name)"
         
-        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
-        Write-Host $stepText.PadRight(77) -ForegroundColor $color -NoNewline
-        Write-Host "║" -ForegroundColor DarkCyan
+        # Calculate total length and ensure proper alignment
+        $totalTextLength = $mainText.Length + $timeStr.Length
+        $paddingNeeded = [Math]::Max(0, 78 - $totalTextLength)
+        
+        Write-Host "│" -ForegroundColor White -NoNewline
+        Write-Host $mainText -ForegroundColor $color -NoNewline
+        if ($step.Time) {
+            Write-Host $timeStr -ForegroundColor Gray -NoNewline
+        }
+        Write-Host (" " * $paddingNeeded) -NoNewline
+        Write-Host "│" -ForegroundColor White
     }
     
-    # Overall progress bar
+    # Overall progress bar - calculate based on current step being worked on
     $completedSteps = ($Global:InstallSteps | Where-Object { $_.Status -eq "completed" }).Count
-    $totalSteps = $Global:InstallSteps.Count
-    $overallPercent = [Math]::Floor(($completedSteps / $totalSteps) * 100)
+    $currentRunningStep = -1
     
-    Write-Host "╠═══════════════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkCyan
-    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+    # Find the currently running step
+    for ($i = 0; $i -lt $Global:InstallSteps.Count; $i++) {
+        if ($Global:InstallSteps[$i].Status -eq "running") {
+            $currentRunningStep = $i
+            break
+        }
+    }
+    
+    # Progress calculation: 0%, 11%, 22%, 33%, 44%, 55%, 66%, 77%, 88%, 100%
+    if ($completedSteps -eq $Global:InstallSteps.Count) {
+        # All steps completed
+        $overallPercent = 100
+    } elseif ($currentRunningStep -ge 0) {
+        # A step is currently running - show progress for that step
+        $overallPercent = $currentRunningStep * 11
+    } else {
+        # No steps running, show progress based on completed steps
+        $overallPercent = $completedSteps * 11
+    }
+    
+    Write-Host "├───────────────────────────────────────────────────────────────────────────────┤" -ForegroundColor White
+    Write-Host "│" -ForegroundColor White -NoNewline
     Write-Host "  " -NoNewline
     Write-ProgressBar $overallPercent "Overall Progress" "Cyan"
-    Write-Host "║" -ForegroundColor DarkCyan
+    Write-Host "│" -ForegroundColor White
     
     # Current action
     if ($CurrentMessage) {
-        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
-        Write-Host "  🔄 $CurrentMessage".PadRight(77) -ForegroundColor Yellow -NoNewline
-        Write-Host "║" -ForegroundColor DarkCyan
+        Write-Host "│" -ForegroundColor White -NoNewline
+        Write-Host "  🔄 $CurrentMessage".PadRight(79) -ForegroundColor Yellow -NoNewline
+        Write-Host "│" -ForegroundColor White
     }
     
-    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
+    Write-Host "└───────────────────────────────────────────────────────────────────────────────┘" -ForegroundColor White
 }
 
 function Write-Status {
@@ -188,18 +215,18 @@ function Write-Header {
     param([string]$Title, [string]$Subtitle = "")
     
     Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
-    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
-    Write-Host ("  " + $Title.PadRight(77)) -ForegroundColor White -NoNewline
-    Write-Host "║" -ForegroundColor DarkCyan
+    Write-Host "┌───────────────────────────────────────────────────────────────────────────────┐" -ForegroundColor White
+    Write-Host "│" -ForegroundColor White -NoNewline
+    Write-Host ("  " + $Title).PadRight(79) -ForegroundColor White -NoNewline
+    Write-Host "│" -ForegroundColor White
     
     if ($Subtitle) {
-        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
-        Write-Host ("  " + $Subtitle.PadRight(77)) -ForegroundColor Gray -NoNewline
-        Write-Host "║" -ForegroundColor DarkCyan
+        Write-Host "│" -ForegroundColor White -NoNewline
+        Write-Host ("  " + $Subtitle).PadRight(79) -ForegroundColor Gray -NoNewline
+        Write-Host "│" -ForegroundColor White
     }
     
-    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
+    Write-Host "└───────────────────────────────────────────────────────────────────────────────┘" -ForegroundColor White
     Write-Host ""
 }
 
@@ -553,14 +580,14 @@ try {
     Write-Host ""
     
     # Interactive prompt
-    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║" -ForegroundColor Green -NoNewline
-    Write-Host "  🎯 Ready to install Excel Taxonomy Extractor AddIn v1.5.0?".PadRight(77) -ForegroundColor White -NoNewline
-    Write-Host "║" -ForegroundColor Green
-    Write-Host "║" -ForegroundColor Green -NoNewline
-    Write-Host "  📦 This will automatically download, install, and configure the AddIn".PadRight(77) -ForegroundColor Gray -NoNewline
-    Write-Host "║" -ForegroundColor Green
-    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host "┌───────────────────────────────────────────────────────────────────────────────┐" -ForegroundColor White
+    Write-Host "│" -ForegroundColor White -NoNewline
+    Write-Host "  🎯 Ready to install Excel Taxonomy Extractor AddIn v1.5.0?".PadRight(79) -ForegroundColor White -NoNewline
+    Write-Host "│" -ForegroundColor White
+    Write-Host "│" -ForegroundColor White -NoNewline
+    Write-Host "  📦 This will automatically download, install, and configure the AddIn".PadRight(79) -ForegroundColor Gray -NoNewline
+    Write-Host "│" -ForegroundColor White
+    Write-Host "└───────────────────────────────────────────────────────────────────────────────┘" -ForegroundColor White
     Write-Host ""
     
     Write-Host "Press " -ForegroundColor Gray -NoNewline
