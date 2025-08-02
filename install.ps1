@@ -1,4 +1,4 @@
-# Excel Taxonomy Cleaner v1.5.0 - One-Click Installation Script
+# Excel Taxonomy Extractor v1.5.0 - One-Click Installation Script
 # Repository: https://github.com/henkisdabro/excel-taxonomy-cleaner
 # Usage: 
 #   Install: irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/install.ps1" | iex
@@ -12,26 +12,275 @@ param(
 $RepoOwner = "henkisdabro"
 $RepoName = "excel-taxonomy-cleaner"
 $AddInName = "ipg_taxonomy_extractor_addonv1.5.0.xlam"
-$DisplayName = "Excel Taxonomy Cleaner v1.5.0"
+$DisplayName = "Excel Taxonomy Extractor AddIn v1.5.0"
 
 # Paths
 $AddInsPath = "$env:APPDATA\Microsoft\AddIns"
 $AddInPath = Join-Path $AddInsPath $AddInName
 $TempPath = Join-Path $env:TEMP "taxonomy-extractor-install"
 
+# Global variables for progress tracking
+$Global:InstallSteps = @()
+$Global:CurrentStep = 0
+$Global:StartTime = Get-Date
+
+function Initialize-ProgressTracker {
+    $Global:InstallSteps = @(
+        @{ Name = "Validating Environment"; Status = "pending"; Icon = "🔍"; Time = $null },
+        @{ Name = "Fetching Latest Release"; Status = "pending"; Icon = "📡"; Time = $null },
+        @{ Name = "Downloading AddIn"; Status = "pending"; Icon = "⬇️"; Time = $null },
+        @{ Name = "Cleaning Old Versions"; Status = "pending"; Icon = "🧹"; Time = $null },
+        @{ Name = "Registry Cleanup"; Status = "pending"; Icon = "🧼"; Time = $null },
+        @{ Name = "Installing AddIn"; Status = "pending"; Icon = "📦"; Time = $null },
+        @{ Name = "Configuring Security"; Status = "pending"; Icon = "🔐"; Time = $null },
+        @{ Name = "Registry Registration"; Status = "pending"; Icon = "📝"; Time = $null },
+        @{ Name = "Finalizing Setup"; Status = "pending"; Icon = "🎯"; Time = $null }
+    )
+}
+
+function Write-ProgressBar {
+    param([int]$Percent, [string]$Label = "", [string]$Color = "Green")
+    
+    $barWidth = 50
+    $filled = [Math]::Floor($barWidth * $Percent / 100)
+    $empty = $barWidth - $filled
+    
+    $bar = "█" * $filled + "░" * $empty
+    $percentStr = "$Percent%".PadLeft(4)
+    $barText = "[$bar] $percentStr $Label"
+    
+    Write-Host $barText.PadRight(75) -ForegroundColor $Color -NoNewline
+}
+
+function Update-StepStatus {
+    param([int]$StepIndex, [string]$Status, [string]$Message = "")
+    
+    if ($StepIndex -lt $Global:InstallSteps.Count) {
+        $Global:InstallSteps[$StepIndex].Status = $Status
+        $Global:InstallSteps[$StepIndex].Time = (Get-Date) - $Global:StartTime
+        
+        if ($Status -eq "running") {
+            $Global:CurrentStep = $StepIndex
+        }
+        
+        Update-ProgressDisplay $Message
+    }
+}
+
+function Show-Spinner {
+    param([string]$Message = "Processing...")
+    
+    $spinChars = @("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+    $counter = 0
+    
+    for ($i = 0; $i -lt 10; $i++) {
+        Write-Host "`r  $($spinChars[$counter % $spinChars.Length]) $Message" -NoNewline -ForegroundColor Cyan
+        Start-Sleep -Milliseconds 100
+        $counter++
+    }
+    Write-Host ""
+}
+
+function Update-ProgressDisplay {
+    param([string]$CurrentMessage = "")
+    
+    # Simple and reliable approach: just clear screen and redraw
+    # This avoids cursor positioning issues that cause duplication
+    Clear-Host
+    
+    # Header
+    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
+    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+    Write-Host "  📊 INSTALLATION PROGRESS".PadRight(77) -ForegroundColor White -NoNewline
+    Write-Host "║" -ForegroundColor DarkCyan
+    Write-Host "╠═══════════════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkCyan
+    
+    # Progress steps
+    for ($i = 0; $i -lt $Global:InstallSteps.Count; $i++) {
+        $step = $Global:InstallSteps[$i]
+        $statusIcon = switch ($step.Status) {
+            "completed" { "✅" }
+            "running" { "⚡" }
+            "failed" { "❌" }
+            default { "⏳" }
+        }
+        
+        $color = switch ($step.Status) {
+            "completed" { "Green" }
+            "running" { "Yellow" }
+            "failed" { "Red" }
+            default { "Gray" }
+        }
+        
+        $timeStr = if ($step.Time) { " ({0:F1}s)" -f $step.Time.TotalSeconds } else { "" }
+        $stepText = "  $statusIcon $($step.Icon) $($step.Name)$timeStr"
+        
+        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+        Write-Host $stepText.PadRight(77) -ForegroundColor $color -NoNewline
+        Write-Host "║" -ForegroundColor DarkCyan
+    }
+    
+    # Overall progress bar
+    $completedSteps = ($Global:InstallSteps | Where-Object { $_.Status -eq "completed" }).Count
+    $totalSteps = $Global:InstallSteps.Count
+    $overallPercent = [Math]::Floor(($completedSteps / $totalSteps) * 100)
+    
+    Write-Host "╠═══════════════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkCyan
+    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+    Write-Host "  " -NoNewline
+    Write-ProgressBar $overallPercent "Overall Progress" "Cyan"
+    Write-Host "║" -ForegroundColor DarkCyan
+    
+    # Current action
+    if ($CurrentMessage) {
+        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+        Write-Host "  🔄 $CurrentMessage".PadRight(77) -ForegroundColor Yellow -NoNewline
+        Write-Host "║" -ForegroundColor DarkCyan
+    }
+    
+    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
+}
+
 function Write-Status {
     param([string]$Message, [string]$Color = "Green")
-    Write-Host "→ $Message" -ForegroundColor $Color
+    Write-Host "  🔄 $Message" -ForegroundColor $Color
 }
 
 function Write-Error {
     param([string]$Message)
-    Write-Host "✗ ERROR: $Message" -ForegroundColor Red
+    Write-Host "  ❌ ERROR: $Message" -ForegroundColor Red
 }
 
 function Write-Success {
     param([string]$Message)
-    Write-Host "✓ $Message" -ForegroundColor Green
+    Write-Host "  ✅ $Message" -ForegroundColor Green
+}
+
+function Write-Logo {
+    $logo = @"
+::::::::::     :::::::::::::::::::::::        xxxxxxxxxxxxxxx          
+::::::::::     ::::::::::::::::::::::::::  xxxxxxxxxxxxxxxxxxxxx       
+::::::::::     ::::::::::::::::::::::::::x&xxxxxxxxxxxxxxxxxxxxxxx     
+::::::::::     ::::::::::::::::::::::::;&&&&xxxxxxxxxxxxxxxxxxxxx      
+::::::::::     :::::::::::::::::::::::X&&&&&&xxxxxxxxxxxxxxxxxx        
+::::::::::     ::::::::::         :::X&&&&&&&xxxxx      xxxx           
+::::::::::     ::::::::::          :x&&&&&&&&Xxx                       
+::::::::::     ::::::::::          $&&&&&&&&&&X                        
+::::::::::     ::::::::::          &&&&&&&&&&&       xxxxxxxxxxxxxxxxxx
+::::::::::     ::::::::::         :;&&&&&&&&&&       xxxxxxxxxxxxxxxxxx
+::::::::::     ::::::::::::::::::::;&&&&&&&&&x       xxxxxxxxxxxxxxxxxx
+::::::::::     ::::::::::::::::::::;$&&&&&&Xxxx      xxxxxxxxxxxxxxxxxx
+::::::::::     :::::::::::::::::::::;&&&&&xxxxxx      xxxxxxxxxxxxxxxxX
+::::::::::     ::::::::::::::::::::::x&&xxxxxxxxxxx     xxxxxxxxxxxxxx 
+::::::::::     :::::::::::::::::::::  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
+::::::::::     ::::::::::              xxxxxxxxxxxxxxxxxxxxxxxxxxxxx   
+::::::::::     ::::::::::                xxxxxxxxxxxxxxxxxxxxxxxxx     
+::::::::::     ::::::::::                  xxxxxxxxxxxxxxxxxxxxx       
+::::::::::     ::::::::::                     xxxxxxxxxxxxxxX  
+
+🏢 IPG MEDIABRANDS TAXONOMY EXTRACTOR ADDIN FOR EXCEL v1.5.0 🏢
+
+"@
+    Write-Host $logo -ForegroundColor Cyan
+}
+
+function Write-Header {
+    param([string]$Title, [string]$Subtitle = "")
+    
+    Write-Host ""
+    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
+    Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+    Write-Host ("  " + $Title.PadRight(77)) -ForegroundColor White -NoNewline
+    Write-Host "║" -ForegroundColor DarkCyan
+    
+    if ($Subtitle) {
+        Write-Host "║" -ForegroundColor DarkCyan -NoNewline
+        Write-Host ("  " + $Subtitle.PadRight(77)) -ForegroundColor Gray -NoNewline
+        Write-Host "║" -ForegroundColor DarkCyan
+    }
+    
+    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
+    Write-Host ""
+}
+
+function Remove-OrphanedAddinRegistryKeys {
+    param(
+        [string]$CurrentAddInName
+    )
+    
+    try {
+        Write-Status "🧼 Cleaning orphaned AddIn registry keys..." "Yellow"
+        $regPath = "HKCU:\Software\Microsoft\Office\16.0\Excel\Options"
+        
+        # Ensure registry path exists
+        if (-not (Test-Path $regPath)) {
+            Write-Status "Excel registry path not found - skipping registry cleanup" "Yellow"
+            return
+        }
+        
+        $removedCount = 0
+        $counter = 0
+        
+        # Check OPEN and OPEN1, OPEN2, etc. up to OPEN50
+        do {
+            $keyName = if ($counter -eq 0) { "OPEN" } else { "OPEN$counter" }
+            
+            try {
+                $regValue = Get-ItemProperty -Path $regPath -Name $keyName -ErrorAction SilentlyContinue
+                
+                if ($regValue -and $regValue.$keyName) {
+                    $registryValue = $regValue.$keyName
+                    $shouldDelete = $false
+                    
+                    # Remove quotes if present and extract filename from registry value
+                    $cleanRegistryValue = $registryValue.Trim('"')
+                    $registryFileName = [System.IO.Path]::GetFileName($cleanRegistryValue)
+                    
+                    Write-Status "Checking registry key '$keyName' with value: $registryValue" "Gray"
+                    Write-Status "  Extracted filename: $registryFileName" "Gray"
+                    
+                    # Check if registry value contains our AddIn patterns and is not the current version
+                    if (($registryFileName -like "ipg_taxonomy_extractor_addon*") -and 
+                        ($registryFileName -ne $CurrentAddInName)) {
+                        $shouldDelete = $true
+                        Write-Status "🔍 Found old AddIn registry key '$keyName' referencing: $registryFileName" "Yellow"
+                    }
+                    elseif (($registryFileName -like "TaxonomyExtractor*") -and 
+                            ($registryFileName -ne $CurrentAddInName)) {
+                        $shouldDelete = $true
+                        Write-Status "🔍 Found old AddIn registry key '$keyName' referencing: $registryFileName" "Yellow"
+                    }
+                    elseif (($registryFileName -like "taxonomy_extractor*") -and 
+                            ($registryFileName -ne $CurrentAddInName)) {
+                        $shouldDelete = $true
+                        Write-Status "🔍 Found old AddIn registry key '$keyName' referencing: $registryFileName" "Yellow"
+                    }
+                    
+                    # Remove the old registry key
+                    if ($shouldDelete) {
+                        Remove-ItemProperty -Path $regPath -Name $keyName -ErrorAction Stop
+                        Write-Success "🗑️ Removed old registry key: $keyName (was: $registryFileName)"
+                        $removedCount++
+                    }
+                }
+            }
+            catch {
+                Write-Status "Failed to process registry key '$keyName': $($_.Exception.Message)" "Red"
+            }
+            
+            $counter++
+        } while ($counter -lt 50)
+        
+        if ($removedCount -gt 0) {
+            Write-Success "Cleaned $removedCount old registry entries"
+        } else {
+            Write-Status "No old registry entries found to clean"
+        }
+    }
+    catch {
+        Write-Status "Registry cleanup failed: $($_.Exception.Message)" "Red"
+        # Don't throw - registry cleanup failure shouldn't stop installation
+    }
 }
 
 function Test-ExcelInstalled {
@@ -54,7 +303,7 @@ function Get-LatestReleaseUrl {
         
         $asset = $release.assets | Where-Object { $_.name -eq $AddInName }
         if (-not $asset) {
-            throw "Add-in file '$AddInName' not found in latest release"
+            throw "AddIn file '$AddInName' not found in latest release"
         }
         
         return @{
@@ -71,38 +320,56 @@ function Get-LatestReleaseUrl {
 
 function Install-AddIn {
     try {
-        # Verify Excel is installed
+        # Initialize the progress tracker
+        Initialize-ProgressTracker
+        Update-ProgressDisplay
+        Start-Sleep -Milliseconds 500
+        
+        # Step 1: Verify Excel is installed
+        Update-StepStatus 0 "running" "Checking Excel installation..."
+        Show-Spinner "Validating Excel environment"
+        
         if (-not (Test-ExcelInstalled)) {
+            Update-StepStatus 0 "failed"
             throw "Microsoft Excel is not installed or cannot be accessed"
         }
+        Update-StepStatus 0 "completed"
 
-        # Get latest release
+        # Step 2: Get latest release
+        Update-StepStatus 1 "running" "Fetching release information from GitHub..."
+        Show-Spinner "Contacting GitHub API"
         $releaseInfo = Get-LatestReleaseUrl
-        Write-Status "Found version: $($releaseInfo.Version)"
+        Update-StepStatus 1 "completed"
+        Write-Status "Found version: $($releaseInfo.Version)" "Cyan"
 
+        # Step 3: Download AddIn
+        Update-StepStatus 2 "running" "Downloading latest AddIn file..."
+        
         # Create temp directory
         if (Test-Path $TempPath) {
             Remove-Item $TempPath -Recurse -Force
         }
         New-Item -ItemType Directory -Path $TempPath -Force | Out-Null
 
-        # Download add-in
         $tempAddInPath = Join-Path $TempPath $AddInName
-        Write-Status "Downloading $DisplayName..."
+        Show-Spinner "Downloading from GitHub releases"
         Invoke-WebRequest -Uri $releaseInfo.DownloadUrl -OutFile $tempAddInPath -UseBasicParsing
 
         # Verify download
         if (-not (Test-Path $tempAddInPath)) {
-            throw "Failed to download add-in file"
+            Update-StepStatus 2 "failed"
+            throw "Failed to download AddIn file"
         }
+        Update-StepStatus 2 "completed"
 
         # Ensure AddIns directory exists
         if (-not (Test-Path $AddInsPath)) {
             New-Item -ItemType Directory -Path $AddInsPath -Force | Out-Null
         }
 
-        # Remove old versions before installing new one
-        Write-Status "Cleaning up old versions..."
+        # Step 4: Remove old versions before installing new one
+        Update-StepStatus 3 "running" "Scanning for old versions to remove..."
+        Show-Spinner "Analyzing installed AddIns"
         
         # Get all XLAM files in the AddIns directory
         $allXlamFiles = Get-ChildItem -Path $AddInsPath -Filter "*.xlam" -ErrorAction SilentlyContinue
@@ -127,44 +394,103 @@ function Install-AddIn {
             if ($shouldDelete) {
                 try {
                     Remove-Item $file.FullName -Force -ErrorAction Stop
-                    Write-Status "Removed old version: $fileName" "Yellow"
+                    Write-Status "🗑️ Removed old version: $fileName" "Yellow"
                 } catch {
                     Write-Status "Failed to remove $fileName`: $($_.Exception.Message)" "Red"
                 }
             }
         }
+        
+        Update-StepStatus 3 "completed"
+        
+        # Step 5: Clean orphaned registry keys
+        Update-StepStatus 4 "running" "Cleaning registry entries..."
+        Show-Spinner "Scanning Windows registry"
+        Remove-OrphanedAddinRegistryKeys -CurrentAddInName $AddInName
+        Update-StepStatus 4 "completed"
 
-        # Install to AddIns folder (native Excel add-in location)
-        Write-Status "Installing to native Excel AddIns folder..."
+        # Step 6: Install to AddIns folder
+        Update-StepStatus 5 "running" "Installing AddIn to Excel folder..."
+        Show-Spinner "Copying files to AddIns directory"
         Copy-Item $tempAddInPath -Destination $AddInPath -Force
 
-        # Unblock file to prevent security warnings
-        Write-Status "Configuring security permissions..."
-        Unblock-File -Path $AddInPath -ErrorAction SilentlyContinue
+        # Verify installation was successful
+        if (-not (Test-Path $AddInPath)) {
+            Update-StepStatus 5 "failed"
+            throw "Failed to copy AddIn file to destination"
+        }
+        Update-StepStatus 5 "completed"
 
-        # Register add-in in Excel registry
-        Write-Status "Registering add-in with Excel..."
+        # Step 7: Configure security
+        Update-StepStatus 6 "running" "Configuring security permissions..."
+        Show-Spinner "Unblocking files and setting permissions"
+        Unblock-File -Path $AddInPath -ErrorAction SilentlyContinue
+        Update-StepStatus 6 "completed"
+
+        # Step 8: Register AddIn in Excel registry
+        Update-StepStatus 7 "running" "Registering with Excel..."
+        Show-Spinner "Creating registry entries"
         $regPath = "HKCU:\Software\Microsoft\Office\16.0\Excel\Options"
         
-        # Find next available OPEN slot
-        $openNumber = ""
+        # Ensure registry path exists
+        if (-not (Test-Path $regPath)) {
+            Write-Status "Creating Excel registry path..."
+            New-Item -Path $regPath -Force | Out-Null
+        }
+        
+        # Check if current version is already registered
+        $currentVersionRegistered = $false
+        $existingKeyName = ""
         $counter = 0
+        
+        # First pass: check if current version already exists
         do {
             $keyName = if ($counter -eq 0) { "OPEN" } else { "OPEN$counter" }
             $existingValue = Get-ItemProperty -Path $regPath -Name $keyName -ErrorAction SilentlyContinue
-            if (-not $existingValue) {
-                $openNumber = $keyName
-                break
+            
+            if ($existingValue -and $existingValue.$keyName) {
+                $existingRegistryValue = $existingValue.$keyName
+                $cleanExistingValue = $existingRegistryValue.Trim('"')
+                $existingFileName = [System.IO.Path]::GetFileName($cleanExistingValue)
+                
+                if ($existingFileName -eq $AddInName) {
+                    $currentVersionRegistered = $true
+                    $existingKeyName = $keyName
+                    Write-Status "Current version already registered as '$keyName'" "Green"
+                    break
+                }
             }
             $counter++
         } while ($counter -lt 50)
+        
+        # If not already registered, find next available slot
+        if (-not $currentVersionRegistered) {
+            $openNumber = ""
+            $counter = 0
+            do {
+                $keyName = if ($counter -eq 0) { "OPEN" } else { "OPEN$counter" }
+                $existingValue = Get-ItemProperty -Path $regPath -Name $keyName -ErrorAction SilentlyContinue
+                if (-not $existingValue) {
+                    $openNumber = $keyName
+                    break
+                }
+                $counter++
+            } while ($counter -lt 50)
 
-        if ($openNumber) {
-            New-ItemProperty -Path $regPath -Name $openNumber -Value $AddInPath -PropertyType String -Force | Out-Null
+            if ($openNumber) {
+                # Use filename-only format with quotes as required by Excel
+                $registryValue = "`"$AddInName`""
+                New-ItemProperty -Path $regPath -Name $openNumber -Value $registryValue -PropertyType String -Force | Out-Null
+                Write-Success "Registered AddIn as '$openNumber' with value: $registryValue"
+            } else {
+                Write-Status "Warning: Could not find available OPEN slot in registry (checked OPEN0-OPEN49)" "Yellow"
+            }
         }
+        Update-StepStatus 7 "completed"
 
-        # Add AddIns folder to trusted locations (defense in depth)
-        Write-Status "Ensuring AddIns folder is trusted..."
+        # Step 9: Finalize setup
+        Update-StepStatus 8 "running" "Finalizing installation..."
+        Show-Spinner "Setting up trusted locations and creating shortcuts"
         $trustRegPath = "HKCU:\Software\Microsoft\Office\16.0\Excel\Security\Trusted Locations"
         $locationPath = "$trustRegPath\Location99"
         
@@ -176,63 +502,24 @@ function Install-AddIn {
         Set-ItemProperty -Path $locationPath -Name "AllowSubFolders" -Value 1
         Set-ItemProperty -Path $locationPath -Name "Description" -Value "Excel AddIns (Auto-trusted by Taxonomy Extractor installer)"
 
-        # Create desktop shortcut with instructions
-        $desktopPath = [Environment]::GetFolderPath("Desktop")
-        $shortcutPath = Join-Path $desktopPath "Excel Taxonomy Cleaner - Instructions.txt"
-        
-        $instructions = @"
-Excel Taxonomy Cleaner v1.5.0 - Installation Complete!
-
-✓ Add-in installed successfully to: $AddInPath
-✓ Registered with Excel for automatic loading
-✓ Security configured (trusted location + unblocked)
-
-HOW TO USE:
-1. Open Microsoft Excel
-2. Go to File → Options → Add-ins
-3. At the bottom, select "Excel Add-ins" and click "Go..."
-4. Look for "Excel Taxonomy Cleaner v1.5.0" in the list and CHECK the box
-5. Click OK - the add-in will load and ribbon button will appear
-
-FALLBACK (if add-in doesn't appear automatically):
-- In step 4 above, click "Browse..." and navigate to: $AddInPath
-- Select the file and click OK, then check the box to enable it
-
-The add-in provides a professional interface for extracting segments from pipe-delimited taxonomy data.
-The IPG Taxonomy Extractor button will appear in the IPG Tools group on Excel's Home tab.
-
-Support: https://github.com/$RepoOwner/$RepoName
-Version: $($releaseInfo.Version)
-Installed: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-
-To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in
-"@
-        
-        $instructions | Out-File -FilePath $shortcutPath -Encoding UTF8
 
         # Cleanup
         Remove-Item $TempPath -Recurse -Force -ErrorAction SilentlyContinue
+        Update-StepStatus 8 "completed"
 
-        Write-Success "Installation completed successfully!"
-        Write-Host ""
-        Write-Host "🎉 Excel Taxonomy Cleaner v1.5.0 is now installed!" -ForegroundColor Cyan
-        Write-Host ""
-        Write-Host "Next steps:" -ForegroundColor Yellow
-        Write-Host "1. Open Microsoft Excel" -ForegroundColor White
-        Write-Host "2. Go to File → Options → Add-ins → Excel Add-ins → Go" -ForegroundColor White
-        Write-Host "3. Look for 'Excel Taxonomy Cleaner v1.5.0' and CHECK the box" -ForegroundColor White
-        Write-Host "4. Click OK - the ribbon button will appear!" -ForegroundColor White
-        Write-Host ""
-        Write-Host "Fallback (if not auto-detected):" -ForegroundColor Yellow
-        Write-Host "In step 3, click 'Browse...' and select: $AddInPath" -ForegroundColor Gray
-        Write-Host ""
-        Write-Host "📄 Full instructions saved to desktop: Excel Taxonomy Cleaner - Instructions.txt" -ForegroundColor Green
-        Write-Host "📂 Add-in location: $AddInPath" -ForegroundColor Gray
-        Write-Host "🏠 Native Excel AddIns folder used for optimal compatibility" -ForegroundColor Gray
+        # Brief pause to show 100% completion
+        Start-Sleep -Milliseconds 1000
+        
+        Write-Header "🎉 INSTALLATION COMPLETE!" "Open Excel and find the IPG Taxonomy Extractor button in the Home tab"
+        
+        Write-Host "📂 AddIn location: " -ForegroundColor Gray -NoNewline
+        Write-Host "$AddInPath" -ForegroundColor Cyan
         Write-Host "🎯 IPG Taxonomy Extractor button will appear in IPG Tools group on Home tab" -ForegroundColor Gray
         Write-Host ""
-        Write-Host "To uninstall:" -ForegroundColor Yellow
-        Write-Host "Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the add-in" -ForegroundColor Gray
+        Write-Host "🗑️  " -ForegroundColor Red -NoNewline
+        Write-Host "TO UNINSTALL:" -ForegroundColor Yellow
+        Write-Host "   Go to File → Options → Add-ins → Excel Add-ins → Go → Uncheck the AddIn" -ForegroundColor Gray
+        
         Write-Host ""
 
     }
@@ -250,14 +537,49 @@ To uninstall: Go to File → Options → Add-ins → Excel Add-ins → Go → Un
 
 # Main execution
 try {
+    Clear-Host
+    
+    # Startup sequence with animation
+    Write-Host "⚡ " -ForegroundColor Yellow -NoNewline
+    Write-Host "Initializing IPG Taxonomy Extractor AddIn Installer..." -ForegroundColor White
+    Show-Spinner "Loading installer components"
+    
+    Clear-Host
+    Write-Logo
+    Write-Header "🚀 AUTOMATED INSTALLER" "One-click installation with smart upgrade handling"
+    
+    Write-Host "📍 Repository: " -ForegroundColor Gray -NoNewline
+    Write-Host "https://github.com/$RepoOwner/$RepoName" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Excel Taxonomy Cleaner v1.5.0 - Installer" -ForegroundColor Cyan
-    Write-Host "Repository: https://github.com/$RepoOwner/$RepoName" -ForegroundColor Gray
+    
+    # Interactive prompt
+    Write-Host "╔═══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+    Write-Host "║" -ForegroundColor Green -NoNewline
+    Write-Host "  🎯 Ready to install Excel Taxonomy Extractor AddIn v1.5.0?".PadRight(77) -ForegroundColor White -NoNewline
+    Write-Host "║" -ForegroundColor Green
+    Write-Host "║" -ForegroundColor Green -NoNewline
+    Write-Host "  📦 This will automatically download, install, and configure the AddIn".PadRight(77) -ForegroundColor Gray -NoNewline
+    Write-Host "║" -ForegroundColor Green
+    Write-Host "╚═══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
     Write-Host ""
+    
+    Write-Host "Press " -ForegroundColor Gray -NoNewline
+    Write-Host "ENTER" -ForegroundColor Yellow -NoNewline
+    Write-Host " to continue or " -ForegroundColor Gray -NoNewline
+    Write-Host "CTRL+C" -ForegroundColor Red -NoNewline
+    Write-Host " to cancel..." -ForegroundColor Gray
+    Read-Host
+    
+    Clear-Host
+    Write-Logo
 
     Install-AddIn
 }
 catch {
+    Write-Host ""
+    Write-Host "💥 INSTALLATION FAILED" -ForegroundColor Red -BackgroundColor Black
     Write-Error "Script execution failed: $($_.Exception.Message)"
+    Write-Host ""
+    Write-Host "📞 Need help? Create an issue at: https://github.com/$RepoOwner/$RepoName/issues" -ForegroundColor Yellow
     exit 1
 }

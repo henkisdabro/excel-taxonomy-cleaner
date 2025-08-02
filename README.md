@@ -32,6 +32,15 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 - ✅ Works without admin rights
 - ✅ Complete setup in under 30 seconds
 
+**Interactive Installation Experience:**
+- 🎨 **Beautiful ASCII Logo**: IPG branding with professional presentation
+- 📊 **Real-time Progress Tracker**: Live progress bars showing installation steps
+- ⚡ **Animated Interface**: Spinning indicators and step-by-step completion status
+- 🎯 **Smart Registry Management**: Automatically removes old version registry entries
+- 🔄 **Upgrade Protection**: Prevents duplicate registry keys when re-installing same version
+- 🖥️ **REPL-style Interface**: Modern CLI experience with consistent frame layouts
+- 🎉 **Clean Success Messages**: Minimal, focused completion information
+
 **After installation:**
 - The add-in loads automatically when Excel starts
 - The **IPG Taxonomy Extractor** button appears in the **IPG Tools** group on the Home tab
@@ -54,9 +63,11 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 **What the installer does automatically:**
 - ✅ Downloads the latest version from GitHub
 - ✅ Removes all old versions from your AddIns folder
-- ✅ Installs the new version
-- ✅ Updates registry entries
+- ✅ Cleans orphaned registry entries from previous versions
+- ✅ Installs the new version with progress tracking
+- ✅ Updates registry entries (prevents duplicates)
 - ✅ Preserves your settings
+- ✅ Shows real-time progress with animated interface
 
 ### Manual Upgrade
 If you prefer manual control:

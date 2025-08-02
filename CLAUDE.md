@@ -463,3 +463,99 @@ User Selection → ParseFirstCellData → SetParsedData → UserForm Display →
 5. **Make operations silent** - avoid confirmation dialogs
 6. **Test with edge cases** - missing segments, empty cells, etc.
 7. **Optimize for batch processing** - screen updating control essential
+
+## Interactive Installer Architecture (v1.5.0+)
+
+### 🎯 Enhanced Version Management Requirements
+
+**With the new interactive installer interface, version updates require additional attention:**
+
+#### 📍 CRITICAL VERSION LOCATIONS (Enhanced List):
+1. **Core Files** (Original):
+   - install.ps1 Line 1: `# Excel Taxonomy Extractor v1.X.X - One-Click Installation Script`
+   - install.ps1 Line 14: `$AddInName = "ipg_taxonomy_extractor_addonv1.X.X.xlam"`
+   - install.ps1 Line 15: `$DisplayName = "Excel Taxonomy Extractor AddIn v1.X.X"`
+   - TaxonomyExtractorForm.vb Line ~101: `Me.Caption = "IPG Mediabrands Taxonomy Extractor v1.X.X"`
+   - TaxonomyExtractorModule.vb error messages with version numbers
+   - README.md Line 1: `# Excel Taxonomy Extractor v1.X.X`
+   - CLAUDE.md Line 5: `## Project Overview - Version 1.X.X`
+
+2. **Interactive Interface** (New in v1.5.0):
+   - install.ps1 Line ~553: `"Initializing IPG Taxonomy Extractor AddIn Installer..."`
+   - install.ps1 Line ~558: `"🎯 Ready to install Excel Taxonomy Extractor AddIn v1.X.X?"`
+   - install.ps1 Line ~513: `"🎉 INSTALLATION COMPLETE!" "...AddIn v1.X.X is ready to use"`
+
+#### 🚨 INTERACTIVE INSTALLER CRITICAL REQUIREMENTS:
+
+**Frame Alignment Standards:**
+- All UI frames must use exactly 79-character width: `╔═══...═══╗` (79 chars)
+- Content within frames must use `.PadRight(77)` for proper alignment
+- Progress bar component already handles proper padding
+- Never use hardcoded spaces for alignment
+
+**Progress System Integrity:**
+- 9 installation steps = 0%, 11%, 22%, 33%, 44%, 55%, 66%, 77%, 88%, 100%
+- Only one `Update-ProgressDisplay` call per step (via `Update-StepStatus`)
+- No duplicate or manual progress display calls
+
+**Terminology Consistency:**
+- Always "Excel Taxonomy Extractor AddIn" (not "Cleaner")
+- Always "AddIn" (not "add-in" or "Add-in")
+- Consistent capitalization throughout all user-facing text
+
+**Registry Management:**
+- Automatically remove orphaned registry keys from previous versions
+- Prevent duplicate registry entries when re-installing same version
+- Use filename-only format with quotes: `"ipg_taxonomy_extractor_addonv1.X.X.xlam"`
+
+#### 🎨 VISUAL CONSISTENCY STANDARDS:
+
+**Color Scheme:**
+- DarkCyan: Progress frames and headers
+- Green: Interactive prompts and success messages
+- Cyan: ASCII logo display
+- Yellow: Status updates and warnings
+- Red: Error messages
+
+**ASCII Logo Protection:**
+- Logo content is user-maintained - never modify the ASCII art
+- Only frame the logo, never change the characters or layout
+- Preserve exact spacing and positioning
+
+#### ⚠️ VERSION UPDATE TESTING PROTOCOL:
+
+**Required Tests for Each Version:**
+1. **Clean Install Test**: Fresh installation from PowerShell one-liner
+2. **Upgrade Test**: Install previous version, then upgrade to new version
+3. **Same Version Test**: Install same version twice (should prevent duplicates)
+4. **Frame Alignment**: Verify all UI frames display correctly
+5. **Progress Flow**: Confirm percentages progress smoothly 0→100%
+6. **Registry Cleanup**: Check old entries removed, new entry created
+7. **Terminology Check**: All text uses "AddIn" and "Extractor" consistently
+
+**Visual Verification:**
+- [ ] ASCII logo displays correctly without corruption
+- [ ] All frames have consistent borders and alignment
+- [ ] Progress bars fit properly within frames
+- [ ] No text overflow or truncation in UI elements
+- [ ] Color scheme matches specification
+
+**Functional Verification:**
+- [ ] Registry entries for old versions are removed
+- [ ] New registry entry created with proper format
+- [ ] No duplicate entries when re-installing same version
+- [ ] Installation progress shows smooth 0-100% progression
+- [ ] All version references are consistent across installer
+
+### 🔧 Development Workflow for Interactive Installer
+
+When modifying the installer interface:
+
+1. **Test Frame Alignment**: Use consistent `.PadRight(77)` for all content
+2. **Verify Progress Logic**: Ensure no duplicate `Update-ProgressDisplay` calls
+3. **Check Terminology**: Search for "Cleaner" or "add-in" and replace consistently
+4. **Validate Colors**: Maintain DarkCyan/Green/Cyan color scheme
+5. **Protect ASCII Logo**: Never modify user-maintained logo content
+6. **Test All Scenarios**: Clean install, upgrade, same version re-install
+
+This interactive installer represents a significant UX improvement and requires careful attention to these enhanced version management practices.
