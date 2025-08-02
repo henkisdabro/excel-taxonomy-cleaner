@@ -1,4 +1,4 @@
-# Excel Taxonomy Extractor v1.6.0
+# IPG Taxonomy Extractor AddIn for Excel v1.6.0
 
 ![Release](https://img.shields.io/github/v/release/henkisdabro/excel-taxonomy-cleaner)
 ![Language](https://img.shields.io/badge/language-VBA-blue)
