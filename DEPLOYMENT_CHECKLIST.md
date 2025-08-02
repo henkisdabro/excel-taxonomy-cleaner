@@ -1,4 +1,4 @@
-# Deployment Checklist - Excel Taxonomy Extractor v1.2.0
+# Deployment Checklist - Excel Taxonomy Extractor v1.6.0
 
 This checklist ensures proper deployment of the one-liner PowerShell installation system.
 
@@ -35,7 +35,7 @@ excel-taxonomy-cleaner/
 - [ ] Repository is public (required for raw.githubusercontent.com access)
 
 ### 4. GitHub Release Creation
-- [ ] Create new release (e.g., v1.2.0)
+- [ ] Create new release (e.g., v1.6.0)
 - [ ] Upload `TaxonomyExtractor.xlam` as release asset
 - [ ] Verify asset name matches exactly: `TaxonomyExtractor.xlam`
 - [ ] Release marked as "Latest release"
@@ -46,7 +46,7 @@ excel-taxonomy-cleaner/
 ### Step 1: Upload XLAM to GitHub Release
 ```bash
 # Create release and upload XLAM file
-gh release create v1.2.0 TaxonomyExtractor.xlam --title "Excel Taxonomy Extractor v1.2.0" --notes "Professional VBA utility for extracting taxonomy segments with one-click installation"
+gh release create v1.6.0 TaxonomyExtractor.xlam --title "Excel Taxonomy Extractor v1.6.0" --notes "Professional VBA utility for extracting taxonomy segments with multi-step undo and enhanced UX"
 ```
 
 ### Step 2: Test Installation Script Locally
@@ -178,7 +178,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ### Hotfix Process
 1. [ ] Fix issue in XLAM file
-2. [ ] Create patch release (e.g., v1.2.1)
+2. [ ] Create patch release (e.g., v1.6.1)
 3. [ ] Upload fixed XLAM file
 4. [ ] No script changes needed (auto-downloads latest)
 

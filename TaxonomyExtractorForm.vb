@@ -27,7 +27,8 @@
 ' IMPORTANT: Increment version number on each significant code update:
 '   - v1.0.0: Initial release with 9 buttons + Activation ID
 '   - v1.1.0: Added smart data preview and dynamic button captions
-'   - v1.2.0: [Future updates - increment as needed]
+'   - v1.2.0: Enhanced undo functionality
+'   - v1.6.0: Multi-step undo system with professional UX enhancements
 ' This helps track which version users are running in their Excel environment.
 '
 ' CONTROLS (MUST be named exactly as shown):
