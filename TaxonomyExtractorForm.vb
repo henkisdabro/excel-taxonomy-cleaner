@@ -94,6 +94,7 @@
 '    - Captions: "Undo Last", "Close"
 '    - Position: X: 12, Y: 220 (btnUndo), X: 240, Y: 220 (btnClose)
 '    - Size: Width: 68, Height: 30
+'    - Undo Button: Dynamically enabled/disabled based on available undo data
 '
 ' LAYOUT SUMMARY:
 ' - Form dimensions: 480 x 280
@@ -249,6 +250,9 @@ Private Sub UpdateInterface()
     
     ' Update button captions with segment previews
     UpdateButtonCaptions
+    
+    ' Update Undo button state based on available undo data
+    UpdateUndoButtonState
 End Sub
 
 Private Sub UpdateButtonCaptions()
@@ -454,6 +458,25 @@ ErrorHandler:
     ' Don't show message box in modeless mode - would interrupt user workflow
 End Sub
 
+Private Sub UpdateUndoButtonState()
+    ' Update Undo button appearance based on UndoCount from TaxonomyExtractorModule
+    ' Access the global UndoCount variable to determine if undo data is available
+    
+    Debug.Print "UpdateUndoButtonState called - UndoCount: " & TaxonomyExtractorModule.UndoCount
+    
+    If TaxonomyExtractorModule.UndoCount > 0 Then
+        ' Enable button with normal appearance when undo data is available
+        btnUndo.Enabled = True
+        btnUndo.ForeColor = RGB(0, 0, 0)  ' Black text for enabled state
+        Debug.Print "  Undo button enabled (undo data available)"
+    Else
+        ' Disable button with grey appearance when no undo data
+        btnUndo.Enabled = False
+        btnUndo.ForeColor = RGB(128, 128, 128)  ' Grey text for disabled state
+        Debug.Print "  Undo button disabled (no undo data)"
+    End If
+End Sub
+
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub
 Private Sub btn2_Click(): Call ExtractPipeSegment(2): End Sub  
 Private Sub btn3_Click(): Call ExtractPipeSegment(3): End Sub
@@ -497,7 +520,7 @@ End Sub
 ' - Segments 1-9: Extract specific pipe-delimited segments
 ' - Activation ID: Extract text after colon character
 ' - Trim ^ABC^: Remove targeting acronyms in format ^any_characters^ with optional trailing space (only visible when pattern detected)
-' - Undo Last: Restore original values before extraction
+' - Undo Last: Restore original values before extraction (enabled only when undo data available)
 ' - Close: Close the dialog
 '
 ' EXAMPLE DATA:

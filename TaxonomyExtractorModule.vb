@@ -46,7 +46,7 @@ Type ParsedCellData
 End Type
 
 Dim UndoArray() As UndoData
-Dim UndoCount As Integer
+Public UndoCount As Integer
 Dim LastSegmentNumber As Integer
 
 ' Global variable to hold ribbon reference (optional)
