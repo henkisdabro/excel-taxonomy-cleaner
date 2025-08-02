@@ -96,6 +96,15 @@
 '    - Size: Width: 68, Height: 30
 '    - Undo Button: Dynamically enabled/disabled with operation count (e.g., "Undo Last (3)")
 '
+' 7. UNDO CAPACITY WARNING LABEL:
+'    - Control Type: Label
+'    - Name: lblUndoWarning
+'    - Caption: "⚠️ Undo limit reached (10/10). Oldest operations will be removed."
+'    - Position: X: 12, Y: 252 (below Undo button)
+'    - Size: Width: 350, Height: 20
+'    - Font: 8pt, ForeColor: RGB(200, 100, 0) (orange warning color)
+'    - Visible: Only when UndoOperationCount = 10
+'
 ' LAYOUT SUMMARY:
 ' - Form dimensions: 480 x 280
 ' - lblInstructions shows: "Selected: [complete original text - no truncation]"
@@ -460,7 +469,7 @@ End Sub
 
 Private Sub UpdateUndoButtonState()
     ' Update Undo button appearance and caption based on multi-step undo stack
-    ' Shows dynamic count of available undo operations
+    ' Shows dynamic count of available undo operations and manages warning label
     
     Debug.Print "UpdateUndoButtonState called - UndoOperationCount: " & TaxonomyExtractorModule.UndoOperationCount
     
@@ -483,6 +492,17 @@ Private Sub UpdateUndoButtonState()
         btnUndo.Caption = "Undo Last (" & TaxonomyExtractorModule.UndoOperationCount & ")"
         Debug.Print "  Undo button enabled (" & TaxonomyExtractorModule.UndoOperationCount & " operations available)"
     End If
+    
+    ' Handle capacity warning label visibility
+    On Error Resume Next  ' Handle case where label doesn't exist yet
+    If TaxonomyExtractorModule.UndoOperationCount = 10 Then
+        lblUndoWarning.Visible = True
+        Debug.Print "  Undo warning label shown (capacity reached)"
+    Else
+        lblUndoWarning.Visible = False
+        Debug.Print "  Undo warning label hidden"
+    End If
+    On Error GoTo 0
 End Sub
 
 Private Sub btn1_Click(): Call ExtractPipeSegment(1): End Sub

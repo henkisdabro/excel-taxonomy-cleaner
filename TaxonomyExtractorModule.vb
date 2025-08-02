@@ -54,8 +54,8 @@ Type UndoOperation
     Timestamp As Date              ' When operation was performed
 End Type
 
-' Multi-step undo stack (up to 25 operations)
-Dim UndoStack(1 To 25) As UndoOperation
+' Multi-step undo stack (up to 10 operations)
+Dim UndoStack(1 To 10) As UndoOperation
 Public UndoOperationCount As Integer    ' Number of operations in stack
 Dim NextOperationId As Integer          ' For assigning unique IDs
 
@@ -695,14 +695,14 @@ End Sub
 Public Sub AddUndoOperation(description As String)
     On Error GoTo ErrorHandler
     
-    ' Increment operation count, managing 25-operation limit
-    If UndoOperationCount >= 25 Then
+    ' Increment operation count, managing 10-operation limit
+    If UndoOperationCount >= 10 Then
         ' Remove oldest operation (shift array left)
         Dim i As Integer
-        For i = 1 To 24
+        For i = 1 To 9
             UndoStack(i) = UndoStack(i + 1)
         Next i
-        UndoOperationCount = 24
+        UndoOperationCount = 9
     End If
     
     UndoOperationCount = UndoOperationCount + 1
