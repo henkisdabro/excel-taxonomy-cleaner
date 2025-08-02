@@ -89,10 +89,10 @@
 '    - Visible: Same logic as button (only when targeting pattern detected)
 '
 ' 6. ACTION BUTTONS:
-'    - Control Type: CommandButton (3 buttons)
-'    - Names: btnUndo, btnCancel, btnClose
-'    - Captions: "Undo Last", "Cancel", "Close"
-'    - Position: X: 12, Y: 220 (btnUndo), X: 164, Y: 220 (btnCancel), X: 316, Y: 220 (btnClose)
+'    - Control Type: CommandButton (2 buttons)
+'    - Names: btnUndo, btnClose
+'    - Captions: "Undo Last", "Close"
+'    - Position: X: 12, Y: 220 (btnUndo), X: 240, Y: 220 (btnClose)
 '    - Size: Width: 68, Height: 30
 '
 ' LAYOUT SUMMARY:
@@ -465,7 +465,6 @@ Private Sub btn8_Click(): Call ExtractPipeSegment(8): End Sub
 Private Sub btn9_Click(): Call ExtractPipeSegment(9): End Sub
 Private Sub btnActivationID_Click(): Call ExtractActivationID: End Sub
 Private Sub TargetingAcronymCleanButton_Click(): Call CleanTargetingAcronyms: End Sub
-Private Sub btnCancel_Click(): Unload Me: End Sub
 Private Sub btnUndo_Click(): Call UndoTaxonomyCleaning: End Sub
 Private Sub btnClose_Click(): Unload Me: End Sub
 
@@ -499,7 +498,7 @@ End Sub
 ' - Activation ID: Extract text after colon character
 ' - Trim ^ABC^: Remove targeting acronyms in format ^any_characters^ with optional trailing space (only visible when pattern detected)
 ' - Undo Last: Restore original values before extraction
-' - Cancel/Close: Close the dialog
+' - Close: Close the dialog
 '
 ' EXAMPLE DATA:
 ' =============
@@ -519,7 +518,7 @@ End Sub
 ' 2. Add Label → Name: "lblInstructions" (for data preview)
 ' 3. Add 9 CommandButtons → Names: "btn1" through "btn9" (for segments)
 ' 4. Add 1 CommandButton → Name: "btnActivationID" (for activation ID)
-' 5. Add 3 CommandButtons → Names: "btnUndo", "btnCancel", "btnClose"
+' 5. Add 2 CommandButtons → Names: "btnUndo", "btnClose"
 ' 6. Copy VBA code above into UserForm module
 ' 7. Test with sample data: "FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123"
 ' 8. Label should show "Selected: FY24_26|Q1-4|Tourism WA|WA|Marketing:ABC123" (complete text)
