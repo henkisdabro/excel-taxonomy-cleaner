@@ -5,18 +5,45 @@
 ![Platform](https://img.shields.io/badge/platform-Excel-green)
 ![License](https://img.shields.io/badge/license-MIT-yellow)
 
-**Owner & Maintainer:** [@henkisdabro](https://github.com/henkisdabro)  
-**Original Concept by:** [@stueydubs](https://github.com/stueydubs)
+**Developer & Maintainer:** [@henkisdabro](https://github.com/henkisdabro)  
+**Original Concept, Feature Contribution & User Testing:** [@stueydubs](https://github.com/stueydubs)
 
 A professional VBA utility for extracting specific segments from pipe-delimited taxonomy data in Excel cells, featuring modeless operation, real-time updates, activation ID extraction, and custom undo functionality.
 
 ## 🎬 Demonstration
 
-![EXCEL_R6dBP0cdDI](https://github.com/user-attachments/assets/b3892344-0d01-4bba-a70e-f2b4b2e728d8)
+![EXCEL_AkzVTkjKyo](https://github.com/user-attachments/assets/97e7c216-2216-441d-a18e-2c86ca18c41b)
 
 ---
 
-## 🚀 **One-Click Installation** (Recommended)
+## Key Features
+
+### 🎯 Flexible Extraction
+- **9 Segments**: Extract any of the first 9 pipe-delimited segments
+- **Activation IDs**: Extract unique identifiers after colon characters
+- **Batch Processing**: Works with single cells or multiple selected ranges
+- **Smart Parsing**: Handles missing segments gracefully
+- **Live Preview**: See segment content before extraction
+- **Enhanced UI**: Modern professional interface with smart data preview
+
+### 🔄 Custom Undo System
+Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
+- **Automatic**: Original values stored before each extraction
+- **UserForm**: Click "Undo Last" button 
+- **Manual**: Run `UndoTaxonomyCleaning` macro
+- **Instant**: Silent operation without confirmation dialogs
+- **Smart**: Undo data cleared after each new operation
+
+### 📦 Excel Add-in Ready
+- **Professional Distribution**: PowerShell one-liner installation from GitHub
+- **Universal Access**: Available in all Excel workbooks once installed
+- **Ribbon Integration**: CustomUI XML embedded in XLAM for permanent ribbon buttons
+- **Native Folder**: Installs to `%APPDATA%\Microsoft\AddIns` for optimal Excel integration
+- **Follow instructions**: See `RIBBON_SOLUTION.md` for ribbon setup and `DEPLOYMENT_CHECKLIST.md` for distribution
+
+---
+
+## 🚀 **Fully Automated Installation**
 
 Install instantly with this PowerShell one-liner:
 
@@ -33,7 +60,7 @@ irm "https://raw.githubusercontent.com/henkisdabro/excel-taxonomy-cleaner/main/i
 - ✅ Complete setup in under 30 seconds
 
 **Interactive Installation Experience:**
-- 🎨 **Beautiful ASCII Logo**: IPG branding with professional presentation
+- 🎨 **Awesome ASCII Logo**: IPG logo!
 - 📊 **Real-time Progress Tracker**: Live progress bars showing installation steps
 - ⚡ **Animated Interface**: Spinning indicators and step-by-step completion status
 - 🎯 **Smart Registry Management**: Automatically removes old version registry entries
@@ -152,36 +179,9 @@ For text: `FY24_26|Q1-4|Tourism WA|WA |Always On Remarketing| 4LAOSO | SOC|Faceb
 
 ---
 
-## Key Features
-
-### 🎯 Flexible Extraction
-- **9 Segments**: Extract any of the first 9 pipe-delimited segments
-- **Activation IDs**: Extract unique identifiers after colon characters
-- **Batch Processing**: Works with single cells or multiple selected ranges
-- **Smart Parsing**: Handles missing segments gracefully
-- **Live Preview**: See segment content before extraction
-- **Enhanced UI**: Modern professional interface with smart data preview
-
-### 🔄 Custom Undo System
-Since Excel's built-in Undo doesn't work with VBA changes, this tool includes:
-- **Automatic**: Original values stored before each extraction
-- **UserForm**: Click "Undo Last" button 
-- **Manual**: Run `UndoTaxonomyCleaning` macro
-- **Instant**: Silent operation without confirmation dialogs
-- **Smart**: Undo data cleared after each new operation
-
-### 📦 Excel Add-in Ready
-- **Professional Distribution**: PowerShell one-liner installation from GitHub
-- **Universal Access**: Available in all Excel workbooks once installed
-- **Ribbon Integration**: CustomUI XML embedded in XLAM for permanent ribbon buttons
-- **Native Folder**: Installs to `%APPDATA%\Microsoft\AddIns` for optimal Excel integration
-- **Follow instructions**: See `RIBBON_SOLUTION.md` for ribbon setup and `DEPLOYMENT_CHECKLIST.md` for distribution
-
----
-
 ## Interface Options
 
-### Modeless UserForm (Recommended - New in v1.4.0)
+### Modeless UserForm (New in v1.4.0)
 - **Continuous operation** - form stays open while Excel remains interactive
 - **Real-time updates** - interface automatically refreshes when you select new cells
 - **Multi-range workflow** - process different ranges without reopening the form
